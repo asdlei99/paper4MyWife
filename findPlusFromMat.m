@@ -4,7 +4,15 @@ close all;
 clear;
 currentPath = fileparts(mfilename('fullpath'));
 %%
-expMatDataPath = 'D:\马屈杨论文\share\【论文】孔管边界条件\实验数据\内插管0.5D\400转带压\20160831内插管0.5D中间开机420转带压-5.mat';
+
+dataPath = getDataPath();
+expMatDataPath = fullfile(dataPath,'实验原始数据\缓冲罐内置孔板0.5D罐中间\开机300转带压.mat');
+
+
+%%开始读取第一个数据的压力值
+expDataCells = load(expMatDataPath);
+
+
 load(expMatDataPath);
 sigmaValues = zeros(1,size(dataStruct.rawData.pressure,2));
 plusValue = sigmaValues;
