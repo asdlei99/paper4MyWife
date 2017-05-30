@@ -5,9 +5,9 @@ dataPath = getDataPath();
 fileName = {};
 switch rpm
 case 300
-    fileName = sprintf('缓冲罐开机%d转带压_combine', rpm);
+    fileName = sprintf('缓冲罐开机%d转带压_combine.mat', rpm);
 case 420
-    fileName = sprintf('缓冲罐开机%d转带压_combine', rpm);
+    fileName = sprintf('缓冲罐开机%d转带压_combine.mat', rpm);
 otherwise
     error('转速需要设定为300或420，目前只接受这两个转速');
 end

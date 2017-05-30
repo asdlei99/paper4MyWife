@@ -11,17 +11,20 @@ function dataCombineStructEx = calcSuppressionLevel(dataCombineStruct,vesselComb
     dataCombineStruct = calcOneField(dataCombineStruct,vesselCombineDataStruct,baseField,'semiFreMag2');
     dataCombineStruct = calcOneField(dataCombineStruct,vesselCombineDataStruct,baseField,'semiFreMag3');
     dataCombineStruct = calcOneField(dataCombineStruct,vesselCombineDataStruct,baseField,'pulsationValue');
+    dataCombineStructEx = dataCombineStruct;
 end
 
 function dataCombineStructEx = calcOneField(dataCombineStruct,vesselCombineDataStruct,baseField,valField)
     dataCombineStructEx = dataCombineStruct;
     if isCombineDataStructHaveField(dataCombineStruct,baseField,valField)
+        st = getfield(dataCombineStruct,baseField);
         [vesselValMean,~,~,~] = getCombineDataStatisticValue(vesselCombineDataStruct,baseField,valField);
         val = getCombineDataValue(dataCombineStruct,baseField,valField);
         tmp = val;
         for i = 1:size(val,1)
             tmp(i,:) = (vesselValMean - val(i,:)) ./ vesselValMean;
         end
-        setfield(dataCombineStructEx,sprintf('%sSL',valField),tmp);
+        st = setfield(st,sprintf('%sSL',valField),tmp);
+        dataCombineStructEx = setfield(dataCombineStructEx,baseField,st);
     end
 end
