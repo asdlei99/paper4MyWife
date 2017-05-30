@@ -8,11 +8,12 @@ function filteringData= spectrumSubtraction( noiseData,originData,str_way)
 if nargin<=2
     str_way = 'mean';
 end
-dcNData = fun_delete_DC(noiseData);
+dcNData = detrend(noiseData,'constant');
 N=length(originData);
 %n=2^nextpow2(n);
 noise_fft = fft(dcNData);%获得噪声的频谱
-[dcOData,meanOriginData ]= fun_delete_DC(originData);
+dcOData= detrend(originData,'constant');
+meanOriginData = mean(originData);
 origin_fft = fft(dcOData);%获得信号的频谱
 mag_data = abs(origin_fft);
 phase_data = angle(origin_fft);

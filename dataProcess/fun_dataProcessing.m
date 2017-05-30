@@ -4,10 +4,6 @@ baseFrequency = nan;%基频
 allowDeviation = 0.5;%获取倍频时允许的误差范围，默认为0.5
 multFreTimes = 3;%倍频1x,2x,3x
 semiFreTimes = 3;%半倍频0.5x,1.5x,2.5x
-STFT.valid = 1;
-STFT.windowSectionPointNums = 256;
-STFT.noverlap = floor(STFT.windowSectionPointNums/2);
-STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 pp = varargin;
 beforeAfterMeaPoint = nan;
 calcPeakPeakValueSection = 0.8;
@@ -26,8 +22,6 @@ while length(pp)>=2
             multFreTimes=val;
         case 'semifretimes' %半倍频数，分析倍频的数目默认3
             semiFreTimes=val;
-        case 'stft' %短时傅里叶变换的参数
-            STFT=val;
         case 'beforeaftermeapoint'
             beforeAfterMeaPoint = val;
         case 'calcpeakpeakvaluesection'
@@ -43,14 +37,6 @@ end
 
 for i = 1:size(rawData,2)
     colData = rawData(:,i);
-    if STFT.valid% 进行短时傅里叶变换
-        [spectrogramData(i).S,spectrogramData(i).F,spectrogramData(i).T,spectrogramData(i).P] = ...
-            spectrogram(detrend(colData)...
-                ,STFT.windowSectionPointNums...
-                ,STFT.noverlap...
-                ,STFT.nfft...
-                ,Fs);%短时傅里叶变换
-    end
 end
 
 
@@ -78,9 +64,6 @@ processDataStruct.semiFrePh = semiFrePh;
 processDataStruct.semiFreFre = semiFreFre;
 [processDataStruct.statisPara,processDataStruct.statisParaName] = statisticalParameterByColumn(rawData);
 [processDataStruct.statisPara25,processDataStruct.statisParaName25] = statisticalParameterByColumn(rawData(round(size(rawData,1)*0.75):end,:));
-if STFT.valid
-    processDataStruct.STFT = spectrogramData;
-end
 processDataStruct.pulsationValue = fun_calcPulsation(rawData,calcPeakPeakValueSection);
 processDataStruct.pulsationRate = processDataStruct.pulsationValue./processDataStruct.statisPara(1,:);%脉动不均度
 %计算脉动抑制效果
