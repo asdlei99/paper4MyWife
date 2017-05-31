@@ -15,7 +15,7 @@ sigmaValuesCell = {};
 plusValuesCell = {};
 %%开始读取第一个数据的压力值
 dataStructCells = load(expMatDataPath);
-dataStructCells = dataStructCells.expDataCells;
+dataStructCells = dataStructCells.dataStructCells;
 reject = 0;
 quitProgram = 0;
 isSave = 1;
