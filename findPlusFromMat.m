@@ -1,44 +1,59 @@
-%% æ‰‹åŠ¨å®šä¹‰è„‰åŠ¨å³°å³°å€¼
+%% ÊÖ¶¯¶¨ÒåÂö¶¯·å·åÖµ
 clc;
 close all;
 clear;
 currentPath = fileparts(mfilename('fullpath'));
 %%
-[fileName,pathName] = uigetfile('*.mat','é€‰æ‹©å®éªŒæ•°æ®é¢„å¤„ç†æ–‡ä»¶');
+[fileName,pathName] = uigetfile('*.mat','Ñ¡ÔñÊµÑéÊı¾İÔ¤´¦ÀíÎÄ¼ş');
 dataPath = getDataPath();
 expMatDataPath = fullfile(pathName,fileName);
-%expMatDataPath = fullfile(dataPath,'å®éªŒåŸå§‹æ•°æ®\ç¼“å†²ç½å†…ç½®å­”æ¿0.5Dç½ä¸­é—´\å¼€æœº300è½¬å¸¦å‹.mat');
-zoomIndexStartPresent = 0.3;%æ”¾å¤§çš„å¼€å§‹ä½ç½®0.3
-zoomIndexEndPresent = 0.35;%æ”¾å¤§çš„ç»“æŸä½ç½®0.35
+%expMatDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\»º³å¹ŞÄÚÖÃ¿×°å0.5D¹ŞÖĞ¼ä\¿ª»ú300×ª´øÑ¹.mat');
+zoomIndexStartPresent = 0.3;%·Å´óµÄ¿ªÊ¼Î»ÖÃ0.3
+zoomIndexEndPresent = 0.35;%·Å´óµÄ½áÊøÎ»ÖÃ0.35
 sigmaValues = [];
 sigmaValuesCell = {};
 plusValuesCell = {};
-%%å¼€å§‹è¯»å–ç¬¬ä¸€ä¸ªæ•°æ®çš„å‹åŠ›å€¼
-expDataCells = load(expMatDataPath);
+%%¿ªÊ¼¶ÁÈ¡µÚÒ»¸öÊı¾İµÄÑ¹Á¦Öµ
+dataStructCells = load(expMatDataPath);
+dataStructCells = dataStructCells.expDataCells;
 reject = 0;
 quitProgram = 0;
 isSave = 1;
-for dataIndex = 1 : size(expDataCells,1)
-	dataStruct = expDataCells{dataIndex,2};
+sigmaData = 1.5;
+plusValueMat = [];
+sigmaValuesMat = [];
+excelCells = {};
+endDotIndex = strfind(fileName,'.');
+excelPath = fileName(1:(endDotIndex(end)-1));
+excelPath = strcat(excelPath,'_sigmaPlusValue.xls');
+excelPath = fullfile(pathName,excelPath);
+if exist(excelPath,'file')
+    [~,~,excelCells] = xlsread(excelPath);
+end
+excelStartRow = size(excelCells,1) + 1;
+excelCells{excelStartRow,1} = datestr(now);
+
+for dataIndex = 1 : size(dataStructCells,1)
+	dataStruct = dataStructCells{dataIndex,2};
 	for i = 1:size(dataStruct.rawData.pressure,2)
     	p = dataStruct.rawData.pressure(:,i);
     	fs = dataStruct.input.fs;
 		while 1
 			if length(sigmaValues) > i
-				sigma = sigmaValues(i);
+				sigmaData = sigmaValues(i);
 			end
-	        sigma=inputdlg(sprintf('è¾“å…¥æµ‹ç‚¹%dçš„sigmaå€¼',i),'sigma',1,{sprintf('%g',sigma)});
-	        if isempty(sigma)
-	        	strBtn1 = 'ç»ˆæ­¢è®¡ç®—é€€å‡ºç¨‹åº';
-	        	strBtn2 = 'ç»ˆæ­¢è®¡ç®—è·³è½¬ä¸‹ä¸€ä¸ªå®éªŒæ•°æ®';
-	        	strBtn3 = 'è·³åˆ°ä¸‹ä¸€ä¸ªæµ‹ç‚¹';
-	            button = questdlg('æ˜¯å¦ç»ˆæ­¢è®¡ç®—ï¼Œæˆ–è€…è·³åˆ°ä¸‹ä¸€ä¸ªæµ‹ç‚¹'...
-	                ,'è¯¢é—®'...
+	        sigmaData=inputdlg(sprintf('ÊäÈë²âµã%dµÄsigmaÖµ',i),'sigma',1,{sprintf('%g',sigmaData)});
+	        if isempty(sigmaData)
+	        	strBtn1 = 'ÖÕÖ¹¼ÆËãÍË³ö³ÌĞò';
+	        	strBtn2 = 'ÖÕÖ¹¼ÆËãÌø×ªÏÂÒ»¸öÊµÑéÊı¾İ';
+	        	strBtn3 = 'Ìøµ½ÏÂÒ»¸ö²âµã';
+	            button = questdlg('ÊÇ·ñÖÕÖ¹¼ÆËã£¬»òÕßÌøµ½ÏÂÒ»¸ö²âµã'...
+	                ,'Ñ¯ÎÊ'...
 	                ,strBtn1,strBtn2,strBtn3,strBtn3);
 
 	            if strcmp(button,strBtn1)
 	            	quitProgram = 1;
-	                warning('ç”¨æˆ·ç»ˆæ­¢ç¨‹åº');
+	                warning('ÓÃ»§ÖÕÖ¹³ÌĞò');
 	                break;
 	            elseif strcmp(button,strBtn2)
 	                reject = 1;
@@ -50,8 +65,8 @@ for dataIndex = 1 : size(expDataCells,1)
 	        end
 
 
-	        sigma = str2num(sigma{1});
-	        [out_index,meadUpStd,meadDownStd,meanValue(i),stdValue] =  sigmaOutlierDetection(p,sigma);
+	        sigmaData = str2num(sigmaData{1});
+	        [out_index,meadUpStd,meadDownStd,meanValue(i),stdValue] =  sigmaOutlierDetection(p,sigmaData);
 	        
 	        fh = figure();
 	        subplot(2,1,1)
@@ -63,7 +78,7 @@ for dataIndex = 1 : size(expDataCells,1)
 	        set(h,'color','r');
 	        h = plot([ax(1),ax(2)],[meadDownStd,meadDownStd],'--');
 	        set(h,'color','r');
-	        title(sprintf('æµ‹ç‚¹%dï¼Œæ€»å…±æœ‰%dä¸ªç‚¹,sigma%gèŒƒå›´ä¹‹å¤–çš„æœ‰%dä¸ªç‚¹',i,length(p),sigma,length(out_index)));
+	        title(sprintf('²âµã%d£¬×Ü¹²ÓĞ%d¸öµã,sigma%g·¶Î§Ö®ÍâµÄÓĞ%d¸öµã',i,length(p),sigmaData,length(out_index)));
 	        subplot(2,1,2)
 	        hold on;
 	        xStartIndex = ceil(length(time)*zoomIndexStartPresent);
@@ -75,13 +90,16 @@ for dataIndex = 1 : size(expDataCells,1)
 	        h = plot([ax(1),ax(2)],[meadDownStd,meadDownStd],'--');
 	        set(h,'color','r');
 	        
-	        button = questdlg(sprintf('æ˜¯å¦å¯ä»¥ä½œä¸ºæµ‹ç‚¹%dçš„sigmaå€¼',i)...
-	                ,'è¯¢é—®'...
-	                ,'æ˜¯','å¦','æ˜¯');
-	        if strcmp(button,'æ˜¯')
+	        button = questdlg(sprintf('ÊÇ·ñ¿ÉÒÔ×÷Îª²âµã%dµÄsigmaÖµ',i)...
+	                ,'Ñ¯ÎÊ'...
+	                ,'ÊÇ','·ñ','ÊÇ');
+	        if strcmp(button,'ÊÇ')
 	            close(fh);
-	            sigmaValues(1,i) = sigma;
+	            sigmaValues(1,i) = sigmaData;
 	            plusValue(1,i) = meadUpStd - meadDownStd;
+                excelCells{excelStartRow,i+1} = plusValue(1,i);
+                excelCells{excelStartRow,i+21} = sigmaValues(1,i);
+                
 	            break;
 	        else 
 	            close(fh);
@@ -106,23 +124,32 @@ for dataIndex = 1 : size(expDataCells,1)
 	if reject
 	   reject = 0;
 	   continue;
-	end
-    expDataCells{dataIndex,3} = plusValue;
-    plusValuesCell{dataIndex,4} = sigmaValues;
-
+    end
+    excelStartRow = excelStartRow + 1;
+    dataStructCells{dataIndex,3} = plusValue;
+    dataStructCells{dataIndex,4} = sigmaValues;
+    plusValueMat(dataIndex,:) = plusValue;
+    sigmaValuesMat(dataIndex,:) = sigmaValues;
 end
 
 
 if quitProgram
-    button = questdlg('ä¸­é€”ç»ˆæ­¢è®¡ç®—ï¼Œæ˜¯å¦éœ€è¦ä¿å­˜å•Šäº²~~'...
-        ,'è¯¢é—®'...
-        ,'ä¿å­˜','ä¸è¦ä¿å­˜','ä¸è¦ä¿å­˜');
-    if strcmp(button,'ä¿å­˜')
+    button = questdlg('ÖĞÍ¾ÖÕÖ¹¼ÆËã£¬ÊÇ·ñĞèÒª±£´æ°¡Ç×~~'...
+        ,'Ñ¯ÎÊ'...
+        ,'±£´æ','²»Òª±£´æ','²»Òª±£´æ');
+    if strcmp(button,'±£´æ')
         isSave = 1;
     else
         isSave = 0;
     end
 end
 if isSave
-    save(expMatDataPath,'expDataCells');
+    save(expMatDataPath,'dataStructCells');
+    endDotIndex = strfind(expMatDataPath,'.');
+    expMatDataPath = expMatDataPath(1:(endDotIndex(end)-1));
+    expMatDataPath = strcat(expMatDataPath,'_sigmaPlusValue.mat');
+    st.expPlusValues = plusValueMat;
+    st.expSigmaValues = sigmaValuesMat;
+    save(expMatDataPath,'st');
+    xlswrite(excelPath,excelCells);
 end
