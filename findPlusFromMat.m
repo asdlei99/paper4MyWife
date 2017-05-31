@@ -1,110 +1,128 @@
-%% ÊÖ¶¯¶¨ÒåÂö¶¯·å·åÖµ
+%% æ‰‹åŠ¨å®šä¹‰è„‰åŠ¨å³°å³°å€¼
 clc;
 close all;
 clear;
 currentPath = fileparts(mfilename('fullpath'));
 %%
-
+[fileName,pathName] = uigetfile('*.mat','é€‰æ‹©å®éªŒæ•°æ®é¢„å¤„ç†æ–‡ä»¶');
 dataPath = getDataPath();
-expMatDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\»º³å¹ŞÄÚÖÃ¿×°å0.5D¹ŞÖĞ¼ä\¿ª»ú300×ª´øÑ¹.mat');
-
-
-%%¿ªÊ¼¶ÁÈ¡µÚÒ»¸öÊı¾İµÄÑ¹Á¦Öµ
+expMatDataPath = fullfile(pathName,fileName);
+%expMatDataPath = fullfile(dataPath,'å®éªŒåŸå§‹æ•°æ®\ç¼“å†²ç½å†…ç½®å­”æ¿0.5Dç½ä¸­é—´\å¼€æœº300è½¬å¸¦å‹.mat');
+zoomIndexStartPresent = 0.3;%æ”¾å¤§çš„å¼€å§‹ä½ç½®0.3
+zoomIndexEndPresent = 0.35;%æ”¾å¤§çš„ç»“æŸä½ç½®0.35
+sigmaValues = [];
+sigmaValuesCell = {};
+plusValuesCell = {};
+%%å¼€å§‹è¯»å–ç¬¬ä¸€ä¸ªæ•°æ®çš„å‹åŠ›å€¼
 expDataCells = load(expMatDataPath);
-
-
-load(expMatDataPath);
-sigmaValues = zeros(1,size(dataStruct.rawData.pressure,2));
-plusValue = sigmaValues;
-meanValue = plusValue;
-sigma = 1.5;
-zoomIndexStartPresent = 0.3;%·Å´óµÄ¿ªÊ¼Î»ÖÃ0.3
-zoomIndexEndPresent = 0.35;%·Å´óµÄ½áÊøÎ»ÖÃ0.35
-isSave = 1;
 reject = 0;
-for i = 1:size(dataStruct.rawData.pressure,2)
-    p = dataStruct.rawData.pressure(:,i);
-    fs = dataStruct.input.fs;
-    while 1
-        sigma=inputdlg(sprintf('ÊäÈë²âµã%dµÄsigmaÖµ',i),'sigma',1,{sprintf('%g',sigma)});
-        if isempty(sigma)
-            button = questdlg('ÊÇ·ñÖÕÖ¹¼ÆËã£¬»òÕßÌøµ½ÏÂÒ»¸ö²âµã'...
-                ,'Ñ¯ÎÊ'...
-                ,'ÖÕÖ¹¼ÆËãÍË³ö³ÌĞò','Ìøµ½ÏÂÒ»¸ö²âµã','Ìøµ½ÏÂÒ»¸ö²âµã');
-            if strcmp(button,'ÖÕÖ¹¼ÆËãÍË³ö³ÌĞò')
-                reject = 1;
-            else
-                continue;
-            end
-        end
-        if reject
-            break;
-        end
-        sigma = str2num(sigma{1});
-        [out_index,meadUpStd,meadDownStd,meanValue(i),stdValue] =  sigmaOutlierDetection(p,sigma);
-        
-        fh = figure();
-        subplot(2,1,1)
-        set(fh,'outerposition',get(0,'screensize'));
-        [~,time,~,~] = plotWave(p,fs,'figureHandle',fh);
-        hold on;
-        ax = axis();
-        h = plot([ax(1),ax(2)],[meadUpStd,meadUpStd],'--');
-        set(h,'color','r');
-        h = plot([ax(1),ax(2)],[meadDownStd,meadDownStd],'--');
-        set(h,'color','r');
-        title(sprintf('²âµã%d£¬×Ü¹²ÓĞ%d¸öµã,sigma%g·¶Î§Ö®ÍâµÄÓĞ%d¸öµã',i,length(p),sigma,length(out_index)));
-        subplot(2,1,2)
-        hold on;
-        xStartIndex = ceil(length(time)*zoomIndexStartPresent);
-        xEndIndex = floor(length(time)*zoomIndexEndPresent);
-        plot(time(xStartIndex:xEndIndex),p(xStartIndex:xEndIndex),'-b');
-        ax = axis();
-        h = plot([ax(1),ax(2)],[meadUpStd,meadUpStd],'--');
-        set(h,'color','r');
-        h = plot([ax(1),ax(2)],[meadDownStd,meadDownStd],'--');
-        set(h,'color','r');
-        
-        button = questdlg(sprintf('ÊÇ·ñ¿ÉÒÔ×÷Îª²âµã%dµÄsigmaÖµ',i)...
-                ,'Ñ¯ÎÊ'...
-                ,'ÊÇ','·ñ','ÊÇ');
-        if strcmp(button,'ÊÇ')
-            close(fh);
-            sigmaValues(1,i) = sigma;
-            plusValue(1,i) = meadUpStd - meadDownStd;
-            break;
-        else 
-            close(fh);
-            continue;
-        end
+quitProgram = 0;
+isSave = 1;
+for dataIndex = 1 : size(expDataCells,1)
+	dataStruct = expDataCells{dataIndex,2};
+	for i = 1:size(dataStruct.rawData.pressure,2)
+    	p = dataStruct.rawData.pressure(:,i);
+    	fs = dataStruct.input.fs;
+		while 1
+			if length(sigmaValues) > i
+				sigma = sigmaValues(i);
+			end
+	        sigma=inputdlg(sprintf('è¾“å…¥æµ‹ç‚¹%dçš„sigmaå€¼',i),'sigma',1,{sprintf('%g',sigma)});
+	        if isempty(sigma)
+	        	strBtn1 = 'ç»ˆæ­¢è®¡ç®—é€€å‡ºç¨‹åº';
+	        	strBtn2 = 'ç»ˆæ­¢è®¡ç®—è·³è½¬ä¸‹ä¸€ä¸ªå®éªŒæ•°æ®';
+	        	strBtn3 = 'è·³åˆ°ä¸‹ä¸€ä¸ªæµ‹ç‚¹';
+	            button = questdlg('æ˜¯å¦ç»ˆæ­¢è®¡ç®—ï¼Œæˆ–è€…è·³åˆ°ä¸‹ä¸€ä¸ªæµ‹ç‚¹'...
+	                ,'è¯¢é—®'...
+	                ,strBtn1,strBtn2,strBtn3,strBtn3);
+
+	            if strcmp(button,strBtn1)
+	            	quitProgram = 1;
+	                warning('ç”¨æˆ·ç»ˆæ­¢ç¨‹åº');
+	                break;
+	            elseif strcmp(button,strBtn2)
+	                reject = 1;
+	                break;
+	            elseif strcmp(button,strBtn3)
+	                reject = 0;
+	                break;   
+	            end
+	        end
+
+
+	        sigma = str2num(sigma{1});
+	        [out_index,meadUpStd,meadDownStd,meanValue(i),stdValue] =  sigmaOutlierDetection(p,sigma);
+	        
+	        fh = figure();
+	        subplot(2,1,1)
+	        set(fh,'outerposition',get(0,'screensize'));
+	        [~,time,~,~] = plotWave(p,fs,'figureHandle',fh);
+	        hold on;
+	        ax = axis();
+	        h = plot([ax(1),ax(2)],[meadUpStd,meadUpStd],'--');
+	        set(h,'color','r');
+	        h = plot([ax(1),ax(2)],[meadDownStd,meadDownStd],'--');
+	        set(h,'color','r');
+	        title(sprintf('æµ‹ç‚¹%dï¼Œæ€»å…±æœ‰%dä¸ªç‚¹,sigma%gèŒƒå›´ä¹‹å¤–çš„æœ‰%dä¸ªç‚¹',i,length(p),sigma,length(out_index)));
+	        subplot(2,1,2)
+	        hold on;
+	        xStartIndex = ceil(length(time)*zoomIndexStartPresent);
+	        xEndIndex = floor(length(time)*zoomIndexEndPresent);
+	        plot(time(xStartIndex:xEndIndex),p(xStartIndex:xEndIndex),'-b');
+	        ax = axis();
+	        h = plot([ax(1),ax(2)],[meadUpStd,meadUpStd],'--');
+	        set(h,'color','r');
+	        h = plot([ax(1),ax(2)],[meadDownStd,meadDownStd],'--');
+	        set(h,'color','r');
+	        
+	        button = questdlg(sprintf('æ˜¯å¦å¯ä»¥ä½œä¸ºæµ‹ç‚¹%dçš„sigmaå€¼',i)...
+	                ,'è¯¢é—®'...
+	                ,'æ˜¯','å¦','æ˜¯');
+	        if strcmp(button,'æ˜¯')
+	            close(fh);
+	            sigmaValues(1,i) = sigma;
+	            plusValue(1,i) = meadUpStd - meadDownStd;
+	            break;
+	        else 
+	            close(fh);
+	            continue;
+	        end
+	    end
+
+	    if reject
+	        break;
+	    else
+	    	continue;
+	    end
+	    if quitProgram
+	    	break;
+	    end
+
+
     end
-    if reject
-        break;
-    end
+	if quitProgram
+		break;
+	end
+	if reject
+	   reject = 0;
+	   continue;
+	end
+    expDataCells{dataIndex,3} = plusValue;
+    plusValuesCell{dataIndex,4} = sigmaValues;
+
 end
 
-if reject
-    button = questdlg('ÖĞÍ¾ÖÕÖ¹¼ÆËã£¬ÊÇ·ñĞèÒª±£´æ°¡Ç×~~'...
-        ,'Ñ¯ÎÊ'...
-        ,'±£´æ','²»Òª±£´æ','²»Òª±£´æ');
-    if strcmp(button,'±£´æ')
+
+if quitProgram
+    button = questdlg('ä¸­é€”ç»ˆæ­¢è®¡ç®—ï¼Œæ˜¯å¦éœ€è¦ä¿å­˜å•Šäº²~~'...
+        ,'è¯¢é—®'...
+        ,'ä¿å­˜','ä¸è¦ä¿å­˜','ä¸è¦ä¿å­˜');
+    if strcmp(button,'ä¿å­˜')
         isSave = 1;
     else
         isSave = 0;
     end
 end
 if isSave
-    resCell{1,1} = '²âµã';
-    resCell{1,2} = 'sigmaÖµ';
-    resCell{1,3} = 'Âö¶¯·å·åÖµ';
-    resCell{1,4} = '¾ùÖµ';
-    for i = 1:length(sigmaValues)
-        resCell{i+1,1} = i;
-        resCell{i+1,2} = sigmaValues(i);
-        resCell{i+1,3} = plusValue(i);
-        resCell{i+1,4} = meanValue(i);
-    end
-    saveFilePath = expMatDataPath(1:end-4);
-    saveFilePath = [saveFilePath,'-ppf.xlsx'];
-    xlswrite(saveFilePath,resCell);
+    save(expMatDataPath,'expDataCells');
 end
