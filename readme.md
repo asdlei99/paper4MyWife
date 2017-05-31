@@ -34,3 +34,8 @@
 
 处理一个文件夹下的所有excel数据，并把所有的结果合并为combine数据,combine数据文件名后面都带有**combine**,combine数据把这个文件夹下的所有实验excel进行了整合，因此，不要把非此次实验的数据放在一个文件夹下
 
+- **findPlusFromMat**
+
+用于读取已经预处理完成的实验数据的脉动压力值，此程序对脉动压力值进行人工肉眼观察，通过sigma滤波过滤非常离群的数据
+
+> 此操作会改变原来的dataStructCells，在原来dataStructCells下加入读取的压力脉动值,并把结果新建立一个%{name}_sigmaPlusValue.mat的文件，此文件保存读取的脉动压力和每个通道的sigma值。
