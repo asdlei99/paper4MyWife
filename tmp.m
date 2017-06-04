@@ -1,8 +1,8 @@
 L = 10;
 Dpipe = 0.106;
 a = 345;
-isDamping = 0;
-coeffFriction = 0;
+isDamping = 1;
+coeffFriction = 0.01;
 meanFlowVelocity = 14.5;
 mach = meanFlowVelocity / a;
 notMach = 0;
@@ -19,11 +19,11 @@ matrix_straigh = matrix_straigh * [1;0];
 syms frequency
 A = matrix_straigh(1);
 B = matrix_straigh(2);
-equ = A == 0;
+equ = A == 1;
 ans = solve(equ,frequency);
 eval(ans)
 
-equ = B == 1;
+equ = B == 0;
 ans = solve(equ,frequency);
 eval(ans)
 
