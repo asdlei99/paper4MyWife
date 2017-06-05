@@ -2,6 +2,7 @@ function [M,k,coeffDamping] = straightPipeTransferMatrix(L,varargin )
 %直管传递矩阵
 % 
 pp=varargin;
+
 k = nan;
 oumiga = nan;
 f = nan;
@@ -17,6 +18,30 @@ density = nan;
 mach = nan;
 notMach = 0;%强制不使用mach
 calcWay2 = 0;%使用另外一种计算传递矩阵的方法，方法见Pulsation and Vibration Analysis of Compressor / Page.421,equ（10-34）
+
+% %接受一个结构体进行传参
+% if 1 == size(pp,2)
+%     st = pp{1};
+%     if isfield(st,'k')
+%         k = st.k;
+%     end
+%     if isfield(st,'oumiga')
+%         oumiga = st.oumiga;
+%     end
+%     if isfield(st,'f')
+%         f = st.f;
+%     end
+%     if isfield(st,'a')
+%         a = st.a;
+%     end
+%     if isfield(st,'S')
+%         S = st.S;
+%     end
+%     if isfield(st,'Dpipe')
+%         Dpipe = st.Dpipe;
+%     end
+% end
+
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -72,6 +97,10 @@ while length(pp)>=2
        		error('参数错误%s',prop);
     end
 end
+
+
+
+
 if isnan(a)
     error('声速必须定义');
 end
