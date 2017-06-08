@@ -16,7 +16,7 @@ end
 end
 
 function pp = calcPulsation( p ,cutPresent)
-    outindex = fun_sigma_outlier_detection(p,2.8);
+    outindex = sigmaOutlierDetection(p,2.8);
     if ~isempty(outindex)
         p(outindex) = [];
     end
@@ -29,7 +29,7 @@ function pp = calcPulsation( p ,cutPresent)
         cutIndex2 = round(len*cutPresent(2));
         p = p(cutIndex1:cutIndex2);
     end
-    outindex = fun_sigma_outlier_detection(p,2.8);
+    outindex = sigmaOutlierDetection(p,2.8);
     if ~isempty(outindex)
         p(outindex) = [];
     end

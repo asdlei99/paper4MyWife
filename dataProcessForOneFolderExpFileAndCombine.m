@@ -8,12 +8,31 @@ currentPath = fileparts(mfilename('fullpath'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%下面是需要设置的参数，本程序仅在此需要更改参数，其他地方不需要更改
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-dataPath = getDataPath();
-rpm = 300;%指定转速，以便做对比时选择对应转速的缓冲罐进行对比
-xlsDataFileFolder = fullfile(dataPath,'实验原始数据\缓冲罐内置孔板0.5D罐中间\开机300转带压\');
-nullShiftDataPath = 'e:\netdisk\shareCloud\【大论文】\[04]数据\实验原始数据\无内件缓冲罐\不开机\无内件缓冲罐重做不开机-2.CSV';
-pureVesselDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\开机300转带压\');
-
+useGUI = 1;
+rpm = 300;
+if useGUI
+    dataPath = getDataPath();
+    xlsDataFileFolder = uigetdir(dataPath,'数据文件夹');
+    if isempty(xlsDataFileFolder) || isnumeric(xlsDataFileFolder)
+        return;
+    end
+    %检查一下，防止转速没有设置或设置错误
+    rpmIndex = strfind(xlsDataFileFolder,'转');
+    if ~isempty(rpmIndex)
+        rpmText = xlsDataFileFolder(rpmIndex-3:rpmIndex-1);
+        rpm=inputdlg('输入测点数据对应转速','转速输入',1,{rpmText});
+    else
+        rpm=inputdlg('输入测点数据对应转速','转速输入',1,{'300'});
+    end
+    rpm = str2num(rpm{1});
+    [nullShiftDataFileName,nullShiftDataPath] = uigetfile({'*.csv','*.xls'},'选择不开机的零飘文件',xlsDataFileFolder);
+    nullShiftDataPath = fullfile(nullShiftDataPath,nullShiftDataFileName);
+else
+    rpm=inputdlg('确认转速','转速确认',1,sprintf('%g',rpm));
+    rpm = str2num(rpm{1});
+    nullShiftDataPath = 'e:\netdisk\shareCloud\【大论文】\[04]数据\实验原始数据\无内件缓冲罐\不开机\无内件缓冲罐重做不开机-2.CSV';
+end
+%pureVesselDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\开机300转带压\');
 noiseSection = 14;
 Fs = 100;%1/0.005
 incrementDenoisingSet.isValid = 1;%是否需要进行自增去噪
@@ -22,7 +41,7 @@ emdDisnoiseCutLayer = nan;%[-2:-1];%emd重构时，去除最后两层
 calcPeakPeakValueSection = [0.3,0.7];%用于标记计算峰峰值的区间，例如[0.7,0.9]，表示70%~90%区间计算峰峰值
 
 
-baseFrequency = 10;%定义一个基准频率，若没有定义为nan
+baseFrequency = rpm / 60 * 2;%定义一个基准频率，若没有定义为nan
 allowDeviation = 0.5;
 startTime = nan;%设置分析的起始时间，如果不设定，就定义为nan,单位为秒
 endTime = nan;%设置分析的结束时间，如果不设定，就定义为nan,单位为秒
@@ -42,7 +61,7 @@ incrementDenoisingSet.sectionLength = 4096;%自增去噪长度
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %检查一下，防止转速没有设置或设置错误
 rpmIndex = strfind(xlsDataFileFolder,'转');
-rpmText = xlsDataFileFolder(rpmIndex-3,rpmIndex-1);
+rpmText = xlsDataFileFolder(rpmIndex-3:rpmIndex-1);
 tmp = str2num(rpmText);
 if tmp ~= rpm
     msgbox('转速设置和检查的文件夹命名转速不一致，如果转速设置不正确，将导致计算结果有很大误差!');
