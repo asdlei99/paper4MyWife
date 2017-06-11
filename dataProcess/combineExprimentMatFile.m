@@ -1,20 +1,39 @@
 function combineDataStruct = combineExprimentMatFile(matFilePath)
 %% 处理已经进行了预处理的实验数据mat文件，对多组数据进行整合
 % 
-    load(matFilePath,'dataStructCells');
+    ds = load(matFilePath,'dataStructCells');
     %开始遍历
-    combineData = dealWithField(dataStructCells,'rawData');
+    combineData = dealWithField(ds,'rawData');
     if isstruct(combineData)
         combineDataStruct.rawData = combineData;
     end
-    combineData = dealWithField(dataStructCells,'subSpectrumData');
+    combineData = dealWithField(ds,'subSpectrumData');
     if isstruct(combineData)
         combineDataStruct.subSpectrumData = combineData;
     end
-    combineData = dealWithField(dataStructCells,'saMainFreFilterStruct');
+    combineData = dealWithField(ds,'saMainFreFilterStruct');
     if isstruct(combineData)
         combineDataStruct.saMainFreFilterStruct = combineData;
     end
+    %处理人读数据
+    if size(ds,2) > 2
+    %说明有人为读取的数据
+        combineData = combineReadPressurePlusData(ds);
+        combineDataStruct.readPlus = combineData;
+        %计算脉动抑制率
+        rpm = ds.rawData.input.baseFrequency * 60 / 2;
+        pureVesselPath = getPureVesselCombineDataPath(rpm);
+        dv = load(pureVesselPath,'dataStructCells');
+        if size(dv,2) < 3
+            return;
+        end
+        
+        for i=0:size(dv,1)
+            suppressionLevel(i,:) = (dv{i,3} - ds{i,3}) ./ dv{i,3};
+        end
+        combineDataStruct.readSuppressionLevel = suppressionLevel;
+    end
+
 end
 
 function combineData = dealWithField(dataStructCells,fieldName)
@@ -80,3 +99,8 @@ function combineData = dealWithField(dataStructCells,fieldName)
 
 end
 
+function combineData = combineReadPressurePlusData(dataStructCells)
+    for i = 1:size(dataStructCells,1)
+        combineData(1,:) = dataStructCells{i,3};
+    end
+end
