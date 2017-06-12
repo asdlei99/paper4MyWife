@@ -2,6 +2,7 @@ function combineDataStruct = combineExprimentMatFile(matFilePath)
 %% 处理已经进行了预处理的实验数据mat文件，对多组数据进行整合
 % 
     ds = load(matFilePath,'dataStructCells');
+    ds = ds.dataStructCells;
     %开始遍历
     combineData = dealWithField(ds,'rawData');
     if isstruct(combineData)
