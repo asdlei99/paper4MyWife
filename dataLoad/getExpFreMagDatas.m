@@ -1,4 +1,4 @@
-function [ fre,mag ] = getExpFreMagDatas( dataStrcutCellsPath,dataNumIndex,dataField)
+function [ fre,mag ] = getExpFreMagDatas( dataStrcutCells,dataNumIndex,dataField)
 %加载实验数据的压力的频谱信息，[频率，幅值]
 % dataStrcutCells 总体的数据cell
 % dataNumIndex 获取的数据索引：1~5
@@ -6,8 +6,9 @@ function [ fre,mag ] = getExpFreMagDatas( dataStrcutCellsPath,dataNumIndex,dataF
     if nargin < 3
         dataField = 'rawData';
     end
-    fre = loadExpDataStrcutCellsData(dataStrcutCellsPath,dataNumIndex,dataField,'Fre');
-    mag = loadExpDataStrcutCellsData(dataStrcutCellsPath,dataNumIndex,dataField,'Maf');
+    st = getExpDataStruct(dataStrcutCells,dataNumIndex,dataField);
+    fre = getfield(st,'Fre');
+    mag = getfield(st,'Mag');
 
 
 end

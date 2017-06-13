@@ -8,26 +8,26 @@ function [ measurePointFre,measurePointMag ] = getExpMultFreMagDatas( dataStrcut
     if nargin < 4
         dataField = 'rawData';
     end
-    freField = 'Fre';
-    magField = 'Mag';
+    st = getExpDataStruct(dataStrcutCells,dataNumIndex,dataField);
+
     if 0.5 == freTimes
-        measurePointFre = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'semiFreFre')(1,:);
-        measurePointMag = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'semiFreMag')(1,:);
+        measurePointFre = getfield(st,'semiFreFre')(1,:);
+        measurePointMag = getfield(st,'semiFreMag')(1,:);
     elseif 1 == freTimes
-        measurePointFre = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'multFreFre')(1,:);
-        measurePointMag = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'multFreMag')(1,:);
+        measurePointFre = getfield(st,'multFreFre')(1,:);
+        measurePointMag = getfield(st,'multFreMag')(1,:);
     elseif 1.5 == freTimes
-        measurePointFre = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'semiFreFre')(2,:);
-        measurePointMag = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'semiFreMag')(2,:);
+        measurePointFre = getfield(st,'semiFreFre')(2,:);
+        measurePointMag = getfield(st,'semiFreMag')(2,:);
     elseif 2 == freTimes
-        measurePointFre = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'multFreFre')(2,:);
-        measurePointMag = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'multFreMag')(2,:);
+        measurePointFre = getfield(st,'multFreFre')(2,:);
+        measurePointMag = getfield(st,'multFreMag')(2,:);
     elseif 2.5 == freTimes
-        measurePointFre = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'semiFreFre')(3,:);
-        measurePointMag = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'semiFreMag')(3,:);
+        measurePointFre = getfield(st,'semiFreFre')(3,:);
+        measurePointMag = getfield(st,'semiFreMag')(3,:);
     elseif 3 == freTimes
-        measurePointFre = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'multFreFre')(3,:);
-        measurePointMag = loadExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'multFreMag')(3,:);
+        measurePointFre = getfield(st,'multFreFre')(3,:);
+        measurePointMag = getfield(st,'multFreMag')(3,:);
     end
 
 end
