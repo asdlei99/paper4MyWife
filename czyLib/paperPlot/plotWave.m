@@ -14,9 +14,11 @@ x = x * (1/fs);
 if 0 ~= mod(size(pp,2),2)
     Handle = plot(x,wave,pp{1});
     pp = pp(2:end);
+else
+    Handle = plot(x,wave);
 end
 
-index = 1:2:size(pp,2) > 1
+index = 1:2:size(pp,2) > 1;
 for i = index
     set(Handle,pp{i},pp{i+1});
 end

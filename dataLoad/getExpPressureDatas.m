@@ -1,4 +1,4 @@
-function pressures = loadExpPressureDatas(dataStrcutCells,dataNumIndex,dataField)
+function pressures = getExpPressureDatas(dataStrcutCellsPath,dataNumIndex,dataField)
 %加载实验数据
 %
 % dataStrcutCells 总体的数据cell
@@ -8,6 +8,6 @@ function pressures = loadExpPressureDatas(dataStrcutCells,dataNumIndex,dataField
     if nargin < 3
         dataField = 'rawData';
     end
-    pressures = getExpDataStrcutCellsData(dataStrcutCells,dataNumIndex,dataField,'pressure');
+    pressures = loadExpDataStrcutCellsData(dataStrcutCellsPath,dataNumIndex,dataField,'pressure');
     
 end
