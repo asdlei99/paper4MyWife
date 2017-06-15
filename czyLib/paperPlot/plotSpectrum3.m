@@ -9,6 +9,9 @@ function [ h,fillH ] = plotSpectrum3( fre,mag,Y,varargin )
 % otherSetting.isMarkTop
 % 是否标记峰值，在此设置为true的情况下，频谱的峰值会被标记，同时otherSetting.markCount才有效
 % otherSetting.markCount 标记峰值的个数
+if nargin < 3
+    Y = 1:size(fre,2);
+end
 pp=varargin;
 lineColor = [255,0,0]./255;
 isFill = 0;
