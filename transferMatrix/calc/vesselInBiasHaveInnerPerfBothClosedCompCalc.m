@@ -42,45 +42,64 @@ meanFlowVelocity = nan;
 mach = nan;
 notMach = 0;%强制不使用mach
 isOpening = 1;
-while length(pp)>=2
-    prop =pp{1};
-    val=pp{2};
-    pp=pp(3:end);
-    switch lower(prop)
-        case 'a' %声速
-            a = val; 
-        case 'acousticvelocity' %声速
-            a = val;
-        case 'acoustic' %声速
-            a = val;
-        case 'isdamping' %是否包含阻尼
-            isDamping = val;   
-        case 'friction' %管道摩擦系数，计算阻尼系数时使用
-            coeffFriction = val;
-        case 'coefffriction' %管道摩擦系数，计算阻尼系数时使用
-            coeffFriction = val;
-        case 'meanflowvelocity' %平均流速，计算阻尼系数时使用
-            meanFlowVelocity = val;
-        case 'flowvelocity' %平均流速，计算阻尼系数时使用
-            meanFlowVelocity = val;
-        case 'mach' %马赫数，加入马赫数将会使用带马赫数的公式计算
-            mach = val;
-        case 'coeffdamping'
-            coeffDamping = val;
-        case 'm'
-            mach = val;
-        case 'notmach' %强制用马赫数计算设定
-            notMach = val;
-        case 'k' %波数
-        	k = val;
-        case 'oumiga' %圆频率
-        	oumiga = val;
-        case 'isopening'%管道末端是否为无反射端(开口)，如果为0，就是为闭口，无流量端
-            isOpening = val;
-        otherwise
-            error('参数错误%s',prop);
+if 1 == size(pp,2)
+%如果多态参数只有一个，说明是个结构体
+    st = pp{1};
+    if ~isstruct(st)
+        error('参数varargin需要一个makeCommonTransferMatrixInputStruct产生的结构体');
+    end
+    k = st.k;
+    oumiga = st.oumiga;
+    a = st.a;
+    isDamping = st.isDamping;
+    coeffDamping = st.coeffDamping;
+    coeffFriction = st.coeffFriction;
+    meanFlowVelocity = st.meanFlowVelocity;
+    notMach = st.notMach;
+    isOpening = st.isOpening;
+    mach = st.mach;
+else
+    while length(pp)>=2
+        prop =pp{1};
+        val=pp{2};
+        pp=pp(3:end);
+        switch lower(prop)
+            case 'a' %声速
+                a = val; 
+            case 'acousticvelocity' %声速
+                a = val;
+            case 'acoustic' %声速
+                a = val;
+            case 'isdamping' %是否包含阻尼
+                isDamping = val;   
+            case 'friction' %管道摩擦系数，计算阻尼系数时使用
+                coeffFriction = val;
+            case 'coefffriction' %管道摩擦系数，计算阻尼系数时使用
+                coeffFriction = val;
+            case 'meanflowvelocity' %平均流速，计算阻尼系数时使用
+                meanFlowVelocity = val;
+            case 'flowvelocity' %平均流速，计算阻尼系数时使用
+                meanFlowVelocity = val;
+            case 'mach' %马赫数，加入马赫数将会使用带马赫数的公式计算
+                mach = val;
+            case 'coeffdamping'
+                coeffDamping = val;
+            case 'm'
+                mach = val;
+            case 'notmach' %强制用马赫数计算设定
+                notMach = val;
+            case 'k' %波数
+                k = val;
+            case 'oumiga' %圆频率
+                oumiga = val;
+            case 'isopening'%管道末端是否为无反射端(开口)，如果为0，就是为闭口，无流量端
+                isOpening = val;
+            otherwise
+                error('参数错误%s',prop);
+        end
     end
 end
+
 if isnan(a)
     error('声速必须定义');
 end

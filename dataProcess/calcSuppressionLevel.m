@@ -24,7 +24,7 @@ function dataCombineStructEx = calcOneField(dataCombineStruct,vesselCombineDataS
         for i = 1:size(val,1)
             tmp(i,:) = (vesselValMean - val(i,:)) ./ vesselValMean;
         end
-        st = setfield(st,sprintf('%sSL',valField),tmp);
+        st = setfield(st,sprintf('%sSL',valField),tmp);%SL是抑制率的意思
         dataCombineStructEx = setfield(dataCombineStructEx,baseField,st);
     end
 end

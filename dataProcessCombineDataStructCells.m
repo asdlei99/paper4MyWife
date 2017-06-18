@@ -14,8 +14,19 @@ else
     matDataStructPath = fullfile(dataPath,'实验原始数据/缓冲罐内置孔板0.5D罐中间/开机420转带压.mat');
 end
 
-combineDataStruct = combineExprimentMatFile(matDataStructPath);
+[combineDataStruct,rpm] = combineExprimentMatFile(matDataStructPath);
+
+%计算缓冲罐的数据
+vesselCombineDataStruct = getPureVesselCombineDataStruct(rpm);
+combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'rawData');
+combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'subSpectrumData');
+combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'saMainFreFilterStruct');
+combineDataStruct.descripe = {'readPlus是人为读取的压力脉动数据';'readSuppressionLevel是人为读取数据和单一缓冲罐进行的脉动抑制率计算'...
+    ;'带SL结尾的是和单一缓冲罐进行对比的抑制率如multFreMag1SL'};
+
 pointIndex = strfind(matDataStructPath,'.');
 saveMatPath = matDataStructPath(1:pointIndex(end)-1);
 saveMatPath = strcat(saveMatPath,'_combine.mat');
 save(saveMatPath,'combineDataStruct');
+
+

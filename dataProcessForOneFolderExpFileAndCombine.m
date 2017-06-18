@@ -25,8 +25,13 @@ if useGUI
         rpm=inputdlg('输入测点数据对应转速','转速输入',1,{'300'});
     end
     rpm = str2num(rpm{1});
-    [nullShiftDataFileName,nullShiftDataPath] = uigetfile({'*.csv','*.xls'},'选择不开机的零飘文件',xlsDataFileFolder);
-    nullShiftDataPath = fullfile(nullShiftDataPath,nullShiftDataFileName);
+    [nullShiftDataFileName,nullShiftDataPath] = uigetfile({'*.csv';'*.xls';'*.xlsx'},'选择不开机的零飘文件',xlsDataFileFolder);
+    if isempty(nullShiftDataFileName) || isnumeric(nullShiftDataFileName)
+        nullShiftDataPath = nan;
+    else
+        nullShiftDataPath = fullfile(nullShiftDataPath,nullShiftDataFileName);
+    end
+    
 else
     rpm=inputdlg('确认转速','转速确认',1,sprintf('%g',rpm));
     rpm = str2num(rpm{1});

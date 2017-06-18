@@ -1,8 +1,9 @@
-function combineDataStruct = combineExprimentMatFile(matFilePath)
+function [combineDataStruct,rpm] = combineExprimentMatFile(matFilePath)
 %% 处理已经进行了预处理的实验数据mat文件，对多组数据进行整合
 % 
     ds = load(matFilePath,'dataStructCells');
     ds = ds.dataStructCells;
+    rpm = ds{1,2}.input.baseFrequency * 60 / 2;
     %开始遍历
     combineData = dealWithField(ds,'rawData');
     if isstruct(combineData)
@@ -22,14 +23,15 @@ function combineDataStruct = combineExprimentMatFile(matFilePath)
         combineData = combineReadPressurePlusData(ds);
         combineDataStruct.readPlus = combineData;
         %计算脉动抑制率
-        rpm = ds.rawData.input.baseFrequency * 60 / 2;
-        pureVesselPath = getPureVesselCombineDataPath(rpm);
+        
+        pureVesselPath = getPureVesselDataPath(rpm);
         dv = load(pureVesselPath,'dataStructCells');
+        dv = dv.dataStructCells;
         if size(dv,2) < 3
             return;
         end
         
-        for i=0:size(dv,1)
+        for i=1:size(dv,1)
             suppressionLevel(i,:) = (dv{i,3} - ds{i,3}) ./ dv{i,3};
         end
         combineDataStruct.readSuppressionLevel = suppressionLevel;
@@ -102,6 +104,6 @@ end
 
 function combineData = combineReadPressurePlusData(dataStructCells)
     for i = 1:size(dataStructCells,1)
-        combineData(1,:) = dataStructCells{i,3};
+        combineData(i,:) = dataStructCells{i,3};
     end
 end
