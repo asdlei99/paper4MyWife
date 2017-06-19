@@ -8,6 +8,5 @@ function res = loadExpCombineDataStrcut(dataStructPath,baseField)
 % innerField 键值
 %  
 	st = load(dataStructPath);
-	combineDataStruct = st.combineDataStruct;
-	res = getfield(combineDataStruct,baseField);
+	res = st.combineDataStruct;
 end

@@ -6,5 +6,5 @@ orificCombineDataPath = fullfile(dataPath,'\实验原始数据\内置孔板\缓冲罐内置孔板
 %% 图6-6 中间孔管缓冲罐压力脉动及抑制率
 st = load(orificCombineDataPath,'combineDataStruct');
 orificCombineData = st.combineDataStruct;
-plotExpOrificPressurePlus(orificCombineData,'errorType',errorType);
-plotyy
+plotExpPressurePlus(orificCombineData,'errorType',errorType);
+plotExpSuppressionLevel(orificCombineData,'errorType',errorType);

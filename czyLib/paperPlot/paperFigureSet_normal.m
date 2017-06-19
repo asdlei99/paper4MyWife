@@ -4,6 +4,5 @@ function paperFigureSet_normal(h)
         h = 8;
     end
     set(gcf,'color','w');
-    set(gca,'FontName',paperFontName(),'FontSize',paperFontSize());
     set(gcf,'unit','centimeter','position',[8,4,12,h]);
 end
