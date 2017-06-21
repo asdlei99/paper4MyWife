@@ -1,9 +1,9 @@
 function  meanPressure  = getExpPressureMeanData( dataStrcutCellsPath,dataNumIndex,dataField )
-%åŠ è½½å®éªŒå‹åŠ›æ•°æ®çš„å‡å€¼
+%¼ÓÔØÊµÑéÑ¹Á¦Êı¾İµÄ¾ùÖµ
 %   
-% dataStrcutCells æ€»ä½“çš„æ•°æ®cell
-% dataNumIndex è·å–çš„æ•°æ®ç´¢å¼•ï¼š1~5
-% dataField å¯¹åº”çš„fieldï¼Œ'rawData','subSpectrumData','saMainFreFilterStruct',è‹¥ä¸æŒ‡å®šï¼Œä¸ºrawData
+% dataStrcutCells ×ÜÌåµÄÊı¾İcell
+% dataNumIndex »ñÈ¡µÄÊı¾İË÷Òı£º1~5
+% dataField ¶ÔÓ¦µÄfield£¬'rawData','subSpectrumData','saMainFreFilterStruct',Èô²»Ö¸¶¨£¬ÎªrawData
 %
 
     if nargin < 3

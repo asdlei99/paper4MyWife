@@ -1,10 +1,10 @@
 function [ measurePointFre,measurePointMag ] = getExpMultFreMagDatas( dataStrcutCells,dataNumIndex,freTimes,dataField )
-%åŠ è½½å®éªŒæ•°æ®çš„å‹åŠ›çš„å€é¢‘ä¿¡æ¯ï¼Œ[é¢‘ç‡ï¼Œå¹…å€¼]
-% dataStrcutCells æ€»ä½“çš„æ•°æ®cell
-% dataNumIndex è·å–çš„æ•°æ®ç´¢å¼•ï¼š1~5
-% freTimes å€é¢‘ä¿¡æ¯ï¼Œå¯è¾“å…¥ï¼š0.5,1,1.5,2,2.5,3
-% dataField å¯¹åº”çš„fieldï¼Œ'rawData','subSpectrumData','saMainFreFilterStruct',è‹¥ä¸æŒ‡å®šï¼Œä¸ºrawData
-% è¿”å›[measurePointFre,measurePointMag]éƒ½æ˜¯1XNå‘é‡ï¼ŒNæ˜¯æµ‹ç‚¹æ•°
+%¼ÓÔØÊµÑéÊı¾İµÄÑ¹Á¦µÄ±¶ÆµĞÅÏ¢£¬[ÆµÂÊ£¬·ùÖµ]
+% dataStrcutCells ×ÜÌåµÄÊı¾İcell
+% dataNumIndex »ñÈ¡µÄÊı¾İË÷Òı£º1~5
+% freTimes ±¶ÆµĞÅÏ¢£¬¿ÉÊäÈë£º0.5,1,1.5,2,2.5,3
+% dataField ¶ÔÓ¦µÄfield£¬'rawData','subSpectrumData','saMainFreFilterStruct',Èô²»Ö¸¶¨£¬ÎªrawData
+% ·µ»Ø[measurePointFre,measurePointMag]¶¼ÊÇ1XNÏòÁ¿£¬NÊÇ²âµãÊı
     if nargin < 4
         dataField = 'rawData';
     end

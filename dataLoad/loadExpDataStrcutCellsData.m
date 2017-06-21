@@ -1,11 +1,11 @@
 function res = loadExpDataStrcutCellsData(dataFileCellPath,dataNumIndex,dataField,innerField)
-%鍔犺浇瀹為獙鏁版嵁dataStrcutCells鐨勬渶鍚庝竴灞傛暟鎹?
-% 鐩稿綋浜巇ataStrcutCells{dataNumIndex,2}.dataField.innerField
+%加载实验数据dataStrcutCells的最后一层数
+% 相当于dataStrcutCells{dataNumIndex,2}.dataField.innerField
 %
-% dataFileCellPath 鏁版嵁鏂囦欢鐨勮矾寰?
-% dataNumIndex 鑾峰彇鐨勬暟鎹储寮曪細1~5
-% dataField 瀵瑰簲鐨刦ield
-% innerField 閿?
+% dataFileCellPath 数据文件的路
+% dataNumIndex 获取的数据索引：1~5
+% dataField 对应的field
+% innerField 键
 %  
 	st = load(dataFileCellPath);
 	dataStructCells = st.dataStructCells;

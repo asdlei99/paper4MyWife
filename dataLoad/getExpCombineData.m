@@ -1,8 +1,8 @@
 function [ meanVal,stdVal,maxVal,minVal ] = getExpCombineData(dataStruct,subField)
-%鍔犺浇鑱斿悎鏁版嵁
-%   鑱斿悎鏁版嵁鐨勭粨鏋勪綋璺緞
-%   baseField 鍩烘湰field
-%   subField 瀛恌ield
+%加载联合数据
+%   联合数据的结构体路径
+%   baseField 基本field
+%   subField 子field
     if ~isfield(dataStruct,subField)
         meanVal = nan;
         stdVal = nan;

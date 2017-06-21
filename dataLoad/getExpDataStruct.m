@@ -1,8 +1,8 @@
 function st = getExpDataStruct( dataStrcutCells,dataNumIndex,dataField)
-%åŠ è½½å®éªŒæ•°æ®çš„çš„ç»“æ„ä½“
-% dataStrcutCells æ€»ä½“çš„æ•°æ®cell
-% dataNumIndex è·å–çš„æ•°æ®ç´¢å¼•ï¼š1~5
-% dataField å¯¹åº”çš„fieldï¼Œ'rawData','subSpectrumData','saMainFreFilterStruct',è‹¥ä¸æŒ‡å®šï¼Œä¸ºrawData
+%¼ÓÔØÊµÑéÊı¾İµÄµÄ½á¹¹Ìå
+% dataStrcutCells ×ÜÌåµÄÊı¾İcell
+% dataNumIndex »ñÈ¡µÄÊı¾İË÷Òı£º1~5
+% dataField ¶ÔÓ¦µÄfield£¬'rawData','subSpectrumData','saMainFreFilterStruct',Èô²»Ö¸¶¨£¬ÎªrawData
     if nargin < 3
         dataField = 'rawData';
     end

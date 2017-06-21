@@ -1,12 +1,13 @@
 function res = loadExpCombineDataStrcut(dataStructPath,baseField)
-%åŠ è½½å®éªŒæ•°æ®çš„ç»“æ„ä½“
-% ç›¸å½“äºdataStrcutCells{dataNumIndex,2}.dataField.innerField
+%¼ÓÔØÊµÑéÊı¾İµÄ½á¹¹Ìå
+% Ïàµ±ÓÚdataStrcutCells{dataNumIndex,2}.dataField.innerField
 %
-% dataStrcutCells æ€»ä½“çš„æ•°æ®cell
-% dataNumIndex è·å–çš„æ•°æ®ç´¢å¼•ï¼š1~5
-% dataField å¯¹åº”çš„field
-% innerField é”®å€¼
+% dataStrcutCells ×ÜÌåµÄÊı¾İcell
+% dataNumIndex »ñÈ¡µÄÊı¾İË÷Òı£º1~5
+% dataField ¶ÔÓ¦µÄfield
+% innerField ¼üÖµ
 %  
 	st = load(dataStructPath);
-	res = st.combineDataStruct;
+	st = st.combineDataStruct;
+	res = getfield(st,baseField);
 end
