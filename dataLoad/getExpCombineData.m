@@ -1,4 +1,4 @@
-function [ meanVal,stdVal,maxVal,minVal ] = getExpCombineData(dataStruct,subField)
+function [ meanVal,stdVal,maxVal,minVal,muci,sigmaci] = getExpCombineData(dataStruct,subField)
 %加载联合数据
 %   联合数据的结构体路径
 %   baseField 基本field
@@ -15,5 +15,6 @@ function [ meanVal,stdVal,maxVal,minVal ] = getExpCombineData(dataStruct,subFiel
     stdVal = std(m,0,1);
     maxVal = max(m);
     minVal = min(m);
+    [~,~,muci,sigmaci] = normfit(m,0.05);
 end
 

@@ -1,7 +1,0 @@
-function [ meanVal,stdVal,maxVal,minVal ] = constExpVesselPressrePlus(rpm)
-%获取缓冲罐的脉动压力均值
-dataPat = getPureVesselCombineDataPath(rpm);
-st = loadExpCombineDataStrcut(dataPat,'rawData');
-[ meanVal,stdVal,maxVal,minVal ] = getExpCombineReadedPlusData(st);
-end
-
