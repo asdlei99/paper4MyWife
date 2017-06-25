@@ -1,4 +1,4 @@
-function [ output_args ] = plotExpPressurePlus(dataCombineStruct,varargin)
+function [ curHancle,fillHandle,vesselFillHandle] = plotExpPressurePlus(dataCombineStruct,varargin)
 %绘制实验数据的压力脉动和抑制率图
 pp = varargin;
 errorType = 'std';
@@ -22,7 +22,7 @@ end
 figure
 paperFigureSet_normal();
 
-[y,stdVal,maxVal,minVal] = getExpCombineReadedPlusData(dataCombineStruct);
+[y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct);
 x = constExpMeasurementPointDistance();%测点对应的距离
 y = y(rang);
 %需要显示单一缓冲罐
@@ -34,7 +34,10 @@ end
 if strcmp(errorType,'std')
     yUp = y + stdVal(rang);
     yDown = y - stdVal(rang);
-else
+elseif strcmp(errorType,'ci')
+    yUp = muci(2,rang);
+    yDown = muci(1,rang);
+else 
     yUp = maxVal(rang);
     yDown = minVal(rang);
 end
@@ -49,8 +52,9 @@ annotation('textbox',...
     'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
 annotation('textarrow',[0.38 0.33],...
     [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
-plotVesselRegion(gca,constExpVesselRangDistance());
+vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
 ax = axis;
+yLabel2Detal = (ax(4) - ax(3))/12;
 % 绘制测点线
 for i = 1:length(x)
     plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
@@ -58,12 +62,12 @@ for i = 1:length(x)
         continue;
     end
     if x(i) < 10
-        text(x(i)-0.15,ax(4)+0.6,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
+        text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
     else
-        text(x(i)-0.3,ax(4)+0.6,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
+        text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
     end
 end
-xlabel('管线距离');
+xlabel('管线距离(m)');
 ylabel('脉动峰峰值(kPa)');
 
 end
