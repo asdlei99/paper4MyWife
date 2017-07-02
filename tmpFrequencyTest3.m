@@ -10,6 +10,7 @@ time = time .* (1/fs);
 frequency(1) = [];
 magE(1) = [];
 
+Dpipe = 0.106;%管道直径（m）%应该是0.106
 
 st = makeCommonTransferMatrixInputStruct();
 st.isDamping = 1;%是否计算阻尼
@@ -19,14 +20,14 @@ st.meanFlowVelocity = 14.5;%流速
 st.k = nan;%波数
 st.oumiga = nan;%圆频率
 st.a = 345;%声速
-st.isOpening = 1;%边界条件是否为开口
+st.isOpening = 0;%边界条件是否为开口
 st.notMach = 1;%是否马赫
 st.mach = st.meanFlowVelocity ./ st.a;
-
+st.D = Dpipe;
 
 L1 = 3.5;%L1(m)
 L2 = 6;%L2（m）长度
-Dpipe = 0.106;%管道直径（m）%应该是0.106
+
 
 vhpicStruct.l = 0.01;
 vhpicStruct.Dv = 0.372;%缓冲罐的直径（m）
@@ -73,131 +74,147 @@ vhpicStruct.Dbias = 0;%偏置管伸入罐体部分为0，所以对应直径为0
 vhpicStruct.Dex = vhpicStruct.Din;
 
 holepipeLength1 = vhpicStruct.Lin - vhpicStruct.la1 - vhpicStruct.la2;
-
+%内插孔管两端闭口脉动计算
 [pressure1,pressure2] = vesselInBiasHaveInnerPerfBothClosedCompCalc(magE,frequency,time,L1,L2,Dpipe,vhpicStruct...
     ,sectionL1,sectionL2...
     ,st);
+%缓冲罐偏置脉动计算
 [pureVesselPressure1,pureVesselPressure2] = vesselStraightBiasPulsationCalc(magE,frequency,time,L1,L2...
     ,vhpicStruct.Lv,vhpicStruct.l,Dpipe,vhpicStruct.Dv,vhpicStruct.Lv2,vhpicStruct.Dbias...
     ,sectionL1,sectionL2...
     ,st);
-
+%计算直管的范围
+pipeLength = L1+vhpicStruct.Lv+L2;
 sectionL = [sectionL1,sectionL2+L1+vhpicStruct.Lv];
 afterIndex = length(sectionL1);
+%直管脉动计算
+pressurePipe = straightPipePulsationCalc(magE,frequency,time,pipeLength,sectionL,st);
+
 pressure = [pressure1,pressure2];
 pressureVessel = [pureVesselPressure1,pureVesselPressure2];
 
-
+%定义频率的范围
 freRang = 1:100;
+%对压力进行傅里叶变换
 [fre1,mag1] = frequencySpectrum(pressure,fs,'scale','amp');
 fre1 = fre1(freRang,:);
 mag1 = mag1(freRang,:);
+
 [freVessel,magVessel] = frequencySpectrum(pressureVessel,fs,'scale','amp');
 freVessel = freVessel(freRang,:);
 magVessel = magVessel(freRang,:);
 
-figure('Name','管系脉冲响应')
-subplot(1,2,1)
+[frePipe,magPipe] = frequencySpectrum(pressurePipe,fs,'scale','amp');
+frePipe = frePipe(freRang,:);
+magPipe = magPipe(freRang,:);
+
+%% 全管系脉冲响应云图
+rowCount = 1;
+columnCount = 3;
+subplotCount = 1;
+figure('Name','管系脉冲响应-全管系脉冲响应云图')
+
+subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+y = frePipe(:,1);
+x = sectionL;%1:size(mag1,2);
+Z = magPipe;
+[X,Y] = meshgrid(x,y);
+contourf(X,Y,Z);
+set(gca,'XTick',0:2:10);
+xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+title(sprintf('straight pipe'),'fontName',paperFontName(),'FontSize',paperFontSize());
+
+
+subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
 y = freVessel(:,1);
 x = sectionL;
 Z = magVessel;
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
+set(gca,'XTick',0:2:10);
 hold on;
 ax = axis;
 plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
 text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('Measurement point','fontName',paperFontName(),'FontSize',paperFontSize());
+xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
 title('surge tank','fontName',paperFontName(),'FontSize',paperFontSize());
 
-subplot(1,2,2)
+subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
 y = fre1(:,1);
 x = sectionL;%1:size(mag1,2);
 Z = mag1;
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
+set(gca,'XTick',0:2:10);
 hold on;
 ax = axis;
 plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
 text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('Measurement point','fontName',paperFontName(),'FontSize',paperFontSize());
+xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
 title(sprintf('volume-perforated \npipe-volume suppressor'),'fontName',paperFontName(),'FontSize',paperFontSize());
 
 
-set(gcf,'unit','centimeter','position',[8,4,14,7]);
+
+
+set(gcf,'unit','centimeter','position',[8,4,14,5]);
 set(gcf,'color','w');
 
 
 
 
-
-
-r = 2;
-c = 3;
-
-
-f = 1;
-subplot(r,c,f)
-y = fre1(:,1);
-x = sectionL;%1:size(mag1,2);
-Z = mag1;
-[X,Y] = meshgrid(x,y);
-contourf(X,Y,Z);
-xlabel('mea point');
-ylabel('fre (Hz)');
-title('BiasHaveInnerPerfBothClosed');
-
-f = f+1;
-subplot(r,c,f)
-plotSpectrum(fre1(:,1),mag1(:,end-1));
-title('pipe line output');
-xlabel('fre (Hz)');
-ylabel('amp');
-ylim([0 100000]);
-
-%罐后的云图
-f=f+1;
-subplot(r,c,f)
-y = fre1(:,1);
-x = sectionL(afterIndex:end);%1:size(mag1,2);
-Z = mag1(:,afterIndex:end);
-[X,Y] = meshgrid(x,y);
-contourf(X,Y,Z);
-xlabel('mea point');
-ylabel('fre (Hz)');
-title('BiasHaveInnerPerfBothClosed');
-
-f=f+1;
-subplot(r,c,f)
+%% 罐前管系系脉冲响应云图
+figure('Name','管系脉冲响应-罐前管系系脉冲响应云图')
+subplot(1,2,1)
 y = freVessel(:,1);
-x = sectionL;
-Z = magVessel;
+x = sectionL(1:afterIndex);
+Z = magVessel(:,1:afterIndex);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
-title('vesselStraightBias');
+xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+title('surge tank','fontName',paperFontName(),'FontSize',paperFontSize());
 
+subplot(1,2,2)
+y = fre1(:,1);
+x = sectionL(1:afterIndex);
+Z = mag1(:,1:afterIndex);
+[X,Y] = meshgrid(x,y);
+contourf(X,Y,Z);
+xlabel('Measurement point','fontName',paperFontName(),'FontSize',paperFontSize());
+ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+title(sprintf('volume-perforated \npipe-volume suppressor'),'fontName',paperFontName(),'FontSize',paperFontSize());
 
-f=f+1;
-subplot(r,c,f)
-plotSpectrum(freVessel(:,1),magVessel(:,end-1));
-title('pipe line output');
-xlabel('fre (Hz)');
-ylabel('amp');
-ylim([0 100000]);
+set(gcf,'unit','centimeter','position',[8,4,14,7]);
+set(gcf,'color','w');
 
-%罐后的云图
-f=f+1;
-subplot(r,c,f)
+%% 罐后管系系脉冲响应云图
+figure('Name','管系脉冲响应-罐后管系系脉冲响应云图')
+subplot(1,2,1)
 y = freVessel(:,1);
-x = sectionL(afterIndex:end);
-Z = magVessel(:,afterIndex:end);
+x = sectionL(afterIndex+1:end);
+Z = magVessel(:,afterIndex+1:end);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
-title('vesselStraightBias');
+xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+title('surge tank','fontName',paperFontName(),'FontSize',paperFontSize());
+
+subplot(1,2,2)
+y = fre1(:,1);
+x = sectionL(afterIndex+1:end);
+Z = mag1(:,afterIndex+1:end);
+[X,Y] = meshgrid(x,y);
+contourf(X,Y,Z);
+xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+title(sprintf('volume-perforated \npipe-volume suppressor'),'fontName',paperFontName(),'FontSize',paperFontSize());
+
+set(gcf,'unit','centimeter','position',[8,4,14,7]);
 set(gcf,'color','w');
 
 
