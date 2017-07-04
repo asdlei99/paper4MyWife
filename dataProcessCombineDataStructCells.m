@@ -24,9 +24,11 @@ combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStru
 combineDataStruct.descripe = {'readPlus是人为读取的压力脉动数据';'readSuppressionLevel是人为读取数据和单一缓冲罐进行的脉动抑制率计算'...
     ;'带SL结尾的是和单一缓冲罐进行对比的抑制率如multFreMag1SL'};
 
-pointIndex = strfind(matDataStructPath,'.');
-saveMatPath = matDataStructPath(1:pointIndex(end)-1);
-saveMatPath = strcat(saveMatPath,'_combine.mat');
+% pointIndex = strfind(matDataStructPath,'.');
+% saveMatPath = matDataStructPath(1:pointIndex(end)-1);
+% saveMatPath = strcat(saveMatPath,'_combine.mat');
+saveMatPath = fileparts(matDataStructPath);
+saveMatPath = fullfile(saveMatPath,'combineDataStruct.mat');
 save(saveMatPath,'combineDataStruct');
 
 

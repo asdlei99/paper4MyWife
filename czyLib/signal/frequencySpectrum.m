@@ -83,7 +83,7 @@ function amp = dealMag(fftData,fftSize,dataSize,scale)
 			amp(2:fftSize/2-1)=amp(2:fftSize/2-1)/(fftSize/2);
 			amp(fftSize/2)=amp(fftSize/2)/fftSize;
 			amp=amp(1:fftSize/2);
-			amp = 20*log(amp);
+			amp = 20*log10(amp);
 		case 'mag'
 			amp=abs(fftData(1:fftSize/2));
 		case 'magdb'

@@ -4,6 +4,7 @@ clc;
 close all;
 clear;
 currentPath = fileparts(mfilename('fullpath'));
+error('暂时别用这个文件，使用dataProcessForOneFolderExpFileAndCombine.m');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%下面是需要设置的参数，本程序仅在此需要更改参数，其他地方不需要更改
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

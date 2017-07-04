@@ -93,7 +93,7 @@ dataStructCells = fun_processOneFolderExperimentFile(xlsDataFileFolder...
             ,'selfAdaptMainFreFilter',selfAdaptMainFreFilter...
             ,'incrementDenoising',incrementDenoisingSet...
             );
-saveMatFilePath = fullfile(xlsDataFileFolder,'processDatas.mat');
+saveMatFilePath = fullfile(xlsDataFileFolder,'dataStructCells.mat');
 save(saveMatFilePath,'dataStructCells');
 %处理联合结果
 combineDataStruct = combineExprimentMatFile(saveMatFilePath);
@@ -103,9 +103,10 @@ combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStru
 combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'subSpectrumData');
 combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'saMainFreFilterStruct');
 %保持结果
-pointIndex = strfind(saveMatFilePath,'.');
-saveCombineMatPath = saveMatFilePath(1:pointIndex(end)-1);
-saveCombineMatPath = strcat(saveCombineMatPath,'_combine.mat');
+saveCombineMatPath = fullfile(xlsDataFileFolder,'combineDataStruct.mat');
+% pointIndex = strfind(saveMatFilePath,'.');
+% saveCombineMatPath = saveMatFilePath(1:pointIndex(end)-1);
+% saveCombineMatPath = strcat(saveCombineMatPath,'_combine.mat');
 save(saveCombineMatPath,'combineDataStruct');
 
 msgbox('计算完成');

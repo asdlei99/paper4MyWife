@@ -96,15 +96,15 @@ pressureVessel = [pureVesselPressure1,pureVesselPressure2];
 %定义频率的范围
 freRang = 1:100;
 %对压力进行傅里叶变换
-[fre1,mag1] = frequencySpectrum(pressure,fs,'scale','amp');
+[fre1,mag1] = frequencySpectrum(pressure,fs,'scale','ampDB');
 fre1 = fre1(freRang,:);
 mag1 = mag1(freRang,:);
 
-[freVessel,magVessel] = frequencySpectrum(pressureVessel,fs,'scale','amp');
+[freVessel,magVessel] = frequencySpectrum(pressureVessel,fs,'scale','ampDB');
 freVessel = freVessel(freRang,:);
 magVessel = magVessel(freRang,:);
 
-[frePipe,magPipe] = frequencySpectrum(pressurePipe,fs,'scale','amp');
+[frePipe,magPipe] = frequencySpectrum(pressurePipe,fs,'scale','ampDB');
 frePipe = frePipe(freRang,:);
 magPipe = magPipe(freRang,:);
 
