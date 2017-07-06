@@ -7,8 +7,7 @@ function res = loadExpDataStrcutCellsData(dataFileCellPath,dataNumIndex,dataFiel
 % dataField ¶ÔÓ¦µÄfield
 % innerField ¼ü
 %  
-	st = load(dataFileCellPath);
-	dataStructCells = st.dataStructCells;
+	dataStructCells = loadExpDataStructCells(dataFileCellPath);
 	st = dataStructCells{dataNumIndex,2};
 	st = getfield(st,dataField);
 	res = getfield(st,innerField);
