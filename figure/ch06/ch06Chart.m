@@ -1,13 +1,13 @@
 %% 第六章绘图
 function ch06Chart
 %第六章画图的参数设置
+baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 %% 加载中间孔管缓冲罐数据
-orificCombineDataPath = fullfile(dataPath,'\实验原始数据\内置孔板\缓冲罐内置孔板0.5D罐中间\开机420转带压_combine.mat');
+orificCombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
 %% 图6-6 中间孔管缓冲罐压力脉动及抑制率
-st = load(orificCombineDataPath,'combineDataStruct');
-orificCombineData = st.combineDataStruct;
+[~,orificCombineData] = loadExpDataFromFolder(orificCombineDataPath);
 plotExpPressurePlus(orificCombineData,'errorType',errorType);
 plotExpSuppressionLevel(orificCombineData,'errorType',errorType...
     ,'yfilterfunptr',@fixInnerOrificY ...

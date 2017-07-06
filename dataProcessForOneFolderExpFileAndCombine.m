@@ -9,7 +9,7 @@ currentPath = fileparts(mfilename('fullpath'));
 %%下面是需要设置的参数，本程序仅在此需要更改参数，其他地方不需要更改
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 useGUI = 1;
-rpm = 300;
+rpm = 420;
 if useGUI
     dataPath = getDataPath();
     xlsDataFileFolder = uigetdir(dataPath,'数据文件夹');
@@ -102,6 +102,8 @@ vesselCombineDataStruct = getPureVesselCombineDataStruct(rpm);
 combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'rawData');
 combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'subSpectrumData');
 combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'saMainFreFilterStruct');
+combineDataStruct.descripe = {'readPlus是人为读取的压力脉动数据';'readSuppressionLevel是人为读取数据和单一缓冲罐进行的脉动抑制率计算'...
+    ;'带SL结尾的是和单一缓冲罐进行对比的抑制率如multFreMag1SL'};
 %保持结果
 saveCombineMatPath = fullfile(xlsDataFileFolder,'combineDataStruct.mat');
 % pointIndex = strfind(saveMatFilePath,'.');

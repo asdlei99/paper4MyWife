@@ -7,6 +7,8 @@ function [ meanVal,stdVal,maxVal,minVal,muci,sigmaci ] = getExpCombineReadedPlus
         stdVal = nan;
         maxVal = nan;
         minVal = nan;
+        muci = nan;
+        sigmaci = nan;
         return;
     end
     m = dataStruct.readPlus;

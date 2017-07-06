@@ -3,9 +3,9 @@ function dataStructCells = loadExpDataStructCellFromFolderPath(dataFolder)
     dataStructCells = nan;
     fileInfoList = dir(dataFolder);
     dataCellsStructName = constDataStructCellsFileName();
-    dataCellsStructName = strcat(dataCellsStructName,'.m');
+    dataCellsStructName = strcat(dataCellsStructName,'.mat');
     for i=1:length(fileInfoList)
-        if strcmp(fileInfoList[i].name,dataCellsStructName)
+        if strcmp(fileInfoList(i).name,dataCellsStructName)
             dataStructCells = loadExpDataStructCells(fullfile(dataFolder,dataCellsStructName));
         end
         

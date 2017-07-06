@@ -23,6 +23,9 @@ figure
 paperFigureSet_normal();
 
 [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct);
+if isnan(y)
+    error('没有获取到数据，请确保数据进行过人工脉动读取');
+end
 x = constExpMeasurementPointDistance();%测点对应的距离
 y = y(rang);
 %需要显示单一缓冲罐

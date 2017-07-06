@@ -2,5 +2,5 @@ function res = loadExpCombineDataStrcut(dataStructPath)
 %加载实验联合数据的结构体
 %  
 	res = load(dataStructPath);
-	res = st.combineDataStruct;
+	res = res.combineDataStruct;
 end

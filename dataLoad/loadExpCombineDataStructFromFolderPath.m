@@ -3,11 +3,10 @@ function combineDataStruct = loadExpCombineDataStructFromFolderPath(dataFolder)
     combineDataStruct = nan;
     fileInfoList = dir(dataFolder);
     combineDataStructName = constCombineDataStruct();
-    combineDataStructName = strcat(combineDataStructName,'.m');
+    combineDataStructName = strcat(combineDataStructName,'.mat');
     for i=1:length(fileInfoList)
-        if strcmp(fileInfoList[i].name,combineDataStructName)
-            combineDataStruct = load(fullfile(dataFolder,combineDataStructName));
-            combineDataStruct = st.combineDataStruct;
+        if strcmp(fileInfoList(i).name,combineDataStructName)
+            combineDataStruct = loadExpCombineDataStrcut(fullfile(dataFolder,combineDataStructName));
         end
         
     end
