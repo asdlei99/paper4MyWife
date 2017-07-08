@@ -1,4 +1,4 @@
-function res = loadSimulationPressureData(filePath,varargin)
+function [res,times] = loadSimulationPressureData(filePath,varargin)
 %加载压力数据
 % experiment 代表实验数据
     section = {};

@@ -22,7 +22,7 @@ if useGUI
         rpmText = xlsDataFileFolder(rpmIndex-3:rpmIndex-1);
         rpm=inputdlg('输入测点数据对应转速','转速输入',1,{rpmText});
     else
-        rpm=inputdlg('输入测点数据对应转速','转速输入',1,{'300'});
+        rpm=inputdlg('输入测点数据对应转速','转速输入',1,{'420'});
     end
     rpm = str2num(rpm{1});
     [nullShiftDataFileName,nullShiftDataPath] = uigetfile({'*.csv';'*.xls';'*.xlsx'},'选择不开机的零飘文件',xlsDataFileFolder);

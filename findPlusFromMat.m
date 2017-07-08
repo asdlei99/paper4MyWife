@@ -71,7 +71,7 @@ for dataIndex = 1 : size(dataStructCells,1)
 	        fh = figure();
 	        subplot(2,1,1)
 	        set(fh,'outerposition',get(0,'screensize'));
-	        [~,time,~,~] = plotWave(p,fs,'figureHandle',fh);
+	        [~,time] = plotWave(p,fs);
 	        hold on;
 	        ax = axis();
 	        h = plot([ax(1),ax(2)],[meadUpStd,meadUpStd],'--');
