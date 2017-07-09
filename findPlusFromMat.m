@@ -145,15 +145,16 @@ if quitProgram
 end
 if isSave
     save(expMatDataPath,'dataStructCells');
-    endDotIndex = strfind(expMatDataPath,'.');
-    expMatDataPath = expMatDataPath(1:(endDotIndex(end)-1));
-    expMatDataPath = strcat(expMatDataPath,'_sigmaPlusValue.mat');
+    dataStructCellMatFilePath = expMatDataPath;
+    expMatDataPath = fileparts(dataStructCellMatFilePath);
+    expMatDataPath = fullfile(expMatDataPath,'sigmaPlusValue.mat');
     st.expPlusValues = plusValueMat;
     st.expSigmaValues = sigmaValuesMat;
     save(expMatDataPath,'st');
     rpm = getRpmFromDataStruct(dataStructCells{1,2});
-    pathstr = fileparts(expMatDataPath);
+    pathstr = fileparts(dataStructCellMatFilePath);
     %处理联合数据
+    combineDataStruct = combineExprimentMatFile(dataStructCellMatFilePath);
     vesselCombineDataStruct = getPureVesselCombineDataStruct(rpm);
     combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'rawData');
     combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'subSpectrumData');
