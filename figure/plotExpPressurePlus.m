@@ -1,7 +1,7 @@
 function [ curHancle,fillHandle,vesselFillHandle] = plotExpPressurePlus(dataCombineStruct,varargin)
 %绘制实验数据的压力脉动和抑制率图
 pp = varargin;
-errorType = 'std';
+errorType = 'ci';
 rang = 1:13;
 showPureVessel = 0;
 while length(pp)>=2
