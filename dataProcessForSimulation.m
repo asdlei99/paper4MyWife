@@ -50,7 +50,7 @@ if useGUI
     loadDataEndTime = nan;%同上
     combinecfxpath = nan;%如果是分开进行的模拟数据，需要把这个设置为1，同时不能使用gui
 else
-    datasPath = 'e:\netdisk\shareCloud\【论文】孔管\数据\模拟数据\孔管1D两端闭口n_72_lp_0.06_Dp0.106\';%fullfile(currentPath,'北区实验数据\模拟\26米单容V=DV细化');
+    datasPath = 'D:\马屈杨\研究生\论文\share\【论文】缓冲罐接法研究\模拟数据\SurgeTank_InSideInOut_Inlet1_5%\';%fullfile(currentPath,'北区实验数据\模拟\26米单容V=DV细化');
     simulationDataSection = {1:19};
     beforeAfterMeaPoint = nan;%[14,15];%定义抑制装置的进口出口的测点号，如果没有定义为nan
     Fs = 200;%1/0.005

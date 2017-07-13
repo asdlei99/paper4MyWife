@@ -6,7 +6,9 @@ errorType = 'ci';
 dataPath = getDataPath();
 %% 加载中间孔管缓冲罐数据
 orificD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
-
+orificD0_25CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.25RPM420罐中间');
+orificD0_75CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.75RPM420罐中间');
+orificD1CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D1RPM420罐中间');
 %% 图6-6 中间孔管缓冲罐压力脉动及抑制率
 [~,orificCombineData] = loadExpDataFromFolder(orificCombineDataPath);
 plotExpPressurePlus(orificCombineData,'errorType',errorType);
