@@ -1,4 +1,4 @@
-function [ curHancle,fillHandle,vesselFillHandle] = plotExpSuppressionLevel(dataCombineStruct,varargin)
+function [ curHancle,fillHandle,vesselFillHandle] = figureExpSuppressionLevel(dataCombineStruct,varargin)
 %绘制实验数据的压力脉动和抑制率图
 pp = varargin;
 errorType = 'ci';%绘制误差带的模式，std：mean+-sd,ci为95%置信区间，minmax为最大最小

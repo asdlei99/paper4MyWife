@@ -1,5 +1,7 @@
 %% 次文件用于不同形式直进缓冲罐的共振频率分析
-
+clear all;
+close all;
+clc;
 
 freTimes = 1;
 fs = 1024*freTimes;
@@ -21,7 +23,7 @@ st.k = nan;%波数
 st.oumiga = nan;%圆频率
 st.a = 345;%声速
 st.isOpening = 0;%边界条件是否为开口
-st.notMach = 1;%是否马赫
+st.notMach = 0;%是否马赫
 st.mach = st.meanFlowVelocity ./ st.a;
 st.D = Dpipe;
 
@@ -100,13 +102,17 @@ pressureVesselOV = [pressure1OV,pressure2OV];
 %定义频率的范围
 freRang = 1:100;
 %对压力进行傅里叶变换
-[fre1,mag1] = frequencySpectrum(pressure,fs,'scale','ampDB');
-fre1 = fre1(freRang,:);
-mag1 = mag1(freRang,:);
+[freVesselOSB,magVesselOSB] = frequencySpectrum(pressureVesselOSB,fs,'scale','ampDB');
+freVesselOSB = freVesselOSB(freRang,:);
+magVesselOSB = magVesselOSB(freRang,:);
 
-[freVessel,magVessel] = frequencySpectrum(pressureVessel,fs,'scale','ampDB');
-freVessel = freVessel(freRang,:);
-magVessel = magVessel(freRang,:);
+[freVesselOSFB,magVesselOSFB] = frequencySpectrum(pressureVesselOSFB,fs,'scale','ampDB');
+freVesselOSFB = freVesselOSFB(freRang,:);
+magVesselOSFB = magVesselOSFB(freRang,:);
+
+[freVesselOV,magVesselOV] = frequencySpectrum(pressureVesselOV,fs,'scale','ampDB');
+freVesselOV = freVesselOV(freRang,:);
+magVesselOV = magVesselOV(freRang,:);
 
 [frePipe,magPipe] = frequencySpectrum(pressurePipe,fs,'scale','ampDB');
 frePipe = frePipe(freRang,:);
@@ -114,56 +120,87 @@ magPipe = magPipe(freRang,:);
 
 %% 全管系脉冲响应云图
 rowCount = 1;
-columnCount = 3;
+columnCount = 4;
 subplotCount = 1;
 figure('Name','管系脉冲响应-全管系脉冲响应云图')
 
+maxVal = 0;
+minVal = 10e10;
+%直管
 subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
 y = frePipe(:,1);
 x = sectionL;%1:size(mag1,2);
 Z = magPipe;
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
+fax(1) = gca;
+maxVal=max([maxVal,max(Z)]);
+minVal = min([minVal,min(Z)]);
 set(gca,'XTick',0:2:10);
 xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title(sprintf('straight pipe'),'fontName',paperFontName(),'FontSize',paperFontSize());
+title(sprintf('直管'),'fontName',paperFontName(),'FontSize',paperFontSize());
 
-
+%直进侧后出
 subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-y = freVessel(:,1);
+y = freVesselOSB(:,1);
 x = sectionL;
-Z = magVessel;
+Z = magVesselOSB;
+maxVal=max([maxVal,max(Z)]);
+minVal = min([minVal,min(Z)]);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
 set(gca,'XTick',0:2:10);
 hold on;
 ax = axis;
+fax(2) = gca;
 plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
 text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title('surge tank','fontName',paperFontName(),'FontSize',paperFontSize());
-
+title('直进侧后出','fontName',paperFontName(),'FontSize',paperFontSize());
+%直进侧前出
 subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-y = fre1(:,1);
+y = freVesselOSFB(:,1);
 x = sectionL;%1:size(mag1,2);
-Z = mag1;
+Z = magVesselOSFB;
+maxVal=max([maxVal,max(Z)]);
+minVal = min([minVal,min(Z)]);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
 set(gca,'XTick',0:2:10);
 hold on;
 ax = axis;
+fax(3) = gca;
 plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
 text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title(sprintf('volume-perforated \npipe-volume suppressor'),'fontName',paperFontName(),'FontSize',paperFontSize());
-
-
-
+title('直进侧前出','fontName',paperFontName(),'FontSize',paperFontSize());
+%直进直出
+subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+y = freVesselOV(:,1);
+x = sectionL;%1:size(mag1,2);
+Z = magVesselOV;
+maxVal=max([maxVal,max(Z)]);
+minVal = min([minVal,min(Z)]);
+[X,Y] = meshgrid(x,y);
+contourf(X,Y,Z);
+set(gca,'XTick',0:2:10);
+hold on;
+ax = axis;
+fax(4) = gca;
+plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
+text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+title('直进直出','fontName',paperFontName(),'FontSize',paperFontSize());
+for i = 1:length(fax)
+    set(fax(i),'Clim',[minVal maxVal]);
+end
 
 set(gcf,'unit','centimeter','position',[8,4,14,5]);
 set(gcf,'color','w');

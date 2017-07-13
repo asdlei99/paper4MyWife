@@ -1,5 +1,9 @@
-function [ curHancle,fillHandle,vesselFillHandle] = plotExpPressurePlus(dataCombineStruct,varargin)
+function [ curHancle,fillHandle,vesselFillHandle] = figureExpPressurePlus(dataCombineStruct,varargin)
 %绘制实验数据的压力脉动和抑制率图
+% varargin可选属性：
+% errortype:'std':上下误差带是标准差，'ci'上下误差带是95%置信区间，'minmax'上下误差带是min和max置信区间，‘none’不绘制误差带
+% rang：‘测点范围’默认为1:13,除非改变测点顺序，否则不需要变更
+% showpurevessel：‘是否显示单一缓冲罐’
 pp = varargin;
 errorType = 'ci';
 rang = 1:13;
@@ -21,7 +25,6 @@ while length(pp)>=2
 end
 figure
 paperFigureSet_normal();
-
 [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct);
 if isnan(y)
     error('没有获取到数据，请确保数据进行过人工脉动读取');
@@ -40,11 +43,16 @@ if strcmp(errorType,'std')
 elseif strcmp(errorType,'ci')
     yUp = muci(2,rang);
     yDown = muci(1,rang);
-else 
+elseif strcmp(errorType,'minmax')
     yUp = maxVal(rang);
     yDown = minVal(rang);
 end
-[curHancle,fillHandle] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(1));
+
+if strcmp(errorType,'none')
+    [curHancle,fillHandle] = plot(x,y,'color',getPlotColor(1));
+else
+    [curHancle,fillHandle] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(1));
+end
 xlim([2,11]);
 
 set(gca,'Position',[0.13 0.18 0.79 0.65]);

@@ -1,6 +1,8 @@
 %% µÚÁùÕÂ»æÍ¼
-function ch06Chart
 %µÚÁùÕÂ»­Í¼µÄ²ÎÊıÉèÖÃ
+clear all;
+close all;
+clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
@@ -9,20 +11,21 @@ orificD0_5CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÄÚÖÃ¿×°å\D0.5RPM420¹
 orificD0_25CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÄÚÖÃ¿×°å\D0.25RPM420¹ŞÖĞ¼ä');
 orificD0_75CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÄÚÖÃ¿×°å\D0.75RPM420¹ŞÖĞ¼ä');
 orificD1CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÄÚÖÃ¿×°å\D1RPM420¹ŞÖĞ¼ä');
+
 %% Í¼6-6 ÖĞ¼ä¿×¹Ü»º³å¹ŞÑ¹Á¦Âö¶¯¼°ÒÖÖÆÂÊ
-[~,orificCombineData] = loadExpDataFromFolder(orificCombineDataPath);
-plotExpPressurePlus(orificCombineData,'errorType',errorType);
-plotExpSuppressionLevel(orificCombineData,'errorType',errorType...
+[~,orificD0_25CombineData] = loadExpDataFromFolder(orificD0_25CombineDataPath);
+[~,orificD0_5CombineData] = loadExpDataFromFolder(orificD0_5CombineDataPath);
+[~,orificD0_75CombineData] = loadExpDataFromFolder(orificD0_75CombineDataPath);
+[~,orificD01CombineData] = loadExpDataFromFolder(orificD1CombineDataPath);
+orificDataCells = {orificD0_25CombineData,orificD0_5CombineData,orificD0_75CombineData,orificD01CombineData};
+legendLabels = {'0.25D','0.5D','0.75D','1D'};
+%% »æÍ¼
+
+figureExpPressurePlus(orificD0_25CombineData,'errorType',errorType,'showpurevessel',1);
+figureMultExpPressurePlus(orificDataCells,legendLabels,'showpurevessel',1);
+
+figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
     ,'yfilterfunptr',@fixInnerOrificY ...
 );
-end
 
-% ÓÃÓÚ´¦ÀíÒì³£Êı¾İ - ´¦Àí¿×¹ÜÂö¶¯ÒÖÖÆÂÊµÄÒì³£Êı¾İ
-function [yData,yUp,yDown] = fixInnerOrificY(y,up,down)
-    y(3:5) =[-9,-4,1];
-    up(3:5) = [0,3,8];
-    down(3:5) = y(3:5) - ( up(3:5) - y(3:5) ) ;
-    yData = y;
-    yUp = up;
-    yDown = down;
-end
+
