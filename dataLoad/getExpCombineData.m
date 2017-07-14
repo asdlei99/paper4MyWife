@@ -1,8 +1,12 @@
-function [ meanVal,stdVal,maxVal,minVal,muci,sigmaci] = getExpCombineData(dataStruct,subField)
+function [ meanVal,stdVal,maxVal,minVal,muci,sigmaci] = getExpCombineData(dataStruct,subField,baseField)
 %加载联合数据
 %   联合数据的结构体路径
 %   baseField 基本field
 %   subField 子field
+    if nargin < 3
+        baseField = 'rawData';
+    end
+    dataStruct = getfield(dataStruct,baseField);
     if ~isfield(dataStruct,subField)
         meanVal = nan;
         stdVal = nan;
