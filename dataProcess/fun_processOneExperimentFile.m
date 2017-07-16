@@ -76,10 +76,8 @@ rawData = loadExperimentPressureData(fileFullPath);
 %½øÐÐÁãÆ¯ÐÞÕý
 if ~isempty(nullShiftDataPath)
     nullShiftData = getMeanExperimentPressure(nullShiftDataPath);
-	for i = length(nullShiftData)
-		if i <= size(rawData,2)
+	for i = 1:length(nullShiftData)
 			rawData(:,i) = rawData(:,i) - nullShiftData(i);
-		end
     end
     dataStruct.input.nullShiftData = nullShiftData;
 end

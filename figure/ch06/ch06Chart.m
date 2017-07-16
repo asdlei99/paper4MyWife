@@ -11,12 +11,15 @@ orificD0_5CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÄÚÖÃ¿×°å\D0.5RPM420¹
 orificD0_25CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÄÚÖÃ¿×°å\D0.25RPM420¹ÞÖÐ¼ä');
 orificD0_75CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÄÚÖÃ¿×°å\D0.75RPM420¹ÞÖÐ¼ä');
 orificD1CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÄÚÖÃ¿×°å\D1RPM420¹ÞÖÐ¼ä');
-
+orific28MultHoleD1CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÄÚÖÃ¿×°å\¶à¿×¿×°åN28D1RPM420¹ÞÖÐ¼ä');
 %% Í¼6-6 ÖÐ¼ä¿×¹Ü»º³å¹ÞÑ¹Á¦Âö¶¯¼°ÒÖÖÆÂÊ
+
 [~,orificD0_25CombineData] = loadExpDataFromFolder(orificD0_25CombineDataPath);
 [~,orificD0_5CombineData] = loadExpDataFromFolder(orificD0_5CombineDataPath);
 [~,orificD0_75CombineData] = loadExpDataFromFolder(orificD0_75CombineDataPath);
 [~,orificD01CombineData] = loadExpDataFromFolder(orificD1CombineDataPath);
+[~,orific28MultHoleD01CombineData] = loadExpDataFromFolder(orific28MultHoleD1CombineDataPath);
+%¶Ô±Èµ¥¿×
 orificDataCells = {orificD0_25CombineData,orificD0_5CombineData,orificD0_75CombineData,orificD01CombineData};
 legendLabels = {'0.25D','0.5D','0.75D','1D'};
 %% »æÍ¼
@@ -31,3 +34,4 @@ figureMultExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorType
     ,'yfilterfunptr',@fixInnerOrificY ...
 );
 
+figureMultExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
