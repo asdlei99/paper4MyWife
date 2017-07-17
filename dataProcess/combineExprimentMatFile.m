@@ -41,7 +41,7 @@ function [combineDataStruct,rpm] = combineExprimentMatFile(matFilePath)
 
     %计算缓冲罐的数据
     vesselCombineDataStruct = getPureVesselCombineDataStruct(rpm);
-    if ~isnan(vesselCombineDataStruct)
+    if isstruct(vesselCombineDataStruct)
         combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'rawData');
         combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'subSpectrumData');
         combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'saMainFreFilterStruct');

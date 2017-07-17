@@ -3,6 +3,9 @@ function [ meanVal,stdVal,maxVal,minVal,muci,sigmaci,pressureDropArr] = getExpCo
 %   dataStruct 联合数据的结构体
 %   measureRang:测点范围（1X2矩阵），压力降就是meanPressure(measureRang(1)) - meanPressure(measureRang(2))
 %   baseField:rawData或者其他
+    if nargin < 3
+        dataField = 'rawData';
+    end
     st = getfield(dataStruct,dataField);
     pressureMean = st.pressureMean;
     pressureDropArr = useRang(pressureMean,measureRang);

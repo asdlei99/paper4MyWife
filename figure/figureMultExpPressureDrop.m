@@ -1,4 +1,4 @@
-function [ curHancle,fillHandle,vesselFillHandle] = figureMultExpPressureDrop(dataCombineStructCells,legendLabels,measureRang,varargin)
+function [ curHancle,fillHandle,pressureDropInfo] = figureMultExpPressureDrop(dataCombineStructCells,legendLabels,measureRang,varargin)
 %绘制实验数据的压力降图
 % dataCombineStructCells：联合数据结构体的数组
 % legendLabels:对应联合数据结构体的数组的名称
@@ -33,7 +33,12 @@ x = 1:length(dataCombineStructCells);
 [ pressureDropMeanVal,pressureDropStdVal,pressureDropMaxVal,pressureDropMinVal,pressureDropMuci,~] ...
     = cellfun(@(x) getExpCombinePressureDropData(x,measureRang,baseField),dataCombineStructCells,'UniformOutput',0);
 y = cell2mat(pressureDropMeanVal);
-
+pressureDropInfo.mean = y;
+-- 这里
+pressureDropInfo.std = cell2mat(pressureDropStdVal);
+pressureDropInfo.max = cell2mat(pressureDropMaxVal);
+pressureDropInfo.min = cell2mat(pressureDropMinVal);
+pressureDropInfo.muci = [cell2mat(cellfun(@(x) x(1,1),pressureDropMuci,'UniformOutput',0));cell2mat(cellfun(@(x) x(2,1),pressureDropMuci,'UniformOutput',0))];
 if strcmp(errorType,'std')
     yUp = y + cell2mat(pressureDropStdVal);
     yDown = y - cell2mat(pressureDropStdVal);
@@ -47,6 +52,7 @@ end
 y=y';
 yUp=yUp';
 yDown=yDown';
+pressureDropInfo.mean = y;
 
 if strcmp(chartType,'line')
     if strcmp(errorType,'none')
