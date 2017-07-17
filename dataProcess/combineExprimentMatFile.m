@@ -35,6 +35,16 @@ function [combineDataStruct,rpm] = combineExprimentMatFile(matFilePath)
             suppressionLevel(i,:) = (dv{i,3} - ds{i,3}) ./ dv{i,3};
         end
         combineDataStruct.readSuppressionLevel = suppressionLevel;
+        combineDataStruct.descripe = {'readPlus是人为读取的压力脉动数据';'readSuppressionLevel是人为读取数据和单一缓冲罐进行的脉动抑制率计算'...
+                ;'带SL结尾的是和单一缓冲罐进行对比的抑制率如multFreMag1SL'};
+    end
+
+    %计算缓冲罐的数据
+    vesselCombineDataStruct = getPureVesselCombineDataStruct(rpm);
+    if ~isnan(vesselCombineDataStruct)
+        combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'rawData');
+        combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'subSpectrumData');
+        combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'saMainFreFilterStruct');
     end
 
 end
