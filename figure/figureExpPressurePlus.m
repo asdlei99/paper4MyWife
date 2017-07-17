@@ -49,7 +49,7 @@ elseif strcmp(errorType,'minmax')
 end
 
 if strcmp(errorType,'none')
-    [curHancle,fillHandle] = plot(x,y,'color',getPlotColor(1));
+    [curHancle] = plot(x,y,'color',getPlotColor(1));
 else
     [curHancle,fillHandle] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(1));
 end
