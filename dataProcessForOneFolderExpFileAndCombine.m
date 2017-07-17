@@ -93,19 +93,13 @@ dataStructCells = fun_processOneFolderExperimentFile(xlsDataFileFolder...
             ,'selfAdaptMainFreFilter',selfAdaptMainFreFilter...
             ,'incrementDenoising',incrementDenoisingSet...
             );
+
 saveMatFilePath = fullfile(xlsDataFileFolder,'dataStructCells.mat');
 save(saveMatFilePath,'dataStructCells');
 %处理联合结果
 combineDataStruct = combineExprimentMatFile(saveMatFilePath);
-%计算缓冲罐的数据
-vesselCombineDataStruct = getPureVesselCombineDataStruct(rpm);
-combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'rawData');
-combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'subSpectrumData');
-combineDataStruct = calcSuppressionLevel(combineDataStruct,vesselCombineDataStruct,'saMainFreFilterStruct');
-combineDataStruct.descripe = {'readPlus是人为读取的压力脉动数据';'readSuppressionLevel是人为读取数据和单一缓冲罐进行的脉动抑制率计算'...
-    ;'带SL结尾的是和单一缓冲罐进行对比的抑制率如multFreMag1SL'};
 %保持结果
-saveCombineMatPath = fullfile(xlsDataFileFolder,'combineDataStruct.mat');
+saveCombineMatPath = fullfile(xlsDataFileFolder,[constCombineDataStructFileName(),'.mat']);
 % pointIndex = strfind(saveMatFilePath,'.');
 % saveCombineMatPath = saveMatFilePath(1:pointIndex(end)-1);
 % saveCombineMatPath = strcat(saveCombineMatPath,'_combine.mat');
