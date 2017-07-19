@@ -32,27 +32,27 @@ paperFigureSet_normal();
 x = 1:length(dataCombineStructCells);
 [ pressureDropMeanVal,pressureDropStdVal,pressureDropMaxVal,pressureDropMinVal,pressureDropMuci,~] ...
     = cellfun(@(x) getExpCombinePressureDropData(x,measureRang,baseField),dataCombineStructCells,'UniformOutput',0);
-y = cell2mat(pressureDropMeanVal);
-pressureDropInfo.mean = y;
--- ’‚¿Ô
+
+pressureDropInfo.mean = cell2mat(pressureDropMeanVal);
 pressureDropInfo.std = cell2mat(pressureDropStdVal);
 pressureDropInfo.max = cell2mat(pressureDropMaxVal);
 pressureDropInfo.min = cell2mat(pressureDropMinVal);
 pressureDropInfo.muci = [cell2mat(cellfun(@(x) x(1,1),pressureDropMuci,'UniformOutput',0));cell2mat(cellfun(@(x) x(2,1),pressureDropMuci,'UniformOutput',0))];
+y = pressureDropInfo.mean;
 if strcmp(errorType,'std')
-    yUp = y + cell2mat(pressureDropStdVal);
-    yDown = y - cell2mat(pressureDropStdVal);
+    yUp = y + pressureDropInfo.std;
+    yDown = y - pressureDropInfo.std;
 elseif strcmp(errorType,'ci')
-    yUp = cell2mat(cellfun(@(x) x(2,1),pressureDropMuci,'UniformOutput',0));
-    yDown = cell2mat(cellfun(@(x) x(1,1),pressureDropMuci,'UniformOutput',0));
+    yUp = pressureDropInfo.muci(2,:);
+    yDown = pressureDropInfo.muci(1,:);
 elseif strcmp(errorType,'minmax')
-    yUp = cell2mat(pressureDropMaxVal);
-    yDown = cell2mat(pressureDropMinVal);
+    yUp = pressureDropInfo.max;
+    yDown = pressureDropInfo.min;
 end
 y=y';
 yUp=yUp';
 yDown=yDown';
-pressureDropInfo.mean = y;
+
 
 if strcmp(chartType,'line')
     if strcmp(errorType,'none')
