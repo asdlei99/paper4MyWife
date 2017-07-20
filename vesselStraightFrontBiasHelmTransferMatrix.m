@@ -4,9 +4,9 @@ function [M,k] = vesselStraightFrontBiasHelmTransferMatrix(Lv,Lv1,l,lv3,Dbias,l1
 %          |     |      |   
 % ---------|  ---|---   |
 %          |__ __|______|      
-% Dpipe          | 
-%                | L3 
-%                |
+% Dpipe       | 
+%             | L3 
+%             |
 %计算双罐-罐二作弯头内插0.5D孔管入全开出亥姆霍兹共鸣器
 pp=varargin;
 k = nan;
@@ -224,7 +224,7 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,lv3,k,Dv,Dbias,l1,l2,
         V = pi.*Dv.^2./4.*(Lv./2)-pi.*dpipe.^2./4.*l2;
         lc = 0.003;%共鸣器连接管长
         M5 = HelmholtzResonatorTransferMatrix(V,l2,lc,dp,1 ...
-        ,'a',a);
+        ,'a',a,'k',k);
         %入流 内插管
         M6 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...

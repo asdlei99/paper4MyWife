@@ -14,25 +14,39 @@ orificD1CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÄÚÖÃ¿×°å\D1RPM420¹ÞÖÐ¼
 orific28MultHoleD1CombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÄÚÖÃ¿×°å\¶à¿×¿×°åN28D1RPM420¹ÞÖÐ¼ä');
 %% Í¼6-6 ÖÐ¼ä¿×¹Ü»º³å¹ÞÑ¹Á¦Âö¶¯¼°ÒÖÖÆÂÊ
 
-[~,orificD0_25CombineData] = loadExpDataFromFolder(orificD0_25CombineDataPath);
-[~,orificD0_5CombineData] = loadExpDataFromFolder(orificD0_5CombineDataPath);
-[~,orificD0_75CombineData] = loadExpDataFromFolder(orificD0_75CombineDataPath);
-[~,orificD01CombineData] = loadExpDataFromFolder(orificD1CombineDataPath);
-[~,orific28MultHoleD01CombineData] = loadExpDataFromFolder(orific28MultHoleD1CombineDataPath);
+[orificD0_25DataCells,orificD0_25CombineData] = loadExpDataFromFolder(orificD0_25CombineDataPath);
+[orificD0_5DataCells,orificD0_5CombineData] = loadExpDataFromFolder(orificD0_5CombineDataPath);
+[orificD0_75DataCells,orificD0_75CombineData] = loadExpDataFromFolder(orificD0_75CombineDataPath);
+[orificD01DataCells,orificD01CombineData] = loadExpDataFromFolder(orificD1CombineDataPath);
+[orific28MultHoleD01DataCells,orific28MultHoleD01CombineData] = loadExpDataFromFolder(orific28MultHoleD1CombineDataPath);
 %¶Ô±Èµ¥¿×
 orificDataCells = {orificD0_25CombineData,orificD0_5CombineData,orificD0_75CombineData,orificD01CombineData};
 legendLabels = {'0.25D','0.5D','0.75D','1D'};
+%% ·ÖÎö²ÎÊýÉèÖÃ
+%Ê±Æµ·ÖÎö²ÎÊýÉèÖÃ
+Fs = 100;%ÊµÑé²ÉÑùÂÊ
+STFT.windowSectionPointNums = 256;
+STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
+STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
+STFTChartType = 'contour';%contour|plot3
 %% »æÍ¼
-
-figureExpPressurePlus(orificD0_25CombineData,'errorType',errorType,'showpurevessel',1);
-fh = figureMultExpPressurePlus(orificDataCells,legendLabels,'showpurevessel',1);
-
+dataNumIndex = 2;%¶ÁÈ¡µÄÊµÑé×éÊý£¬<5
+measurePoint = [1,3,7,13];%Ê±Æµ·ÖÎö²¨ÐÎµÄ²âµã
+fh = figureExpPressureSTFT(getExpDataStruct(orificD01DataCells,dataNumIndex,baseField),measurePoint,Fs...
+    ,'STFT',STFT,'chartType',STFTChartType);
+ylim([0,30]);
+%»æÖÆ0.25DµÄÑ¹Á¦Âö¶¯
+fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
+%»æÖÆ¶à×éÑ¹Á¦Âö¶¯
+fh = figureMultExpPressurePlus(orificDataCells,legendLabels,'showPureVessel',1);
+%»æÖÆ0.25DµÄÑ¹Á¦Âö¶¯ÒÖÖÆÂÊ
 fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
     ,'yfilterfunptr',@fixInnerOrificY ...
 );
-
+%»æÖÆ¶à×éÑ¹Á¦Âö¶¯ÒÖÖÆÂÊ
 fh = figureMultExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorType...
     ,'yfilterfunptr',@fixInnerOrificY ...
 );
-
+%»æÖÆ¶à×éÑ¹Á¦½µ
 figureMultExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
+%¶Ô²âµã1½øÐÐÊ±Æµ·ÖÎö²¨ÐÎ

@@ -1,4 +1,4 @@
-function [fh,spectrogramData] = plotSTFT( wave,SIFT,Fs,varargin )
+function [fh,spectrogramData] = plotSTFT( wave,STFT,Fs,varargin )
 %绘制一个波形的短时傅立叶变换
 %   wave 波
 %   SIFT 短时傅立叶变化的参数
@@ -7,10 +7,8 @@ function [fh,spectrogramData] = plotSTFT( wave,SIFT,Fs,varargin )
 % chartType：绘图类型，可选‘contour’（默认）或者‘plot3’
 % contourfLineStyle:设置云图是否显示等高线,在chartType=‘contour’时可用
 % isshowcolorbar或colorbar:云图时是否显示色棒
+    pp = varargin;
     chartType = 'contour';
-    STFT.windowSectionPointNums = 1024;
-    STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
-    STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
     contourfLineStyle = 'none';
     isShowColorbar = 1;
     while length(pp)>=2
@@ -52,6 +50,9 @@ function [fh,spectrogramData] = plotSTFT( wave,SIFT,Fs,varargin )
         end
     else
         for i=1:tl
+            if 2 == i
+                hold on;
+            end
             fre = spectrogramData.F;
             Amp = mag(:,i);
             Y = spectrogramData.T(i);
