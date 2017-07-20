@@ -1,4 +1,4 @@
-function [ curHancle,fillHandle,pressureDropInfo] = figureMultExpPressureDrop(dataCombineStructCells,legendLabels,measureRang,varargin)
+function fh = figureMultExpPressureDrop(dataCombineStructCells,legendLabels,measureRang,varargin)
 %绘制实验数据的压力降图
 % dataCombineStructCells：联合数据结构体的数组
 % legendLabels:对应联合数据结构体的数组的名称
@@ -26,7 +26,7 @@ while length(pp)>=2
     end
 end
 
-figure
+fh.figure = figure;
 paperFigureSet_normal();
 
 x = 1:length(dataCombineStructCells);
@@ -56,10 +56,10 @@ yDown=yDown';
 
 if strcmp(chartType,'line')
     if strcmp(errorType,'none')
-        [curHancle] = plot(x,y,'color',getPlotColor(1)...
+        fh.plotHandle = plot(x,y,'color',getPlotColor(1)...
             ,'Marker',getMarkStyle(1));
     else
-        [curHancle,fillHandle] = plotWithError(x,y,yUp,yDown,'type','errorbar','color',getPlotColor(1)...
+        [fh.plotHandle,fh.errFillHandle] = plotWithError(x,y,yUp,yDown,'type','errorbar','color',getPlotColor(1)...
             ,'Marker',getMarkStyle(1));
     end
 else
@@ -67,13 +67,10 @@ else
         curHancle = bar(y);
     else
         errY = [y-yDown,yUp-y];
-        barwitherr(errY, y);    % Plot with errorbars
+        [fh.barHandle,fh.errBarHandle] = barwitherr(errY, y);    % Plot with errorbars
     end
 end
-
-%legend(curHancle,legendLabels,0);
-
-set(gca,'XTick',x,'XTickLabel',legendLabels)
+set(gca,'XTick',x,'XTickLabel',legendLabels);
 xlabel('类型');
 ylabel('压力降(kPa)');
 
