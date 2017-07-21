@@ -208,34 +208,48 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,lv3,k,Dv,Dbias,l1,l2,
 %         RM = sudEnlargeTransferMatrix(S,Sv,a,'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notMach',optMach.notMach);
 %         LM = sudReduceTransferMatrix(Sv,S,a,'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notMach',optMach.notMach);
 %         Mv = LM * innerLM * ML * innerRM * RM;
+%         %回流 出口管对应偏置腔(innerLM)
+%         M1 = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
+%         %回流 出口管与内插管（回流时为入口管）间空腔（ML）
+%         M2 = straightPipeTransferMatrix(Lv1-l1-lv3,'k',k,'D',Dv,'a',a,...
+%                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
+%         %回流 内插管作入口管部分腔体（innerRM）
+%         M3 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
+%         %回流 内插管部分
+%         M4 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
+%                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
+%         % 亥姆霍兹共鸣器
+%         V = pi.*Dv.^2./4.*(Lv./2)-pi.*dpipe.^2./4.*l2;
+%         lc = 0.003;%共鸣器连接管长
+%         M5 = HelmholtzResonatorTransferMatrix(V,l2,lc,dp,1 ...
+%         ,'a',a,'k',k);
+%         %入流 内插管
+%         M6 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
+%                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
+%         %入流 内插管作出口管所在腔体
+%         M7 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
+%         % 入流 腔体
+%         M8 = straightPipeTransferMatrix(Lv1-l1,'k',k,'D',Dv,'a',a,...
+%                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
+%         Mv = M1 * M2 * M3 * M4 * M5 * M6 * M7 * M8;
         %回流 出口管对应偏置腔(innerLM)
-        M1 = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
-        %回流 出口管与内插管（回流时为入口管）间空腔（ML）
-        M2 = straightPipeTransferMatrix(Lv1-l1-lv3,'k',k,'D',Dv,'a',a,...
-                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
-        %回流 内插管作入口管部分腔体（innerRM）
-        M3 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
-        %回流 内插管部分
-        M4 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
-                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
+        M1 = innerPipeCavityTransferMatrix(Dv,Dbias,Lv1-l1-lv3,'a',a,'k',k);
         % 亥姆霍兹共鸣器
         V = pi.*Dv.^2./4.*(Lv./2)-pi.*dpipe.^2./4.*l2;
         lc = 0.003;%共鸣器连接管长
-        M5 = HelmholtzResonatorTransferMatrix(V,l2,lc,dp,1 ...
+        M2 = HelmholtzResonatorTransferMatrix(V,l2,lc,dp,1 ...
         ,'a',a,'k',k);
-        %入流 内插管
-        M6 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
-                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
-        %入流 内插管作出口管所在腔体
-        M7 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
+        %回流 内插管作入口管部分腔体（innerRM）
+        M3 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
         % 入流 腔体
-        M8 = straightPipeTransferMatrix(Lv1-l1,'k',k,'D',Dv,'a',a,...
+        M4 = straightPipeTransferMatrix(Lv1-l1,'k',k,'D',Dv,'a',a,...
                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
-        Mv = M1 * M2 * M3 * M4 * M5 * M6 * M7 * M8;
+                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵  
+       Mv = M1 * M2 * M3 * M4;     
         return;
     end
     %使用容积传递矩阵
