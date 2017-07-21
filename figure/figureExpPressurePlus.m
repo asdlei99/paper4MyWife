@@ -9,6 +9,12 @@ pp = varargin;
 errorType = 'ci';
 rang = 1:13;
 showPureVessel = 0;
+legendLabels = {};
+%允许特殊的把地一个varargin作为legend
+if 0 ~= mod(length(pp),2)
+    legendLabels = pp{1};
+    pp=pp(2:end);
+end
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -68,6 +74,10 @@ for plotCount = 1:length(dataCombineStruct)
 end
 
 xlim([2,11]);
+if ~isempty(legendLabels)
+    fh.legend = legend(fh.plotHandle,legendLabels,0);
+end
+
 set(gca,'Position',[0.13 0.18 0.79 0.65]);
 annotation('textbox',...
     [0.48 0.885 0.0998 0.0912],...
