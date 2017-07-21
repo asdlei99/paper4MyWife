@@ -1,4 +1,4 @@
-function fh = figureMultExpPressureDrop(dataCombineStructCells,legendLabels,measureRang,varargin)
+function fh = figureExpPressureDrop(dataCombineStructCells,legendLabels,measureRang,varargin)
 %绘制实验数据的压力降图
 % dataCombineStructCells：联合数据结构体的数组
 % legendLabels:对应联合数据结构体的数组的名称

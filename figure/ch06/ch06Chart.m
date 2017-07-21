@@ -38,7 +38,7 @@ ylim([0,30]);
 %绘制0.25D的压力脉动
 fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %绘制多组压力脉动
-fh = figureMultExpPressurePlus(orificDataCells,legendLabels,'showPureVessel',1);
+fh = figureExpPressurePlus(orificDataCells,legendLabels,'errorType',errorType,'showPureVessel',1);
 %绘制0.25D的压力脉动抑制率
 fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
     ,'yfilterfunptr',@fixInnerOrificY ...
