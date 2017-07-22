@@ -4,8 +4,9 @@ function fh = figureExpSuppressionLevel(dataCombineStructCells,varargin)
 pp = varargin;
 errorType = 'ci';%绘制误差带的模式，std：mean+-sd,ci为95%置信区间，minmax为最大最小
 rang = 1:13;
+%允许特殊的把地一个varargin作为legend
 yFilterFunPtr = @fixY;
-
+legendLabels = {};
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
     pp=pp(2:end);
@@ -33,7 +34,11 @@ paperFigureSet_normal();
 x = constExpMeasurementPointDistance();%测点对应的距离
 
 for plotCount = 1:length(dataCombineStructCells)
-    [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells{plotCount});
+    if 1 == length(dataCombineStructCells)
+        [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells);
+    else     
+        [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells{plotCount});
+    end
     if isnan(y)
         error('此数据未有进行完全的分析，没有脉动抑制率');
     end

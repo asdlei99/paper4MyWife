@@ -3,9 +3,11 @@ function fh = figureExpNatureFrequency(dataCombineStructCells,varargin)
 pp = varargin;
 errorType = 'ci';%绘制误差带的模式，std：mean+-sd,ci为95%置信区间，minmax为最大最小
 rang = 1:13;
-yFilterFunPtr = @fixY;
+yFilterFunPtr = nan;
 legendLabels = {};
 baseField = 'rawData';
+showPureVessel = 0;
+rpm = 420;
 natureFre= [1,2];%固有频率，支持[0.5,1,1.5,2,2.5,3]
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
@@ -29,6 +31,10 @@ while length(pp)>=2
             natureFre = val;
         case 'nf'
             natureFre = val;
+        case 'showpurevessel'
+            showPureVessel = val;
+        case 'rpm'
+            rpm = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -39,53 +45,61 @@ fh.figure = figure;
 paperFigureSet_normal();
 x = constExpMeasurementPointDistance();%测点对应的距离
 %需要显示单一缓冲罐
-plotCount = 1;
+
 if showPureVessel
     dataPat = getPureVesselCombineDataPath(rpm);
     st = loadExpCombineDataStrcut(dataPat);
-    plotMarker = getMarkStyle(plotCount);
-    plotColor = getPlotColor(plotCount);
     for i=1:length(natureFre)
-        [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(st);
-        
+        plotLineStyle = getLineStyle(i);
+        [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(st,natureFre(i),baseField);
+        [yUp,yDown] = getUpDownRang(y,stdVal,maxVal,minVal,muci,errorType,rang);
+        y = y(rang);
+        if strcmp(errorType,'none')
+            fh.vesselHandle(i) = plot(x,y,'color',[160,162,162]./255 ...
+                ,'LineStyle',plotLineStyle');
+        else
+            [fh.vesselHandle(i),fh.vesselErrFillHandle(i)] = plotWithError(x,y,yUp,yDown...
+                ,'color',[160,162,162]./255 ...
+                ,'LineStyle',plotLineStyle);
+        end
     end
-    plot(x,meanVessel(rang),'LineStyle',':','color',[160,162,162]./255);
+    
     hold on;
 end
 
 for plotCount = 1:length(dataCombineStructCells)
-    [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells{plotCount});
-    if isnan(y)
-        error('此数据未有进行完全的分析，没有脉动抑制率');
-    end
-    y = y(rang).*100;
-
-    if strcmp(errorType,'std')
-        yUp = y + stdVal(rang).* 100;
-        yDown = y - stdVal(rang).* 100;
-    elseif strcmp(errorType,'ci')
-        yUp = muci(2,rang).* 100;
-        yDown = muci(1,rang).* 100;
-    elseif strcmp(errorType,'minmax')
-        yUp = maxVal(rang).* 100;
-        yDown = minVal(rang).* 100;
-    end
-    getUpDownRang(y,stdVal,maxVal,minVal,muci);
-    if isa(yFilterFunPtr,'function_handle')
-        [y,yUp,yDown]= yFilterFunPtr(y,yUp,yDown);
-    end
-
-    if strcmp(errorType,'none')
-        fh.plotHandle(plotCount) = plot(x,y,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount));
-    else
-        [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount));
+    plotMarker = getMarkStyle(plotCount);
+    plotColor = getPlotColor(plotCount);
+    
+    for i=1:length(natureFre)
+        plotLineStyle = getLineStyle(i);
+        if 1==length(dataCombineStructCells)
+            [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(dataCombineStructCells,natureFre(i),baseField);
+        else
+            [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(dataCombineStructCells{plotCount},natureFre(i),baseField);
+        end
+        [yUp,yDown] = getUpDownRang(y,stdVal,maxVal,minVal,muci,errorType,rang);
+        y = y(rang);
+        if isa(yFilterFunPtr,'function_handle')
+            [y,yUp,yDown]= yFilterFunPtr(y,yUp,yDown);
+        end
+        if strcmp(errorType,'none')
+            fh.plotHandle(plotCount,i) = plot(x,y...
+                ,'color',getPlotColor(plotCount)...
+                ,'Marker',plotMarker...
+                ,'LineStyle',plotLineStyle);
+        else
+            [fh.plotHandle(plotCount,i),fh.errFillHandle(plotCount,i)] = plotWithError(x,y,yUp,yDown...
+                ,'color',plotColor...
+                ,'Marker',plotMarker...
+                ,'LineStyle',plotLineStyle);
+        end
     end
 end
 xlim([2,11]);
-fh.legend = legend(fh.plotHandle,legendLabels,0);
-
+if ~isempty(legendLabels)
+    fh.legend = legend(fh.plotHandle,legendLabels,0);
+end
 set(gca,'Position',[0.13 0.18 0.79 0.65]);
 fh.textboxTopAxixTitle = annotation('textbox',...
     [0.48 0.885 0.0998 0.0912],...
@@ -110,19 +124,8 @@ for i = 1:length(x)
     end
 end
 xlabel('管线距离(m)');
-ylabel('脉动抑制率(%)');
+ylabel('倍频幅值(kPa)');
 
 end
 
-function [yUp,yDown] = getUpDownRang(y,stdVal,maxVal,minVal,muci,errorType,rang)
-    if strcmp(errorType,'std')
-        yUp = y + stdVal(rang).* 100;
-        yDown = y - stdVal(rang).* 100;
-    elseif strcmp(errorType,'ci')
-        yUp = muci(2,rang).* 100;
-        yDown = muci(1,rang).* 100;
-    elseif strcmp(errorType,'minmax')
-        yUp = maxVal(rang).* 100;
-        yDown = minVal(rang).* 100;
-    end
-end
+

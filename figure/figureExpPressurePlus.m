@@ -1,4 +1,4 @@
-function [ curHancle,fillHandle,vesselFillHandle] = figureExpPressurePlus(dataCombineStruct,varargin)
+function fh = figureExpPressurePlus(dataCombineStruct,varargin)
 %绘制实验数据的压力脉动和抑制率图
 % dataCombineStruct 如果传入一个dataCombineStruct就绘制一个图，如果要绘制多个，传入一个dataCombineStructCells
 % varargin可选属性：
@@ -10,6 +10,7 @@ errorType = 'ci';
 rang = 1:13;
 showPureVessel = 0;
 legendLabels = {};
+rpm = 420;
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -26,6 +27,8 @@ while length(pp)>=2
             rang = val;
         case 'showpurevessel'
             showPureVessel = val;
+        case 'rpm'
+            rpm = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -36,8 +39,8 @@ paperFigureSet_normal();
 x = constExpMeasurementPointDistance();%测点对应的距离
 %需要显示单一缓冲罐
 if showPureVessel
-    meanVessel = constExpVesselPressrePlus(420);
-    plot(x,meanVessel(rang),'LineStyle',':','color',[160,162,162]./255);
+    meanVessel = constExpVesselPressrePlus(rpm);
+    fh.vesselHandle =  plot(x,meanVessel(rang),'LineStyle',':','color',[160,162,162]./255);
     hold on;
 end
 
@@ -46,7 +49,11 @@ for plotCount = 1:length(dataCombineStruct)
     if 2 == plotCount
         hold on;
     end
-    [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct{plotCount});
+    if(1 == length(dataCombineStruct))
+        [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct);
+    else
+        [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct{plotCount});
+    end
     if isnan(y)
         error('没有获取到数据，请确保数据进行过人工脉动读取');
     end

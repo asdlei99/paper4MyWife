@@ -48,8 +48,6 @@ fh = figureExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorTyp
     ,'yfilterfunptr',@fixInnerOrificY ...
 );
 %绘制多组压力降
-figureMultExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
+fh = figureExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
 %对测点1进行时频分析波形
-
-
-编写 -- figureExpNatureFrequency
+fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);

@@ -1,13 +1,13 @@
-function [M,k] = vesselStraightFrontBiasHelmTransferMatrix(Lv,Lv1,l,lv3,Dbias,l1,l2,dpipe,dp,varargin )
-%    L2   l      Lv
-%            ___________ 
-%          |     |      |   
-% ---------|  ---|---   |
-%          |__ __|______|      
-% Dpipe       | 
-%             | L3 
-%             |
-%计算双罐-罐二作弯头内插0.5D孔管入全开出亥姆霍兹共鸣器
+function [M,k] = vesselStraightFrontBiasHelmTransferMatrix(Lv,Lv1,Lv2,l,lv3,Dbias,dp,lc,varargin )
+%       长度 L1     l    Lv    l    L2   l    Lv
+%                   __________            ____________
+%                  |          |          |     |      |   
+%       -----------|          |----------|     |--    |
+%                  |__________|          |__ __|______|      
+% 直径      Dpipe       Dv       Dpipe      | 
+%                                           | L3 
+%                                           |
+%计算双罐-罐二作弯头内插孔板腔体二内插管形成亥姆霍兹共鸣器
 pp=varargin;
 k = nan;
 oumiga = nan;
@@ -163,7 +163,7 @@ M1 = straightPipeTransferMatrix(l,'k',k,'S',S,'a',a,...
 optDamp.isDamping = 0;
 optDamp.coeffDamping = coeffDamping(2);
 optDamp.meanFlowVelocity = meanFlowVelocity(2);
-Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,lv3,k,Dvessel,Dbias,l1,l2,dpipe,dp,a,optDamp,optMachVessel);
+Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,Lv2,lv3,k,Dvessel,Dbias,dp,lc,a,optDamp,optMachVessel);
 %后管道传递矩阵
 M2 = straightPipeTransferMatrix(l,'k',k,'S',S,'a',a,...
      'isDamping',isDamping,'coeffDamping',coeffDamping(1)...
@@ -171,7 +171,7 @@ M2 = straightPipeTransferMatrix(l,'k',k,'S',S,'a',a,...
     
 M = M2*Mv*M1;
 end
-function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,lv3,k,Dv,Dbias,l1,l2,dpipe,dp,a,optDamping,optMach)
+function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,Lv2,lv3,k,Dv,Dbias,dp,lc,a,optDamping,optMach)
     if ~isstruct(optDamping)
         if isnan(optDamping)
             optDamping.isDamping = 0;
@@ -210,50 +210,47 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,lv3,k,Dv,Dbias,l1,l2,
 %         Mv = LM * innerLM * ML * innerRM * RM;
         
         %法一
-        %回流 出口管对应偏置腔(innerLM)
-        M1 = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
-        %回流 出口管与内插管（回流时为入口管）间空腔（ML）
-        M2 = straightPipeTransferMatrix(Lv1-l1-lv3,'k',k,'D',Dv,'a',a,...
-                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
-        %回流 内插管作入口管部分腔体（innerRM）
-        M3 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
-        %回流 内插管部分
-        M4 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
-                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
-        % 亥姆霍兹共鸣器
-        V = pi.*Dv.^2./4.*(Lv./2)-pi.*dpipe.^2./4.*l2;
-        lc = 0.003;%共鸣器连接管长
-        M5 = HelmholtzResonatorTransferMatrix(V,l2,lc,dp,1 ...
-        ,'a',a,'k',k);
-        %入流 内插管
-        M6 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
-                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
-        %入流 内插管作出口管所在腔体
-        M7 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
-        % 入流 腔体
-        M8 = straightPipeTransferMatrix(Lv1-l1,'k',k,'D',Dv,'a',a,...
-                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
-        Mv = M1 * M2 * M3 * M4 * M5 * M6 * M7 * M8;
-        
-        %法二
 %         %回流 出口管对应偏置腔(innerLM)
-%         M1 = innerPipeCavityTransferMatrix(Dv,Dbias,Lv1-l1-lv3,'a',a,'k',k);
+%         M1 = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
+%         %回流 出口管与内插管（回流时为入口管）间空腔（ML）
+%         M2 = straightPipeTransferMatrix(Lv1-l1-lv3,'k',k,'D',Dv,'a',a,...
+%                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
+%         %回流 内插管作入口管部分腔体（innerRM）
+%         M3 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
+%         %回流 内插管部分
+%         M4 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
+%                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
 %         % 亥姆霍兹共鸣器
 %         V = pi.*Dv.^2./4.*(Lv./2)-pi.*dpipe.^2./4.*l2;
 %         lc = 0.003;%共鸣器连接管长
-%         M2 = HelmholtzResonatorTransferMatrix(V,l2,lc,dp,1 ...
+%         M5 = HelmholtzResonatorTransferMatrix(V,l2,lc,dp,1 ...
 %         ,'a',a,'k',k);
-%         %回流 内插管作入口管部分腔体（innerRM）
-%         M3 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
-%         % 入流 腔体
-%         M4 = straightPipeTransferMatrix(Lv1-l1,'k',k,'D',Dv,'a',a,...
+%         %入流 内插管
+%         M6 = straightPipeTransferMatrix(l1+l2,'k',k,'D',dpipe,'a',a,...
 %                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵  
-%        Mv = M1 * M2 * M3 * M4;     
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
+%         %入流 内插管作出口管所在腔体
+%         M7 = innerPipeCavityTransferMatrix(Dv,dpipe,l1,'a',a,'k',k);
+%         % 入流 腔体
+%         M8 = straightPipeTransferMatrix(Lv1-l1,'k',k,'D',Dv,'a',a,...
+%                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
+%         Mv = M1 * M2 * M3 * M4 * M5 * M6 * M7 * M8;
+        
+        %法二
+        %回流 出口管对应偏置腔(innerLM)
+        M1 = innerPipeCavityTransferMatrix(Dv,Dbias,Lv1-lv3,'a',a,'k',k);
+        % 亥姆霍兹共鸣器
+        V = pi.*Dv.^2./4.*(Lv./2);
+        M2 = HelmholtzResonatorTransferMatrix(V,Lv2,lc,dp,1 ...
+        ,'a',a,'k',k);
+        % 入流 腔体
+        M3 = straightPipeTransferMatrix(lv3,'k',k,'D',Dv,'a',a,...
+                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵  
+       Mv = M1 * M2 * M3 ;     
         return;
     end
     %使用容积传递矩阵
