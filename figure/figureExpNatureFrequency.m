@@ -1,9 +1,17 @@
-function fh = figureMultExpSuppressionLevel(dataCombineStructCells,legendLabels,varargin)
+function fh = figureExpNatureFrequency(dataCombineStructCells,varargin)
 %绘制实验数据的压力脉动和抑制率图
 pp = varargin;
 errorType = 'ci';%绘制误差带的模式，std：mean+-sd,ci为95%置信区间，minmax为最大最小
 rang = 1:13;
 yFilterFunPtr = @fixY;
+legendLabels = {};
+baseField = 'rawData';
+natureFre= [1,2];%固有频率，支持[0.5,1,1.5,2,2.5,3]
+%允许特殊的把地一个varargin作为legend
+if 0 ~= mod(length(pp),2)
+    legendLabels = pp{1};
+    pp=pp(2:end);
+end
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -15,6 +23,12 @@ while length(pp)>=2
             rang = val;
         case 'yfilterfunptr'
             yFilterFunPtr = val;
+        case 'basefield'
+            baseField = val;
+        case 'naturefre'
+            natureFre = val;
+        case 'nf'
+            natureFre = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -24,6 +38,20 @@ end
 fh.figure = figure;
 paperFigureSet_normal();
 x = constExpMeasurementPointDistance();%测点对应的距离
+%需要显示单一缓冲罐
+plotCount = 1;
+if showPureVessel
+    dataPat = getPureVesselCombineDataPath(rpm);
+    st = loadExpCombineDataStrcut(dataPat);
+    plotMarker = getMarkStyle(plotCount);
+    plotColor = getPlotColor(plotCount);
+    for i=1:length(natureFre)
+        [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(st);
+        
+    end
+    plot(x,meanVessel(rang),'LineStyle',':','color',[160,162,162]./255);
+    hold on;
+end
 
 for plotCount = 1:length(dataCombineStructCells)
     [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells{plotCount});
@@ -42,6 +70,7 @@ for plotCount = 1:length(dataCombineStructCells)
         yUp = maxVal(rang).* 100;
         yDown = minVal(rang).* 100;
     end
+    getUpDownRang(y,stdVal,maxVal,minVal,muci);
     if isa(yFilterFunPtr,'function_handle')
         [y,yUp,yDown]= yFilterFunPtr(y,yUp,yDown);
     end
@@ -83,4 +112,17 @@ end
 xlabel('管线距离(m)');
 ylabel('脉动抑制率(%)');
 
+end
+
+function [yUp,yDown] = getUpDownRang(y,stdVal,maxVal,minVal,muci,errorType,rang)
+    if strcmp(errorType,'std')
+        yUp = y + stdVal(rang).* 100;
+        yDown = y - stdVal(rang).* 100;
+    elseif strcmp(errorType,'ci')
+        yUp = muci(2,rang).* 100;
+        yDown = muci(1,rang).* 100;
+    elseif strcmp(errorType,'minmax')
+        yUp = maxVal(rang).* 100;
+        yDown = minVal(rang).* 100;
+    end
 end

@@ -1,9 +1,16 @@
-function fh = figureExpSuppressionLevel(dataCombineStruct,varargin)
+function fh = figureExpSuppressionLevel(dataCombineStructCells,varargin)
 %绘制实验数据的压力脉动和抑制率图
+%允许特殊的把地一个varargin作为legend
 pp = varargin;
 errorType = 'ci';%绘制误差带的模式，std：mean+-sd,ci为95%置信区间，minmax为最大最小
 rang = 1:13;
 yFilterFunPtr = @fixY;
+
+if 0 ~= mod(length(pp),2)
+    legendLabels = pp{1};
+    pp=pp(2:end);
+end
+
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -19,34 +26,45 @@ while length(pp)>=2
        		error('参数错误%s',prop);
     end
 end
-[y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStruct);
-if isnan(y)
-    error('此数据未有进行完全的分析，没有脉动抑制率');
-end
+
+
 fh.figure = figure;
 paperFigureSet_normal();
 x = constExpMeasurementPointDistance();%测点对应的距离
-y = y(rang).*100;
-muci = muci.*100;
-stdVal = stdVal .* 100;
-maxVal = maxVal .* 100;
-minVal = minVal .* 100;
 
-if strcmp(errorType,'std')
-    yUp = y + stdVal(rang);
-    yDown = y - stdVal(rang);
-elseif strcmp(errorType,'ci')
-    yUp = muci(2,rang);
-    yDown = muci(1,rang);
-else
-    yUp = maxVal(rang);
-    yDown = minVal(rang);
+for plotCount = 1:length(dataCombineStructCells)
+    [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells{plotCount});
+    if isnan(y)
+        error('此数据未有进行完全的分析，没有脉动抑制率');
+    end
+    y = y(rang).*100;
+
+    if strcmp(errorType,'std')
+        yUp = y + stdVal(rang).* 100;
+        yDown = y - stdVal(rang).* 100;
+    elseif strcmp(errorType,'ci')
+        yUp = muci(2,rang).* 100;
+        yDown = muci(1,rang).* 100;
+    elseif strcmp(errorType,'minmax')
+        yUp = maxVal(rang).* 100;
+        yDown = minVal(rang).* 100;
+    end
+    if isa(yFilterFunPtr,'function_handle')
+        [y,yUp,yDown]= yFilterFunPtr(y,yUp,yDown);
+    end
+
+    if strcmp(errorType,'none')
+        fh.plotHandle(plotCount) = plot(x,y,'color',getPlotColor(plotCount)...
+            ,'Marker',getMarkStyle(plotCount));
+    else
+        [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
+            ,'Marker',getMarkStyle(plotCount));
+    end
 end
-if isa(yFilterFunPtr,'function_handle')
-    [y,yUp,yDown]= yFilterFunPtr(y,yUp,yDown);
-end
-[fh.plotHandle,fh.errFillHandle] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(1));
 xlim([2,11]);
+if ~isempty(legendLabels)
+    fh.legend = legend(fh.plotHandle,legendLabels,0);
+end
 
 set(gca,'Position',[0.13 0.18 0.79 0.65]);
 fh.textboxTopAxixTitle = annotation('textbox',...
