@@ -51,3 +51,5 @@ fh = figureExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorTyp
 fh = figureExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
 %对测点1进行时频分析波形
 fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
+%绘制1倍频的对比
+fh = figureExpNatureFrequencyBar(orificD01CombineData,1);
