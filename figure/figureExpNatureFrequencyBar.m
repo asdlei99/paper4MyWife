@@ -21,7 +21,7 @@ while length(pp)>=2
             rang = val;
         case 'basefield'
             baseField = val;
-        case 'legendLlabels'
+        case 'legendlabels'
             legendLabels = val;
         otherwise
        		error('参数错误%s',prop);
@@ -57,17 +57,18 @@ for i = 1:length(dataCombineStructCells)
         errDown(i,:) = y(rang) - muci(1,rang);
     end
 end
-err(:,:,1) = errUp;
-err(:,:,1) = errDown;
+ys = ys';
+err(:,:,1) = errUp';
+err(:,:,1) = errDown';
 fh.barHandle = barwitherr(err,ys);
 
 
 if ~isempty(legendLabels)
-    fh.legend = legend(legendLabels);
+    fh.legend = legend(legendLabels,'FontName',paperFontName(),'FontSize',paperFontSize());
 end
 
-xlabel('测点');
-ylabel('幅值(kPa)');
+xlabel('测点','FontName',paperFontName(),'FontSize',paperFontSize());
+ylabel('幅值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
 
 end
 

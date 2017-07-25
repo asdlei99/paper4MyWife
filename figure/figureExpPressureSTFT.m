@@ -10,6 +10,12 @@ varargin = {};
 STFT.windowSectionPointNums = 1024;
 STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
+%允许特殊的把地一个varargin作为legend
+legendLabels = {};
+if 0 ~= mod(length(pp),2)
+    legendLabels = pp{1};
+    pp=pp(2:end);
+end
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -17,6 +23,8 @@ while length(pp)>=2
     switch lower(prop)
         case 'stft' %误差带的类型
         	STFT = val;
+        case 'legendlabels'
+            legendLabels = val;
         otherwise
        		varargin{length(varargin)+1} = prop;
             varargin{length(varargin)+1} = val;
@@ -31,9 +39,9 @@ if 1 == length(meaPoint)
     [fh.plotHandles,spectrogramData] = plotSTFT( wave,STFT,Fs,varargin{:});
     box on;
     xlim([0,50]);
-    xlabel('频率(Hz)'); 
-    ylabel('时间(s)');
-    zlabel('幅值(kPa)');
+    xlabel('频率(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
+    ylabel('时间(s)','FontName',paperFontName(),'FontSize',paperFontSize());
+    zlabel('幅值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
 else
     paperFigureSet_FullWidth(8)
     for i=1:length(meaPoint)
@@ -43,11 +51,20 @@ else
         colorbar('off');
         box on;
         xlim([0,50]);
-%         xlabel('频率(Hz)'); 
-%         ylabel('时间(s)');
-%         zlabel('幅值(kPa)');
+        if ~isempty(legendLabels)
+            fh.title(i) = title(legendLabels{i});
+        end
+        if 1 == i
+            fh.ylabel = ylabel('时间(s)','FontName',paperFontName(),'FontSize',paperFontSize());
+        end
+        fh.xlabel(i) = xlabel('频率(Hz)','FontName',paperFontName(),'FontSize',paperFontSize());
     end
-    colorbar;
+    fh.colorBar = colorbar;
+    colorBarTicks = get(fh.colorBar,'Ticks')
+    set(fh.colorBar,'Ticks',[0,colorBarTicks(end)]);
+    set(fh.colorBar,'TickLabels',{'低','高'},'FontName',paperFontName(),'FontSize',paperFontSize());
+    set(fh.colorBar,'Position',...
+    [0.941127558168275 0.109140624239201 0.00928362573099406 0.816901042427465]);
 end
 end
 
