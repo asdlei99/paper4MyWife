@@ -10,9 +10,12 @@ varargin = {};
 STFT.windowSectionPointNums = 1024;
 STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
+
 subplotRow = 1;
 subplotCol = -1;
 figureHeight = 10;
+
+
 %允许特殊的把地一个varargin作为legend
 legendLabels = {};
 if 0 ~= mod(length(pp),2)
