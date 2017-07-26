@@ -52,7 +52,7 @@ for i = 1:length(dataCombineStructCells)
     elseif strcmp(errorType,'minmax')
         errUp(i,:) = maxVal(2,rang) - y(rang);
         errUp(i,:) = y(rang) - minVal(1,rang);
-    else strcmp(errorType,'ci')
+    else
         errUp(i,:) = muci(2,rang) - y(rang);
         errDown(i,:) = y(rang) - muci(1,rang);
     end
@@ -61,7 +61,12 @@ ys = ys';
 err(:,:,1) = errUp';
 err(:,:,1) = errDown';
 fh.barHandle = barwitherr(err,ys);
-
+% for i=1:length(fh.barHandle) %h = fh.barHandle
+%     set(fh.barHandle(i),'FaceColor',getPlotColor(i));
+%     set(fh.barHandle(i),'LineWidth',1);
+%     set(fh.barHandle(i),'FaceAlpha',0.8);
+%     set(fh.barHandle(i),'EdgeColor',getPlotColor(i));
+% end
 
 if ~isempty(legendLabels)
     fh.legend = legend(legendLabels,'FontName',paperFontName(),'FontSize',paperFontSize());

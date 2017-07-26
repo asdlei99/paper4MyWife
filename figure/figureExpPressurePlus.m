@@ -9,6 +9,7 @@ pp = varargin;
 errorType = 'ci';
 rang = 1:13;
 showPureVessel = 0;
+pureVesselLegend = {};
 legendLabels = {};
 rpm = 420;
 %允许特殊的把地一个varargin作为legend
@@ -27,6 +28,8 @@ while length(pp)>=2
             rang = val;
         case 'showpurevessel'
             showPureVessel = val;
+        case 'purevessellegend'
+            pureVesselLegend = val;
         case 'rpm'
             rpm = val;
         otherwise
@@ -82,16 +85,22 @@ end
 
 xlim([2,11]);
 if ~isempty(legendLabels)
-    fh.legend = legend(fh.plotHandle,legendLabels,0);
+    if isempty(pureVesselLegend)
+        fh.legend = legend(fh.plotHandle,legendLabels,0);
+    else
+        legendLabels(2:length(legendLabels)+1) = legendLabels;
+        legendLabels{1} = pureVesselLegend;
+        fh.legend = legend([fh.vesselHandle,fh.plotHandle],legendLabels,0);
+    end
 end
 
 set(gca,'Position',[0.13 0.18 0.79 0.65]);
-annotation('textbox',...
+fh.textboxMeasurePoint = annotation('textbox',...
     [0.48 0.885 0.0998 0.0912],...
     'String','测点',...
     'FaceAlpha',0,...
     'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
-annotation('textarrow',[0.38 0.33],...
+fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
     [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
 vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
 ax = axis;

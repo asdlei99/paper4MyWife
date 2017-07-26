@@ -4,5 +4,5 @@ function paperFigureSet_FullWidth(h)
         h = 8;
     end
     set(gcf,'color','w');
-    set(gcf,'unit','centimeter','position',[8,4,19,h]);
+    set(gcf,'unit','centimeter','position',[8,4,14.5,h]);
 end

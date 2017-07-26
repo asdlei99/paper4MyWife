@@ -1,9 +1,9 @@
 function fh = figureExpNatureFrequency(dataCombineStructCells,varargin)
-%ç»˜åˆ¶å®éªŒæ•°æ®çš„å‹åŠ›è„‰åŠ¨å’ŒæŠ‘åˆ¶ç‡å›¾
+%»æÖÆÊµÑéÊı¾İµÄÑ¹Á¦Âö¶¯ºÍÒÖÖÆÂÊÍ¼
 pp = varargin;
 chartType = 'line';
 varargin = {};
-%å…è®¸ç‰¹æ®Šçš„æŠŠåœ°ä¸€ä¸ªvararginä½œä¸ºlegend
+%ÔÊĞíÌØÊâµÄ°ÑµØÒ»¸övarargin×÷Îªlegend
 if 0 ~= mod(length(pp),2)
     varargin{1} = pp{1};
     pp=pp(2:end);
@@ -14,32 +14,32 @@ while length(pp)>=2
     val=pp{2};
     pp=pp(3:end);
     switch lower(prop)
-        case 'chartType' %ç»˜å›¾ç±»å‹å¯é€‰'line'å’Œ'bar'
+        case 'charttype' %»æÍ¼ÀàĞÍ¿ÉÑ¡'line'ºÍ'bar'
             chartType = val;
         otherwise
             varargin{length(varargin)+1} = prop;
             varargin{length(varargin)+1} = val;
     end
 end
-if strcmp(chartType,'line')
+% if strcmp(chartType,'line')
     fh = plotInLine(dataCombineStructCells,varargin{:});
-else
-    fh = plotInBar(dataCombineStructCells,varargin{:});
+% else
+%     fh = plotInBar(dataCombineStructCells,varargin{:});
 end
 end
 
 
 function fh = plotInLine(dataCombineStructCells,varargin)
     pp = varargin;
-    errorType = 'ci';%ç»˜åˆ¶è¯¯å·®å¸¦çš„æ¨¡å¼ï¼Œstdï¼šmean+-sd,ciä¸º95%ç½®ä¿¡åŒºé—´ï¼Œminmaxä¸ºæœ€å¤§æœ€å°
+    errorType = 'ci';%»æÖÆÎó²î´øµÄÄ£Ê½£¬std£ºmean+-sd,ciÎª95%ÖÃĞÅÇø¼ä£¬minmaxÎª×î´ó×îĞ¡
     rang = 1:13;
     yFilterFunPtr = nan;
     legendLabels = {};
     baseField = 'rawData';
     showPureVessel = 0;
     rpm = 420;
-    natureFre= [1,2];%å›ºæœ‰é¢‘ç‡ï¼Œæ”¯æŒ[0.5,1,1.5,2,2.5,3]
-    %å…è®¸ç‰¹æ®Šçš„æŠŠåœ°ä¸€ä¸ªvararginä½œä¸ºlegend
+    natureFre= [1,2];%¹ÌÓĞÆµÂÊ£¬Ö§³Ö[0.5,1,1.5,2,2.5,3]
+    %ÔÊĞíÌØÊâµÄ°ÑµØÒ»¸övarargin×÷Îªlegend
     if 0 ~= mod(length(pp),2)
         legendLabels = pp{1};
         pp=pp(2:end);
@@ -49,7 +49,7 @@ function fh = plotInLine(dataCombineStructCells,varargin)
         val=pp{2};
         pp=pp(3:end);
         switch lower(prop)
-            case 'errortype' %è¯¯å·®å¸¦çš„ç±»å‹
+            case 'errortype' %Îó²î´øµÄÀàĞÍ
                 errorType = val;
             case 'rang'
                 rang = val;
@@ -66,15 +66,15 @@ function fh = plotInLine(dataCombineStructCells,varargin)
             case 'rpm'
                 rpm = val;
             otherwise
-                error('å‚æ•°é”™è¯¯%s',prop);
+                error('²ÎÊı´íÎó%s',prop);
         end
     end
 
 
     fh.figure = figure;
     paperFigureSet_normal();
-    x = constExpMeasurementPointDistance();%æµ‹ç‚¹å¯¹åº”çš„è·ç¦»
-    %éœ€è¦æ˜¾ç¤ºå•ä¸€ç¼“å†²ç½
+    x = constExpMeasurementPointDistance();%²âµã¶ÔÓ¦µÄ¾àÀë
+    %ĞèÒªÏÔÊ¾µ¥Ò»»º³å¹Ş
 
     if showPureVessel
         dataPat = getPureVesselCombineDataPath(rpm);
@@ -133,14 +133,14 @@ function fh = plotInLine(dataCombineStructCells,varargin)
     set(gca,'Position',[0.13 0.18 0.79 0.65]);
     fh.textboxTopAxixTitle = annotation('textbox',...
         [0.48 0.885 0.0998 0.0912],...
-        'String','æµ‹ç‚¹',...
+        'String','²âµã',...
         'FaceAlpha',0,...
         'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
     fh.textarrow = annotation('textarrow',[0.38 0.33],...
-        [0.744 0.665],'String',{'ç¼“å†²ç½'},'FontName',paperFontName(),'FontSize',paperFontSize());
+        [0.744 0.665],'String',{'»º³å¹Ş'},'FontName',paperFontName(),'FontSize',paperFontSize());
     fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
     ax = axis;
-    % ç»˜åˆ¶æµ‹ç‚¹çº¿
+    % »æÖÆ²âµãÏß
     yLabel2Detal = (ax(4) - ax(3))/12;
     for i = 1:length(x)
         fh.measurementGridLine(i) = plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
@@ -153,53 +153,6 @@ function fh = plotInLine(dataCombineStructCells,varargin)
             fh.measurementText(i) = text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
         end
     end
-    xlabel('ç®¡çº¿è·ç¦»(m)');
-    ylabel('å€é¢‘å¹…å€¼(kPa)');
-end
-
-function fh = plotInBar(dataCombineStructCells,varargin)
-    pp = varargin;
-    errorType = 'ci';%ç»˜åˆ¶è¯¯å·®å¸¦çš„æ¨¡å¼ï¼Œstdï¼šmean+-sd,ciä¸º95%ç½®ä¿¡åŒºé—´ï¼Œminmaxä¸ºæœ€å¤§æœ€å°
-    rang = 1:13;
-    yFilterFunPtr = nan;
-    legendLabels = {};
-    baseField = 'rawData';
-    showPureVessel = 0;
-    rpm = 420;
-    natureFre= [1,2];%å›ºæœ‰é¢‘ç‡ï¼Œæ”¯æŒ[0.5,1,1.5,2,2.5,3]
-    %å…è®¸ç‰¹æ®Šçš„æŠŠåœ°ä¸€ä¸ªvararginä½œä¸ºlegend
-    if 0 ~= mod(length(pp),2)
-        legendLabels = pp{1};
-        pp=pp(2:end);
-    end
-    while length(pp)>=2
-        prop =pp{1};
-        val=pp{2};
-        pp=pp(3:end);
-        switch lower(prop)
-            case 'errortype' %è¯¯å·®å¸¦çš„ç±»å‹
-                errorType = val;
-            case 'rang'
-                rang = val;
-            case 'yfilterfunptr'
-                yFilterFunPtr = val;
-            case 'basefield'
-                baseField = val;
-            case 'naturefre'
-                natureFre = val;
-            case 'nf'
-                natureFre = val;
-            case 'showpurevessel'
-                showPureVessel = val;
-            case 'rpm'
-                rpm = val;
-            otherwise
-                error('å‚æ•°é”™è¯¯%s',prop);
-        end
-    end
-
-    fh.figure = figure;
-    paperFigureSet_normal();
-    x = constExpMeasurementPointDistance();%æµ‹ç‚¹å¯¹åº”çš„è·ç¦»
-    
+    xlabel('¹ÜÏß¾àÀë(m)');
+    ylabel('±¶Æµ·ùÖµ(kPa)');
 end

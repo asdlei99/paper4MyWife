@@ -10,6 +10,9 @@ varargin = {};
 STFT.windowSectionPointNums = 1024;
 STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
+subplotRow = 1;
+subplotCol = -1;
+figureHeight = 10;
 %允许特殊的把地一个varargin作为legend
 legendLabels = {};
 if 0 ~= mod(length(pp),2)
@@ -25,14 +28,23 @@ while length(pp)>=2
         	STFT = val;
         case 'legendlabels'
             legendLabels = val;
+        case 'subplotrow'
+            subplotRow = val;
+        case 'subplotcol'
+            subplotCol = val;
+        case 'figureheight'
+            figureHeight = val;
         otherwise
        		varargin{length(varargin)+1} = prop;
             varargin{length(varargin)+1} = val;
     end
 end
 
+if subplotRow <= 0
+    error('subplotRow 必须大于等于1');
+end
 
-fh.figure = figure
+fh.figure = figure;
 if 1 == length(meaPoint)
     paperFigureSet_normal();
     wave=dataCells.pressure(:,meaPoint);
@@ -43,18 +55,21 @@ if 1 == length(meaPoint)
     ylabel('时间(s)','FontName',paperFontName(),'FontSize',paperFontSize());
     zlabel('幅值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
 else
-    paperFigureSet_FullWidth(8)
+    paperFigureSet_FullWidth(figureHeight)
+    if subplotCol <= 0
+        subplotCol = length(meaPoint) / subplotRow;
+    end
     for i=1:length(meaPoint)
-        fh.subplotHandles = subplot(1,length(meaPoint),i);
+        fh.subplotHandles = subplot(subplotRow,subplotCol,i);
         wave=dataCells.pressure(:,meaPoint(i));
         [fh.plotHandles(i),spectrogramData] = plotSTFT( wave,STFT,Fs,varargin{:});
         colorbar('off');
         box on;
         xlim([0,50]);
         if ~isempty(legendLabels)
-            fh.title(i) = title(legendLabels{i});
+            fh.title(i) = title(legendLabels{i},'FontName',paperFontName(),'FontSize',paperFontSize());
         end
-        if 1 == i
+        if 1==i || 0 == mod(i-1,subplotCol)
             fh.ylabel = ylabel('时间(s)','FontName',paperFontName(),'FontSize',paperFontSize());
         end
         fh.xlabel(i) = xlabel('频率(Hz)','FontName',paperFontName(),'FontSize',paperFontSize());

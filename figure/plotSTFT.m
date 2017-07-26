@@ -44,6 +44,7 @@ function [fh,spectrogramData] = plotSTFT( wave,STFT,Fs,varargin )
         [X,Y] = meshgrid(spectrogramData.F,spectrogramData.T);
         [~,fh.contourfHandle] = contourf(X,Y,mag');
         set(fh.contourfHandle,'LineStyle',contourfLineStyle);
+        ylim([Y(1,1),Y(end,1)]);
         %shading flat%保持光滑效果
         if isShowColorbar
             colorbar;
