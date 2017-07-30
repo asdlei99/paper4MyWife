@@ -251,11 +251,11 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,Lv2,lv3,k,Dv,Dbias,dp
                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵  
         M4 = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
-<<<<<<< HEAD
-        Mv = M4 * M3 * M2 * M1;     
-=======
+% 
+%         Mv = M4 * M3 * M2 * M1;     
+
         Mv = M1 * M2 * M3 * M4;     
->>>>>>> caa8b7b2fbaf198342affebcf7f6950967694fb1
+
         return;
     end
     %使用容积传递矩阵

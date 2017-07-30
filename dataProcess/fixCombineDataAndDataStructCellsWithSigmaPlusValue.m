@@ -12,11 +12,11 @@ function res = fixCombineDataAndDataStructCellsWithSigmaPlusValue( folderPath )
         dataStructCells{i,4} = sgV(i,:);
     end
 %
-    saveMatFilePath = fullfile(folderPath,[constDataStructCellsFileName(),'.mat']);
+    saveMatFilePath = fullfile(folderPath,[constExpDataStructCellsFileName(),'.mat']);
     save(saveMatFilePath,'dataStructCells');
 
     combineDataStruct = combineExprimentMatFile(saveMatFilePath);
-    saveMatFilePath = fullfile(folderPath,[constCombineDataStructFileName(),'.mat']);
+    saveMatFilePath = fullfile(folderPath,[constExpCombineDataStructFileName(),'.mat']);
     save(saveMatFilePath,'combineDataStruct');
 end
 

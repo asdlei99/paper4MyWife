@@ -16,7 +16,7 @@ end
 
 combineDataStruct = combineExprimentMatFile(matDataStructPath);
 saveMatPath = fileparts(matDataStructPath);
-saveMatPath = fullfile(saveMatPath,[constCombineDataStructFileName(),'.mat']);
+saveMatPath = fullfile(saveMatPath,[constExpCombineDataStructFileName(),'.mat']);
 save(saveMatPath,'combineDataStruct');
 
 

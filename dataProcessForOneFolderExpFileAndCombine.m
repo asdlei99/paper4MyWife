@@ -99,7 +99,7 @@ save(saveMatFilePath,'dataStructCells');
 %处理联合结果
 combineDataStruct = combineExprimentMatFile(saveMatFilePath);
 %保持结果
-saveCombineMatPath = fullfile(xlsDataFileFolder,[constCombineDataStructFileName(),'.mat']);
+saveCombineMatPath = fullfile(xlsDataFileFolder,[constExpCombineDataStructFileName(),'.mat']);
 % pointIndex = strfind(saveMatFilePath,'.');
 % saveCombineMatPath = saveMatFilePath(1:pointIndex(end)-1);
 % saveCombineMatPath = strcat(saveCombineMatPath,'_combine.mat');

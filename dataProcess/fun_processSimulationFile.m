@@ -1,5 +1,6 @@
 function dataStruct = fun_processSimulationFile( fileFullPath,varargin )
 % 加载北区的实验数据到dataStruct里
+%  fileFullPath 若输入多个路径，使用一个cell来输入时，会按照顺序连接所有cell的数据并做分析
 %   文件路径
 baseFrequency = 10;%基频
 allowDeviation = 0.5;%获取倍频时允许的误差范围，默认为0.5
@@ -9,7 +10,6 @@ pp=varargin;
 beforeAfterMeaPoint = nan;
 calcPeakPeakValueSection = nan;
 Fs = 200;
-combineCFXPath = nan;
 polyfitN = -1;
 isFluent = 0;%是否是fluent导出的数据
 loadDataStartTime = nan;
@@ -38,8 +38,6 @@ while length(pp)>=2
             loadDataEndTime = val;
         case 'calcpeakpeakvaluesection'
             calcPeakPeakValueSection = val;
-        case 'combinecfxpath'
-            combineCFXPath = val;%对于需要联合的模拟数据，定义多个路径
         case 'polyfitn'
             polyfitN = val;
         case 'isfluent'
@@ -58,7 +56,7 @@ dataStruct.input.multFreTimes = multFreTimes;
 dataStruct.input.semiFreTimes = semiFreTimes;
 
 
-if isnan(combineCFXPath)
+if ~iscell(fileFullPath)
     rawData = loadSimulationPressureData(fileFullPath...
                 ,'section',simulationDataSection...
                 ,'Fs',Fs...
@@ -67,7 +65,7 @@ if isnan(combineCFXPath)
                 ,'isFluent',isFluent...
                 );
 else
-    rawData = combineCFXSimulateData('datapaths',combineCFXPath...
+    rawData = combineCFXSimulateData('datapaths',fileFullPath...
                 ,'section',simulationDataSection...
                 ,'Fs',Fs...
                 ,'loadDataStartTime',loadDataStartTime...
