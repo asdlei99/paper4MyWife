@@ -1,18 +1,18 @@
 function [fh,spectrogramData] = figureExpPressureSpectrum(dataCells,varargin)
-%缁樺埗瀹為獙鏁版嵁鐨勯璋卞浘
-% dataCells锛歞ataStructCells涓嬬殑鍏蜂綋娴嬮噺鐨勬暟鎹甦ataStructCells{n,2}
-% meaPoint:娴嬬偣
-% varargin鍙?灞炴?锛?
-% chartType锛氱粯鍥剧被鍨嬶紝鍙?鈥榗ontour鈥欙紙榛樿锛夋垨鑰呪?plot3鈥?
-% baseField: 缁樺浘鏁版嵁绫诲瀷锛?
+%绘制实验数据的频谱图
+% dataCells：dataStructCells下的具体测量的数据dataStructCells{n,2}
+% meaPoint:测点
+% varargin可选属性：
+% chartType：绘图类型，可选‘contour’（默认）或者‘plot3’
+% baseField: 绘图数据类型，
 pp = varargin;
 varargin = {};
 baseField = 'rawData';
-meaPoint = 1:13;%鏄剧ず鐨勬祴鐐?
+meaPoint = 1:13;%显示的测点
 figureHeight = 10;
 chartType = 'plot3';
-
-%鍏佽鐗规畩鐨勬妸鍦颁竴涓獀arargin浣滀负legend
+dataCellNum = 1;%define which row of dataCells should be plot,this val can set to 1~5
+%允许特殊的把地一个varargin作为legend
 legendLabels = {};
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -29,32 +29,30 @@ while length(pp)>=2
             baseField = val;
         case 'chartType'
             chartType = val;
+        case 'datacellnum'
+            dataCellNum = val;
         otherwise
        		varargin{length(varargin)+1} = prop;
             varargin{length(varargin)+1} = val;
     end
 end
 
-x = constExpMeasurementPointDistance();%娴嬬偣瀵瑰簲鐨勮窛绂?
+x = constExpMeasurementPointDistance();%测点对应的距离
 count = 1;
-for i = 1:length(dataCells)
-    fh.figure(i) = figure;
-    paperFigureSet_normal();
-    for mp = meaPoint
-        if(1 == length(dataCells))
-            [fre,tmp] = getExpFreMagDatas(dataCells,mp,baseField);
-        else
-            [fre,tmp] = getExpFreMagDatas(dataCells{i},mp,baseField);
-        end
-        mag(:,count) = tmp;
-        [fh.plot3Handle(count),fh.plot3FillHandle(count)] = plotSpectrum3(fre,tmp,x(mp));
-        count = count + 1;
-    end
-    %缁樺埗鍥惧舰
-    xlabel('棰戠巼(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
-    ylabel('璺濈(m)','FontName',paperFontName(),'FontSize',paperFontSize());
-    zlabel('骞呭?(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+
+fh.figure = figure;
+paperFigureSet_normal();
+for mp = meaPoint
+    [fre,tmp] = getExpFreMagDatas(dataCells{dataCellNum,2},mp,baseField);
+    mag(:,count) = tmp;
+    [fh.plot3Handle(count),fh.plot3FillHandle(count)] = plotSpectrum3(fre,tmp,x(mp));
+    count = count + 1;
 end
+%绘制图形
+xlabel('频率(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
+ylabel('距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
+zlabel('幅值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+
 
 
 
