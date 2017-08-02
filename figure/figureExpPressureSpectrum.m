@@ -11,7 +11,7 @@ baseField = 'rawData';
 meaPoint = 1:13;%显示的测点
 figureHeight = 10;
 chartType = 'plot3';
-
+dataCellNum = 1;%define which row of dataCells should be plot,this val can set to 1~5
 %允许特殊的把地一个varargin作为legend
 legendLabels = {};
 if 0 ~= mod(length(pp),2)
@@ -29,6 +29,8 @@ while length(pp)>=2
             baseField = val;
         case 'chartType'
             chartType = val;
+        case 'datacellnum'
+            dataCellNum = val;
         otherwise
        		varargin{length(varargin)+1} = prop;
             varargin{length(varargin)+1} = val;
@@ -37,24 +39,20 @@ end
 
 x = constExpMeasurementPointDistance();%测点对应的距离
 count = 1;
-for i = 1:length(dataCells)
-    fh.figure(i) = figure;
-    paperFigureSet_normal();
-    for mp = meaPoint
-        if(1 == length(dataCombineStruct))
-            [fre,tmp] = getExpFreMagDatas(dataCells,mp,baseField);
-        else
-            [fre,tmp] = getExpFreMagDatas(dataCells{i},mp,baseField);
-        end
-        mag(:,count) = tmp;
-        [fh.plot3Handle(count),fh.plot3FillHandle(count)] = plotSpectrum3(fre,tmp,x(mp));
-        count = count + 1;
-    end
-    %绘制图形
-    xlabel('频率(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
-    ylabel('距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
-    zlabel('幅值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+
+fh.figure = figure;
+paperFigureSet_normal();
+for mp = meaPoint
+    [fre,tmp] = getExpFreMagDatas(dataCells{dataCellNum,2},mp,baseField);
+    mag(:,count) = tmp;
+    [fh.plot3Handle(count),fh.plot3FillHandle(count)] = plotSpectrum3(fre,tmp,x(mp));
+    count = count + 1;
 end
+%绘制图形
+xlabel('频率(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
+ylabel('距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
+zlabel('幅值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+
 
 
 
