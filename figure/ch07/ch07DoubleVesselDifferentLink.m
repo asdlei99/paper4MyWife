@@ -40,10 +40,10 @@ Fs = 100;%实验采样率
 STFT.windowSectionPointNums = 512;
 STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
-STFTChartType = 'contour';%contour|plot3
+STFTChartType = 'plot3';%contour|plot3
 %% 绘图 
 %% [1,3,5,7,9,13]测点的时频分析波形
-if 0
+if 1
     dataNumIndex = 2;%读取的实验组数，<5
     measurePoint = [1,3,5,7,9,13];%时频分析波形的测点
     stftLabels = {};
