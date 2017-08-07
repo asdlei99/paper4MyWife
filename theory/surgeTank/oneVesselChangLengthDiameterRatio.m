@@ -1,89 +1,110 @@
 %% 单一缓冲罐迭代长径比研究
-clc;
-close all;
-clear;
-currentPath = fileparts(mfilename('fullpath'));
+function theoryDataCells = oneVesselChangLengthDiameterRatio(varargin)
+pp = varargin;
+Dv = nan;
+massflowData = nan;
+while length(pp)>=2
+    prop =pp{1};
+    val=pp{2};
+    pp=pp(3:end);
+    switch lower(prop)
+        case 'massflowdata'
+            massflowData = val;
+        case 'dv'
+            Dv = val;
+	end
+end
 %% 初始参数
 %
-isOpening = 0;%管道闭口
-%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
-rpm = 420;
-outDensity = 1.5608;
-Fs = 4096;
-[massFlowRaw,time,~,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,rpm...
-	,0.14,1.075,outDensity,'rcv',0.15,'k',1.4,'pr',0.15,'fs',Fs,'oneSecond',6);
-[freRaw,AmpRaw,PhRaw,massFlowERaw] = frequencySpectrum(detrend(massFlowRaw,'constant'),Fs);
-freRaw = [7,14,21,28,14*3];
-massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
-massFlowE = massFlowERaw;
-Fre = freRaw;
-% ==================================================================================
-%% 
-[time,massFlow,Fre,massFlowE ] = getMassFlowData('N',4096,'isfindpeaks',1);
-[massFlow.time,massFlow.massFlow,massFlow.Fre,massFlow.massFlowE] = getMassFlowData('N',4096,'isfindpeaks',1);
-Fs = 1/(time(2)-time(1));
-[los]=find(Fre>19 & Fre <21);
-Fre(los) = Fre(los)./1.5;
+param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
+param.rpm = 420;
+param.outDensity = 1.5608;
+param.Fs = 4096;
 
-temp = Fre<20 | (Fre>22&Fre<60);%Fre<80;
-Fre = Fre(temp);
+if isnan(massflowData)
+    [massFlowRaw,time,~,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
+        ,0.14,1.075,param.outDensity,'rcv',0.15,'k',1.4,'pr',0.15,'fs',param.Fs,'oneSecond',6);
+    [freRaw,AmpRaw,PhRaw,massFlowERaw] = frequencySpectrum(detrend(massFlowRaw,'constant'),param.Fs);
+    freRaw = [7,14,21,28,14*3];
+    massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
+    massFlowE = massFlowERaw;
+    param.fre = freRaw;
+    param.massFlowE = massFlowE;
+else
+    time = makeTime(param.Fs,1024);
+    param.fre = massflowData(1,:);
+    param.massFlowE = massflowData(2,:);
+end
 
-massFlowE = massFlowE(temp);
+param.acousticVelocity = 345;%声速（m/s）
+param.isDamping = 1;
+param.coeffFriction = 0.03;
+param.meanFlowVelocity = 16;
+param.L1 = 3.5;%(m)
+param.L2 = 6;
+param.Lv = 1.1;
+param.l = 0.01;%(m)缓冲罐的连接管长
+param.Dv = 0.372;
+param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
+param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+param.Dpipe = 0.098;%管道直径（m）
+param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 
-simValue = [9.17543970000000	10.3250122100000	10.1907085000000	10.6239057600000	10.4358613300000	9.80200586000000	9.64491675000000	9.80446094000000	9.65491846000000	9.01961939000000	7.78409082000000	5.75730152000000	2.91316907000000	1.46925610400000	2.39139527000000	3.15910156000000	3.73210498000000	4.09421813000000	4.19560510000000	4.19263013000000	4.09637684000000	3.97438465000000	3.74883410000000	3.37208447000000	2.76874720000000	1.93113226400000	0.929064820000000	4.43451025300000e-06];
-XsimValue = [0:13,((0:13) + 13+2+0.115*2)];
-%%
-
-acousticVelocity = 345;%声速（m/s）
-isDamping = 1;
-coeffFriction = 0.03;
-meanFlowVelocity = 16;
-L1 = 3;%(m)
-L2 = 6;
-Lv = 1.1;
-l = 0.01;%(m)缓冲罐的连接管长
-Dv = 0.372;
-sectionL1 = linspace(0,L1,14);
-sectionL2 = linspace(0,L2,14);
-Dpipe = 0.098;%管道直径（m）
-X = [sectionL1,sectionL2 + 3 + Lv + 2 * l];
-
-baseFrequency = 10;
-multFreTimes = 8;
+baseFrequency = 14;
+multFreTimes = 3;
+semiFreTimes = 3;
 allowDeviation = 0.5;
-%% 计算脉动压力
 
-[pressure1,pressure2] = oneVesselPulsationCalc(massFlowE,Fre,time,L1,L2,Lv,l,Dpipe,Dv ...
-	,sectionL1,sectionL2 ...
-	,'a',acousticVelocity,'isDamping',isDamping,'friction',coeffFriction,'meanFlowVelocity',meanFlowVelocity);
-pressure = [pressure1,pressure2];
-
+V = (pi * param.Dv.^2 / 4) .* param.Lv;%缓冲罐体积
+%开始计算迭代的Lv和Dv
+if isnan(Dv)
+    Dv = 0.1:0.05:0.9;
+end
+Lv = (4*V) ./ (pi * Dv.^2);
 dcpss = getDefaultCalcPulsSetStruct();
-dcpss.calcSection = [0.4,0.5];
-dcpss.fs = Fs;
+dcpss.calcSection = [0.2,0.8];
+dcpss.fs = param.Fs;
 dcpss.isHp = 0;
 dcpss.f_pass = 7;%通过频率5Hz
 dcpss.f_stop = 5;%截止频率3Hz
 dcpss.rp = 0.1;%边带区衰减DB数设置
 dcpss.rs = 30;%截止区衰减DB数设置
+theoryDataCells{1,1} = '描述';
+theoryDataCells{1,2} = 'dataCells';
+theoryDataCells{1,3} = 'input';
+theoryDataCells{1,4} = 'Lv';
+theoryDataCells{1,5} = 'Dv';
+theoryDataCells{1,6} = 'Lv/Dv(长径比)';
+theoryDataCells{1,7} = 'X';
 
-[plus,filterData] = calcPuls(pressure,dcpss);
+for i = 1:length(Dv)
+    [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
+        ,param.L1,param.L2,Lv(i),param.l,param.Dpipe,Dv(i) ...
+        ,param.sectionL1,param.sectionL2 ...
+        ,'a',param.acousticVelocity...
+        ,'isDamping',param.isDamping...
+        ,'friction',param.coeffFriction...
+        ,'meanFlowVelocity',param.meanFlowVelocity...
+        );
+    beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
+    pressure = [pressure1,pressure2];
+    %[plus,filterData] = calcPuls(pressure,dcpss);
+    theoryDataCells{i+1,1} = sprintf('缓冲罐长:%g,直径:%g,长径比:%g',Lv(i),Dv(i),Lv(i)/Dv(i));
+    theoryDataCells{i+1,2} = fun_dataProcessing(pressure...
+                                ,'fs',param.Fs...
+                                ,'basefrequency',baseFrequency...
+                                ,'allowdeviation',allowDeviation...
+                                ,'multfretimes',multFreTimes...
+                                ,'semifretimes',semiFreTimes...
+                                ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
+                                ,'calcpeakpeakvaluesection',nan...
+                                );
+    theoryDataCells{i+1,3} = param;
+    theoryDataCells{i+1,4} = Lv(i);
+    theoryDataCells{i+1,5} = Dv(i);
+    theoryDataCells{i+1,6} = Lv(i)/Dv(i);
+    theoryDataCells{i+1,7} = [param.sectionL1, param.sectionL1(end) + 2*param.l + Lv(i) + param.sectionL2];
+end
 
-figure
-plot(X,plus./1000,'-r');
-hold on;
-plot(XsimValue,simValue,'-b');
-set(gcf,'color','w');
 
-% [plus,pressure] = fun_straightPipe(massFlowE1,L,Dpipe,opt,sectionL);
-% plus = plus'./1000;
-[multFreMag] = calcBaseFres(pressure,Fs,baseFrequency,multFreTimes,allowDeviation);
-
-figure
-plot(multFreMag(1,:)./1000);
-hold on;
-plot(multFreMag(2,:)./1000);
-plot(multFreMag(3,:)./1000);
-set(gcf,'color','w');
-
-
+end

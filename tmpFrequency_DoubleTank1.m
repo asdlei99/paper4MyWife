@@ -58,7 +58,10 @@ sectionL2 = 0:0.25:L2;
 sectionL3 = 0:0.25:L3;
 sectionL4 = 0:0.25:L4;
 sectionL5 = 0:0.25:L5;
-
+beforeIndexDBE = length(sectionL1);
+beforeIndexDBS = beforeIndexDBE;
+afterIndexDBE = length(sectionL1)+length(sectionL3)+1;
+afterIndexDBS = length(sectionL1)+1;
 %       长度 L1     l    Lv    l    L2   l    Lv
 %                   __________            ___________ 
 %                  |          |          |           |   
@@ -75,7 +78,7 @@ sectionL5 = 0:0.25:L5;
     vhpicStruct.lv3,vhpicStruct.Dbias,...
     sectionL1,sectionL3,sectionL4,...
     'a',opt.acousticVelocity,'isDamping',opt.isDamping,'friction',opt.coeffFriction,...
-    'meanFlowVelocity',40,'isUseStaightPipe',1,...
+    'meanFlowVelocity',45,'isUseStaightPipe',1,...
     'm',opt.mach,'notMach',opt.notMach...
     ,'isOpening',isOpening...
     );%,'coeffDamping',opt.coeffDamping
@@ -122,7 +125,7 @@ magVesselDBS = magVesselDBS(freRang,:);
 
 %% 全管系脉冲响应云图
 rowCount = 1;
-columnCount = 4;
+columnCount = 2;
 subplotCount = 1;
 figure('Name','管系脉冲响应-全管系脉冲响应云图')
 
@@ -146,8 +149,9 @@ minVal = 10e10;
 %双罐-罐二作弯头
 subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
 y = freVesselDBE(:,1);
-x = [sectionL1, L1 + 2*vhpicStruct.l+vhpicStruct.LV1+sectionL3,...
+sectionLDBE = [sectionL1, L1 + 2*vhpicStruct.l+vhpicStruct.LV1+sectionL3,...
                                L1 + 2*vhpicStruct.l+vhpicStruct.LV1+L3+ 2*vhpicStruct.l+vhpicStruct.lv3+sectionL4];
+x = sectionLDBE;
 Z = magVesselDBE;
 maxVal=max([maxVal,max(Z)]);
 minVal = min([minVal,min(Z)]);
@@ -156,7 +160,7 @@ contourf(X,Y,Z);
 set(gca,'XTick',0:2:10);
 hold on;
 ax = axis;
-fax(2) = gca;
+fax(subplotCount-1) = gca;
 plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
 text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
@@ -166,8 +170,9 @@ title('双罐-罐二作弯头','fontName',paperFontName(),'FontSize',paperFontSize());
 %双罐串联
 subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
 y = freVesselDBS(:,1);
-x = [sectionL1, ...
+sectionLDBS = [sectionL1, ...
     L1 + 2*vhpicStruct.l+vhpicStruct.LV1+2*vhpicStruct.l+vhpicStruct.LV2+sectionL5];
+x = sectionLDBS;
 Z = magVesselDBS;
 maxVal=max([maxVal,max(Z)]);
 minVal = min([minVal,min(Z)]);
@@ -176,7 +181,7 @@ contourf(X,Y,Z);
 set(gca,'XTick',0:2:10);
 hold on;
 ax = axis;
-fax(3) = gca;
+fax(subplotCount-1) = gca;
 plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
 text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
@@ -197,9 +202,9 @@ set(gcf,'color','w');
 %% 罐前管系系脉冲响应云图
 figure('Name','管系脉冲响应-罐前管系系脉冲响应云图')
 subplot(1,2,1)
-y = freVessel(:,1);
-x = sectionL(1:afterIndex);
-Z = magVessel(:,1:afterIndex);
+y = freVesselDBE(:,1);
+x = sectionLDBE(1:beforeIndexDBE);
+Z = magVesselDBE(:,1:beforeIndexDBE);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
 xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
@@ -207,9 +212,9 @@ ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
 title('surge tank','fontName',paperFontName(),'FontSize',paperFontSize());
 
 subplot(1,2,2)
-y = fre1(:,1);
-x = sectionL(1:afterIndex);
-Z = mag1(:,1:afterIndex);
+y = freVesselDBS(:,1);
+x = sectionLDBS(1:beforeIndexDBS);
+Z = magVesselDBS(:,1:beforeIndexDBS);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
 xlabel('Measurement point','fontName',paperFontName(),'FontSize',paperFontSize());
@@ -222,9 +227,9 @@ set(gcf,'color','w');
 %% 罐后管系系脉冲响应云图
 figure('Name','管系脉冲响应-罐后管系系脉冲响应云图')
 subplot(1,2,1)
-y = freVessel(:,1);
-x = sectionL(afterIndex+1:end);
-Z = magVessel(:,afterIndex+1:end);
+y = freVesselDBE(:,1);
+x = sectionLDBE(afterIndexDBE:end);
+Z = magVesselDBE(:,afterIndexDBE:end);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
 xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
@@ -232,9 +237,9 @@ ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
 title('surge tank','fontName',paperFontName(),'FontSize',paperFontSize());
 
 subplot(1,2,2)
-y = fre1(:,1);
-x = sectionL(afterIndex+1:end);
-Z = mag1(:,afterIndex+1:end);
+y = freVesselDBS(:,1);
+x = sectionLDBS(afterIndexDBS:end);
+Z = magVesselDBS(:,afterIndexDBS:end);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
 xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
