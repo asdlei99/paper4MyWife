@@ -1,9 +1,10 @@
 function fh = figureTheoryPressurePlus(dataCells,X,varargin)
-%»æÖÆÊµÊµÑéµÄÑ¹Á¦Âö¶¯
+%ç»˜åˆ¶å®å®éªŒçš„å‹åŠ›è„‰åŠ¨
 % 
 pp = varargin;
 legendLabels = {};
-%ÔÊĞíÌØÊâµÄ°ÑµØÒ»¸övarargin×÷Îªlegend
+Y = nan;%å¦‚æœYèµ‹å€¼ï¼Œå°†ä¼šä»¥3då½¢å¼ç»˜åˆ¶
+%å…è®¸ç‰¹æ®Šçš„æŠŠåœ°ä¸€ä¸ªvararginä½œä¸ºlegend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
     pp=pp(2:end);
@@ -13,42 +14,53 @@ while length(pp)>=2
     val=pp{2};
     pp=pp(3:end);
     switch lower(prop)
+        case 'y'
+            Y = val;
         otherwise
-       		error('²ÎÊı´íÎó%s',prop);
+       		error('å‚æ•°é”™è¯¯%s',prop);
     end
 end
 
 figure
 paperFigureSet_normal();
+if isnan(Y)
+    for plotCount = 1:length(dataCells)
+        if 2 == plotCount
+            hold on;
+        end
+        if(1 == length(dataCells))
+            y = dataCells.pulsationValue;
+        else
+            y = dataCells{plotCount}.pulsationValue;
+        end
+        y = y./1000;
+        if size(X,1) > 1
+            x = X{plotCount,:};
+        else
+            x = X;
+        end
+        if isnan(y)
+            error('æ²¡æœ‰è·å–åˆ°æ•°æ®');
+        end
 
-for plotCount = 1:length(dataCells)
-    if 2 == plotCount
-        hold on;
+        [fh.plotHandle(plotCount)] = plot(x,y,'color',getPlotColor(plotCount)...
+            ,'Marker',getMarkStyle(plotCount));
     end
-    if(1 == length(dataCells))
-        y = dataCells.pulsationValue;
-    else
-        y = dataCells{plotCount}.pulsationValue;
-    end
-    y = y./1000;
-    if size(X,1) > 1
-        x = X{plotCount,:};
-    else
-        x = X;
-    end
-    if isnan(y)
-        error('Ã»ÓĞ»ñÈ¡µ½Êı¾İ');
+    if ~isempty(legendLabels)
+        fh.legend = legend(fh.plotHandle,legendLabels,0);
     end
 
-    [fh.plotHandle(plotCount)] = plot(x,y,'color',getPlotColor(plotCount)...
-        ,'Marker',getMarkStyle(plotCount));
+    xlabel('ç®¡çº¿è·ç¦»(m)');
+    ylabel('è„‰åŠ¨å³°å³°å€¼(kPa)');
+else
+    for i = 1:length(dataCells)
+        z = dataCells{i}.pulsationValue;
+    end
+    z = z./1000;
+        
+        
+    
 end
-if ~isempty(legendLabels)
-    fh.legend = legend(fh.plotHandle,legendLabels,0);
-end
-
-xlabel('¹ÜÏß¾àÀë(m)');
-ylabel('Âö¶¯·å·åÖµ(kPa)');
 
 end
 
