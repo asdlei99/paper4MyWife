@@ -5,7 +5,7 @@ clc;
 
 freTimes = 1;
 fs = 1024*freTimes;
-pulsSig = [2048,zeros(1,1024*freTimes-1)];
+pulsSig = [100,zeros(1,1024*freTimes-1)];
 time = 0:1:(size(pulsSig,2)-1);
 time = time .* (1/fs);
 [frequency,~,~,magE] = frequencySpectrum(pulsSig,fs);
@@ -31,7 +31,7 @@ opt.acousticVelocity = 345;%声速
 opt.meanFlowVelocity = 25.51;
 opt.isDamping = 1;%是否计算阻尼
 opt.coeffDamping = nan;%阻尼
-opt.coeffFriction = 0.04;%管道摩察系数
+opt.coeffFriction = 0.003;%管道摩察系数
 opt.isUseStaightPipe = 1;%计算容器传递矩阵的方法
 opt.mach = opt.meanFlowVelocity / opt.acousticVelocity;
 opt.notMach = 0;
@@ -40,7 +40,7 @@ L1 = 3.5;%L1(m)
 L2 = 6;%L2（m）长度
 L3 = 1.5;%双罐串联罐二作弯头两罐间距
 L4 = 4.0;%双罐串联罐二作弯头出口管长
-L5 = 4.5;%双罐无间隔串联L2（m）长度
+L5 = 5.85;%4.5%双罐无间隔串联L2（m）长度
 
 vhpicStruct.l = 0.01;
 vhpicStruct.DV1 = 0.372;%缓冲罐的直径（m）
@@ -77,8 +77,8 @@ afterIndexDBS = length(sectionL1)+1;
     vhpicStruct.LV1,vhpicStruct.LV2,vhpicStruct.l,Dpipe,vhpicStruct.DV1,vhpicStruct.DV2,...
     vhpicStruct.lv3,vhpicStruct.Dbias,...
     sectionL1,sectionL3,sectionL4,...
-    'a',opt.acousticVelocity,'isDamping',opt.isDamping,'friction',opt.coeffFriction,...
-    'meanFlowVelocity',45,'isUseStaightPipe',1,...
+    'a',opt.acousticVelocity,'isDamping',opt.isDamping,'friction',0.045,...
+    'meanFlowVelocity',opt.meanFlowVelocity,'isUseStaightPipe',1,...
     'm',opt.mach,'notMach',opt.notMach...
     ,'isOpening',isOpening...
     );%,'coeffDamping',opt.coeffDamping
@@ -96,8 +96,8 @@ afterIndexDBS = length(sectionL1)+1;
     L1,L5,...
     vhpicStruct.LV1,vhpicStruct.LV2,vhpicStruct.l,Dpipe,vhpicStruct.DV1,vhpicStruct.DV2,...
     sectionL1,sectionL5,...
-    'a',opt.acousticVelocity,'isDamping',opt.isDamping,'friction',opt.coeffFriction,...
-    'meanFlowVelocity',20,'isUseStaightPipe',1,...
+    'a',opt.acousticVelocity,'isDamping',opt.isDamping,'friction',0.003,...
+    'meanFlowVelocity',opt.meanFlowVelocity,'isUseStaightPipe',1,...
     'm',opt.mach,'notMach',opt.notMach...
     ,'isOpening',isOpening...
     );%,'coeffDamping',opt.coeffDamping
@@ -111,11 +111,11 @@ pressureVesselDBS = [pressure1DBS,pressure2DBS];
 %定义频率的范围
 freRang = 1:100;
 %对压力进行傅里叶变换
-[freVesselDBE,magVesselDBE] = frequencySpectrum(pressureVesselDBE,fs,'scale','ampDB');
+[freVesselDBE,magVesselDBE] = frequencySpectrum(pressureVesselDBE,fs,'scale','amp');
 freVesselDBE = freVesselDBE(freRang,:);
 magVesselDBE = magVesselDBE(freRang,:);
 
-[freVesselDBS,magVesselDBS] = frequencySpectrum(pressureVesselDBS,fs,'scale','ampDB');
+[freVesselDBS,magVesselDBS] = frequencySpectrum(pressureVesselDBS,fs,'scale','amp');
 freVesselDBS = freVesselDBS(freRang,:);
 magVesselDBS = magVesselDBS(freRang,:);
 
@@ -124,30 +124,19 @@ magVesselDBS = magVesselDBS(freRang,:);
 % magPipe = magPipe(freRang,:);
 
 %% 全管系脉冲响应云图
-rowCount = 1;
+multMagA = [];
+semiMagA = [];
+rowCount = 4;
 columnCount = 2;
 subplotCount = 1;
 figure('Name','管系脉冲响应-全管系脉冲响应云图')
 
-maxVal = 0;
+maxVal = -10e10;
 minVal = 10e10;
-% %直管
-% subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-% y = frePipe(:,1);
-% x = sectionL;%1:size(mag1,2);
-% Z = magPipe;
-% [X,Y] = meshgrid(x,y);
-% contourf(X,Y,Z);
-% fax(1) = gca;
-% maxVal=max([maxVal,max(Z)]);
-% minVal = min([minVal,min(Z)]);
-% set(gca,'XTick',0:2:10);
-% xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-% ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-% title(sprintf('直管'),'fontName',paperFontName(),'FontSize',paperFontSize());
+
 
 %双罐-罐二作弯头
-subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+subplot(rowCount,columnCount,[1,3]);
 y = freVesselDBE(:,1);
 sectionLDBE = [sectionL1, L1 + 2*vhpicStruct.l+vhpicStruct.LV1+sectionL3,...
                                L1 + 2*vhpicStruct.l+vhpicStruct.LV1+L3+ 2*vhpicStruct.l+vhpicStruct.lv3+sectionL4];
@@ -157,18 +146,32 @@ maxVal=max([maxVal,max(Z)]);
 minVal = min([minVal,min(Z)]);
 [X,Y] = meshgrid(x,y);
 contourf(X,Y,Z);
+
 set(gca,'XTick',0:2:10);
 hold on;
 ax = axis;
-fax(subplotCount-1) = gca;
+fax(1) = gca;
 plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
+plot([ax(1),ax(2)],[14,14],':','color',[0.9,0.9,0.9]);
+plot([ax(1),ax(2)],[14*2,14*2],':','color',[0.9,0.9,0.9]);
+plot([ax(1),ax(2)],[14*3,14*3],':','color',[0.9,0.9,0.9]);
 text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
 title('双罐-罐二作弯头','fontName',paperFontName(),'FontSize',paperFontSize());
+set(gca,'XTickLabel',{});
+multMagA(1,:) = Z(14,:);
+multMagA(2,:) = Z(14*2,:);
+multMagA(3,:) = Z(14*3,:);
+semiMagA(1,:) = Z(14*0.5,:);
+semiMagA(2,:) = Z(14*1.5,:);
+semiMagA(3,:) = Z(14*2.5,:);
+
 %双罐串联
-subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+multMagB = [];
+semiMagB = [];
+subplot(rowCount,columnCount,[2,4]);
 y = freVesselDBS(:,1);
 sectionLDBS = [sectionL1, ...
     L1 + 2*vhpicStruct.l+vhpicStruct.LV1+2*vhpicStruct.l+vhpicStruct.LV2+sectionL5];
@@ -181,24 +184,63 @@ contourf(X,Y,Z);
 set(gca,'XTick',0:2:10);
 hold on;
 ax = axis;
-fax(subplotCount-1) = gca;
+fax(2) = gca;
 plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
+plot([ax(1),ax(2)],[14,14],':','color',[0.9,0.9,0.9]);
+plot([ax(1),ax(2)],[14*2,14*2],':','color',[0.9,0.9,0.9]);
+plot([ax(1),ax(2)],[14*3,14*3],':','color',[0.9,0.9,0.9]);
 text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
 text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
 title('双罐串联','fontName',paperFontName(),'FontSize',paperFontSize());
-
+set(gca,'XTickLabel',{});
 for i = 1:length(fax)
     set(fax(i),'Clim',[minVal maxVal]);
 end
 
-set(gcf,'unit','centimeter','position',[8,4,14,5]);
+set(gcf,'unit','centimeter','position',[8,4,14,9]);
 set(gcf,'color','w');
+multMagB(1,:) = Z(14,:);
+multMagB(2,:) = Z(14*2,:);
+multMagB(3,:) = Z(14*3,:);
+semiMagB(1,:) = Z(14*0.5,:);
+semiMagB(2,:) = Z(14*1.5,:);
+semiMagB(3,:) = Z(14*2.5,:);
+
+subplotCount = 5;
+subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+plot(sectionLDBE,multMagA(1,:),'-');
+hold on;
+plot(sectionLDBE,multMagA(2,:),'-');
+plot(sectionLDBE,multMagA(3,:),'-');
+xlim([sectionLDBE(1),sectionLDBE(end)]);
+set(gca,'XTickLabel',{});
+
+subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+plot(sectionLDBS,multMagB(1,:),'-');
+hold on;
+plot(sectionLDBS,multMagB(2,:),'-');
+plot(sectionLDBS,multMagB(3,:),'-');
+xlim([sectionLDBS(1),sectionLDBS(end)]);
+set(gca,'XTickLabel',{});
 
 
+subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+plot(sectionLDBE,semiMagA(1,:),'-');
+hold on;
+plot(sectionLDBE,semiMagA(2,:),'-.');
+plot(sectionLDBE,semiMagA(3,:),':');
+xlim([sectionLDBE(1),sectionLDBE(end)]);
+xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 
-
+subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+plot(sectionLDBS,semiMagB(1,:),'-');
+hold on;
+plot(sectionLDBS,semiMagB(2,:),'-.');
+plot(sectionLDBS,semiMagB(3,:),':');
+xlim([sectionLDBS(1),sectionLDBS(end)]);
+xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 %% 罐前管系系脉冲响应云图
 figure('Name','管系脉冲响应-罐前管系系脉冲响应云图')
 subplot(1,2,1)

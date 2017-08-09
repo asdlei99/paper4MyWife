@@ -10,14 +10,14 @@ function [Fre,Amp,Ph,Fe] = frequencySpectrum( wave,Fs,varargin)
 
     if (size(wave,1)>1 && size(wave,2) > 1)
     	for i=1:size(wave,2)
-    		[a,b,c,d] = frequencySpectrum_1dim( wave(:,i),Fs,varargin);
+    		[a,b,c,d] = frequencySpectrum_1dim( wave(:,i),Fs,varargin{:});
     		Fre(:,i) = a;
     		Amp(:,i) = b;
     		Ph(:,i) = c;
     		Fe(:,i) = d;
     	end
     else
-    	[Fre,Amp,Ph,Fe] = frequencySpectrum_1dim( wave,Fs,varargin);
+    	[Fre,Amp,Ph,Fe] = frequencySpectrum_1dim( wave,Fs,varargin{:});
     end
 end
 
@@ -89,6 +89,11 @@ function amp = dealMag(fftData,fftSize,dataSize,scale)
 		case 'magdb'
 			amp=abs(fftData(1:fftSize/2));
 			amp = 20*log(amp);
+        case 'nordb'
+            amp=abs(fftData(1:fftSize/2));
+			amp = 20*log(amp);
+            maxamp = max(amp);
+            amp = amp - maxamp;
 		otherwise
 			error('unknow scale type');
 	end
