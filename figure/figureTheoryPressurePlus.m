@@ -20,7 +20,7 @@ while length(pp)>=2
             Y = val;
         case 'charttype'
             chartType = val;
-        case 'yLabelText'
+        case 'ylabeltext'
             yLabelText = val;
         otherwise
        		error('参数错误%s',prop);
