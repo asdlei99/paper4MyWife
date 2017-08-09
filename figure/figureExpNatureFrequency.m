@@ -153,6 +153,6 @@ function fh = plotInLine(dataCombineStructCells,varargin)
             fh.measurementText(i) = text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
         end
     end
-    xlabel('管线距离(m)');
-    ylabel('倍频幅值(kPa)');
+    xlabel('管线距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('倍频幅值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
 end
