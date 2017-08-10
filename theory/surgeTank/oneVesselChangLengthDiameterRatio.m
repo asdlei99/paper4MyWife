@@ -2,6 +2,7 @@
 function theoryDataCells = oneVesselChangLengthDiameterRatio(varargin)
 pp = varargin;
 Dv = nan;
+Lv = nan;
 massflowData = nan;
 while length(pp)>=2
     prop =pp{1};
@@ -12,6 +13,8 @@ while length(pp)>=2
             massflowData = val;
         case 'dv'
             Dv = val;
+        case 'lv'
+            Lv = val;
 	end
 end
 %% 初始参数
@@ -57,10 +60,16 @@ allowDeviation = 0.5;
 
 V = (pi * param.Dv.^2 / 4) .* param.Lv;%缓冲罐体积
 %开始计算迭代的Lv和Dv
-if isnan(Dv)
-    Dv = 0.1:0.05:0.9;
+
+if isnan(Dv) & isnan(Lv)
+    Lv = 0.3:0.05:6;
 end
-Lv = (4*V) ./ (pi * Dv.^2);
+if ~isnan(Dv)
+    Lv = calcLFromLengthDiameterRatio(V,Dv);
+elseif ~isnan(Lv)
+    Dv = calcDFromLengthDiameterRatio(V,Lv);
+end
+
 dcpss = getDefaultCalcPulsSetStruct();
 dcpss.calcSection = [0.2,0.8];
 dcpss.fs = param.Fs;
@@ -107,4 +116,13 @@ for i = 1:length(Dv)
 end
 
 
+end
+
+
+function Lv = calcLFromLengthDiameterRatio(V,Dv)
+    Lv = (4*V) ./ (pi * Dv.^2);
+end
+
+function Dv = calcDFromLengthDiameterRatio(V,Lv)
+    Dv = ((4*V) ./ (pi * Lv)).^0.5;
 end

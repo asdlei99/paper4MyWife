@@ -53,9 +53,9 @@ else
     %如果是分析单一文件夹的数据，只需要写成datasPath = 'D:\数据\xxx\'
     %如果是要连接两个模拟数据，写成一个元包数组datasPath ={'D:\数据\xxx1\','D:\数据\xxx2\'};
     %这样程序会按照元包数组的顺序进行数据提取和合并
-    datasPath = {'D:\马屈杨\研究生\论文\share\【大论文】\[04]数据\模拟数据\SurgeTank_InnerOrifice0.25D_5%\New Folder'};
+    datasPath = {'D:\马屈杨\研究生\论文\share\【大论文】\[04]数据\模拟数据\DoubleTank_Tank2BeElbow_L2_2.5m_5%'};
 %         ,'e:\netdisk\shareCloud\【大论文】\[04]数据\模拟数据\DoubleTank_Z_5%\New Folder'};%fullfile(currentPath,'北区实验数据\模拟\26米单容V=DV细化');
-    simulationDataSection = {1:19};
+    simulationDataSection = {1:18};
     beforeAfterMeaPoint = nan;%[14,15];%定义抑制装置的进口出口的测点号，如果没有定义为nan
     Fs = 200;%1/0.005
     calcPeakPeakValueSection = [0.8,1.0];%用于标记计算峰峰值的区间，例如[0.7,0.9]，表示70%~90%区间计算峰峰值

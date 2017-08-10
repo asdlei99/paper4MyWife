@@ -1,11 +1,24 @@
 function fh = figureTheoryPressurePlus(dataCells,X,varargin)
-%ç»˜åˆ¶å®žå®žéªŒçš„åŽ‹åŠ›è„‰åŠ¨
-% 
+%»æÖÆdataCellsÊý¾Ý×é³ÉµÄÂö¶¯Ñ¹Á¦Öµ
+% dataCellsÎªdataStruct×é³ÉµÄcell£¬ÈôÖ»ÊäÈëÒ»¸ödataStruct£¬»æÖÆ¶þÎ¬Í¼
+% X Îª¶ÔÓ¦µÄxÖµ£¬ÈôdataCellsÊÇÒ»¸öcell£¬X¶ÔÓ¦Ò²ÊÇÒ»¸öcell
+% ¿É±ä²Îvarargin£º
+% 'y':Èç¹ûY¸³Öµ£¨Êý×é£©£¬½«»áÒÔ3dÐÎÊ½»æÖÆ£¬·ñÔò»áÒÔ¶þÎ¬Í¼»æÖÆ¶à¸öÇúÏß
+% 'yLabelText':Èç¹ûÒÔ3d»æÖÆ£¬´ËÖµ×÷ÎªyÖáµÄlabel
+% 'charttype':¿ÉÑ¡Îª'plot3'£¬'surf',²»Í¬ÖµÊ¹ÓÃ²»Í¬º¯Êý»æÖÆ
+% 'sectiony':Ö¸¶¨¶ÔyÖµ½øÐÐÇÐÆ¬£¬ÇÐÆ¬»áÔÚÍ¼ÉÏÏÔÊ¾Ò»¸öÇÐÃæ
+% 'markSectionY':½öÔÚ¡®sectiony¡¯ÉúÐ§Ê±ÓÐÓÃ£¬Ö¸¶¨ÇÐÆ¬µÄÇúÏß±ê¼Ç·½Ê½
+%                ¿ÉÑ¡'none'-²»±ê¼Ç,'markLine'-ÔÚÍ¼ÉÏÒÔÏßµÄÐÎÊ½±ê¼Ç,'shadow'-Í¶Ó°µ½x,zÃæÉÏ
+% 'EdgeColor':½öÔÚcharttype=¡®surf¡¯ÉúÐ§£¬Ö¸¶¨surfµÄEdgeColorÊôÐÔ
 pp = varargin;
 legendLabels = {};
 yLabelText = '';
-Y = nan;%å¦‚æžœYèµ‹å€¼ï¼Œå°†ä¼šä»¥3då½¢å¼ç»˜åˆ¶
-%å…è®¸ç‰¹æ®Šçš„æŠŠåœ°ä¸€ä¸ªvararginä½œä¸ºlegend
+Y = nan;%Èç¹ûY¸³??£¬½«»áÒÔ3dÐÎÊ½»æÖÆ
+sectionY = nan;
+fh = nan;
+edgeColor = 'none';
+markSectionY = 'none';% ÊÇ·ñ¶ÔÇÐÆ¬µÄyÖµ½øÐÐ±ê¼Ç£¬±ê¼Ç¿ÉÑ¡'none'-²»±ê¼Ç,'markLine'-ÔÚÍ¼ÉÏÒÔÏßµÄÐÎÊ½±ê¼Ç,'shadow'-Í¶Ó°µ½x,zÃæÉÏ
+%ÔÊÐíÌØÊâµÄ°ÑµØÒ»¸övarargin×÷Îªlegend
 chartType = 'plot3';
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -22,62 +35,63 @@ while length(pp)>=2
             chartType = val;
         case 'ylabeltext'
             yLabelText = val;
+        case 'sectiony'%¶ÔÒ»¸öÖ¸¶¨µÄyÖµ½øÐÐÇÐÆ¬,ÐÎ³ÉÒ»¸öÇÐÃæ£¬È¡Öµ½«»áÈ¡×î½Ó½üµÄyÖµ
+            sectionY = val;
+        case 'marksectiony'
+            markSectionY = val;
+        case 'edgecolor'
+            edgeColor = val;
         otherwise
-       		error('å‚æ•°é”™è¯¯%s',prop);
+       		error('²ÎÊý´íÎó%s',prop);
     end
 end
 
 figure
 paperFigureSet_normal();
 if isnan(Y)
-    for plotCount = 1:length(dataCells)
-        if 2 == plotCount
+    for i = 1:length(dataCells)
+        if 2 == i
             hold on;
         end
         if(1 == length(dataCells))
             y = dataCells.pulsationValue;
         else
-            y = dataCells{plotCount}.pulsationValue;
+            y = dataCells{i}.pulsationValue;
         end
         y = y./1000;
         if size(X,1) > 1
-            x = X{plotCount,:};
+            x = X{i};
         else
-            x = X;
+            if iscell(X)
+                x(i,:) = X{1};
+            else
+                x(i,:) = X;
+            end
         end
         if isnan(y)
-            error('æ²¡æœ‰èŽ·å–åˆ°æ•°æ®');
+            error('Ã»ÓÐ»ñÈ¡µ½Êý¾Ý');
         end
 
-        [fh.plotHandle(plotCount)] = plot(x,y,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount));
+        [fh.plotHandle(i)] = plot(x,y,'color',getPlotColor(i)...
+            ,'Marker',getMarkStyle(i));
     end
     if ~isempty(legendLabels)
         fh.legend = legend(fh.plotHandle,legendLabels,0);
     end
 
-    xlabel('ç®¡çº¿è·ç¦»(m)','FontName',paperFontName(),'FontSize',paperFontSize());
-    ylabel('è„‰åŠ¨å³°å³°å€¼(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel('¹ÜÏß¾àÀë(m)','FontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('Âö¶¯·å·åÖµ(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
 else
     if strcmp(chartType,'plot3')
-        hold on;
-        for i = 1:length(dataCells)
-            z = dataCells{i}.pulsationValue;
-            z = z ./ 1000;
-            if size(X,1) > 1
-                x = X{i,:};
-            else
-                x = X;
-            end
-            fh.plotHandle(i) = plot3(x,Y(i).*ones(lenght(x),1),z);
-        end
-        xlabel('ç®¡çº¿è·ç¦»(m)','FontName',paperFontName(),'FontSize',paperFontSize());
-        ylabel(yLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
-        zlabel('è„‰åŠ¨å³°å³°å€¼(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
-    elseif
-        
+        fh = figurePlotPlot3(dataCells,X,Y,sectionY,markSectionY);
+    elseif strcmp(chartType,'surf')
+        fh = figurePlotSurf(dataCells,X,Y,edgeColor,sectionY,markSectionY);
     end
-
+    xlabel('¹ÜÏß¾àÀë(m)','FontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel(yLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
+    zlabel('Âö¶¯·å·åÖµ(kPa))','FontName',paperFontName(),'FontSize',paperFontSize());
+    box on;
+    grid on;
     
         
     
@@ -85,5 +99,84 @@ end
 
 end
 
+function fhRet = figurePlotPlot3(dataCells,X,Y)
+    hold on;
+     for i = 1:length(dataCells)
+        z = dataCells{i}.pulsationValue;
+        z = z ./ 1000;
+        if size(X,1) > 1
+            x = X{i};
+        else
+            if iscell(X)
+                x(i,:) = X{1};
+            else
+                x(i,:) = X;
+            end
+        end
+        fhRet.plotHandle(i) = plot3(x,Y(i).*ones(length(x),1),z);
+     end
+end
 
+
+function fh = figurePlotSurf(dataCells,X,Y,edgeColor,sectionY,markSectionY)
+    maxLengthX = 0;
+    hold on;
+    for i = 1:length(dataCells)
+        z(i,:) = dataCells{i}.pulsationValue;
+        if size(X,1) > 1
+            x = X{i};
+        else
+            if iscell(X)
+                x(i,:) = X{1};
+            else
+                x(i,:) = X;
+            end
+        end
+        if(length(x) > maxLengthX )
+            maxLengthX = length(x);
+        end
+    end
+    z = z ./ 1000;
+    x = zeros(length(dataCells),maxLengthX);
+    x(:) = nan;
+    y = x;
+    for i = 1:length(dataCells)
+        if size(X,1) > 1
+            x(i,:) = X{i};
+        else
+            if iscell(X)
+                x(i,:) = X{1};
+            else
+                x(i,:) = X;
+            end
+        end
+        y(i,:) = Y(i);
+    end
+    fh.plotHandle = surf(x,y,z);
+    if ~isnan(edgeColor)
+        set(fh.plotHandle,'EdgeColor',edgeColor);
+    end
+    view(-24,58);
+    if ~isnan(sectionY)
+        for i = 1:length(sectionY)
+            [val,index] = closeValue(Y,sectionY(i));
+            if isnan(val)
+                continue;
+            end
+            ax = axis();
+            xf = [ax(1),ax(2),ax(2),ax(1),ax(1)];
+            yf = ones(1,5).*val;
+            zf = [ax(5),ax(5),ax(6),ax(6),ax(5)];
+            fh.sectionYHandle(i) = fill3(xf,yf,zf,'r');
+            set(fh.sectionYHandle(i),'FaceAlpha',0.1);
+            set(fh.sectionYHandle(i),'EdgeColor','r','EdgeAlpha',0.6);
+            xl = x(index,:);
+            yl = y(index,:);
+            zl = z(index,:);
+            if strcmp(markSectionY,'all')
+                plot3(xl,yl,zl,'-k');
+            end
+        end
+    end
+end
 
