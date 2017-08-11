@@ -1,8 +1,6 @@
 %% 单一缓冲罐迭代长径比研究
-function theoryDataCells = oneVesselChangLengthDiameterRatio(varargin)
+function theoryDataCells = oneVesselChangVolume(V,varargin)
 pp = varargin;
-Dv = nan;
-Lv = nan;
 massflowData = nan;
 while length(pp)>=2
     prop =pp{1};
@@ -11,11 +9,7 @@ while length(pp)>=2
     switch lower(prop)
         case 'massflowdata'
             massflowData = val;
-        case 'dv'
-            Dv = val;
-        case 'lv'
-            Lv = val;
-	end
+    end
 end
 %% 初始参数
 %
@@ -58,17 +52,6 @@ multFreTimes = 3;
 semiFreTimes = 3;
 allowDeviation = 0.5;
 
-V = (pi * param.Dv.^2 / 4) .* param.Lv;%缓冲罐体积
-%开始计算迭代的Lv和Dv
-
-if isnan(Dv) & isnan(Lv)
-    Lv = 0.3:0.05:6;
-end
-if ~isnan(Dv)
-    Lv = calcLFromLengthDiameterRatio(V,Dv);
-elseif ~isnan(Lv)
-    Dv = calcDFromLengthDiameterRatio(V,Lv);
-end
 
 dcpss = getDefaultCalcPulsSetStruct();
 dcpss.calcSection = [0.2,0.8];
@@ -81,14 +64,13 @@ dcpss.rs = 30;%截止区衰减DB数设置
 theoryDataCells{1,1} = '描述';
 theoryDataCells{1,2} = 'dataCells';
 theoryDataCells{1,3} = 'X';
-theoryDataCells{1,4} = 'Lv';
-theoryDataCells{1,5} = 'Dv';
-theoryDataCells{1,6} = 'Lv/Dv(长径比)';
-theoryDataCells{1,7} = 'input';
+theoryDataCells{1,4} = 'V';
+theoryDataCells{1,5} = 'input';
 
-for i = 1:length(Dv)
+for i = 1:length(V)
+    param.Dv = (4*(V(i) / (param.Lv + 2*param.l))/pi)^0.5;
     [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
-        ,param.L1,param.L2,Lv(i),param.l,param.Dpipe,Dv(i) ...
+        ,param.L1,param.L2,param.Lv,param.l,param.Dpipe,param.Dv ...
         ,param.sectionL1,param.sectionL2 ...
         ,'a',param.acousticVelocity...
         ,'isDamping',param.isDamping...
@@ -98,7 +80,7 @@ for i = 1:length(Dv)
     beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
     pressure = [pressure1,pressure2];
     %[plus,filterData] = calcPuls(pressure,dcpss);
-    theoryDataCells{i+1,1} = sprintf('缓冲罐长:%g,直径:%g,长径比:%g',Lv(i),Dv(i),Lv(i)/Dv(i));
+    theoryDataCells{i+1,1} = sprintf('缓冲罐体积:%g',V(i));
     theoryDataCells{i+1,2} = fun_dataProcessing(pressure...
                                 ,'fs',param.Fs...
                                 ,'basefrequency',baseFrequency...
@@ -108,22 +90,11 @@ for i = 1:length(Dv)
                                 ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
                                 ,'calcpeakpeakvaluesection',nan...
                                 );
-    theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + Lv(i) + param.sectionL2];  
-    theoryDataCells{i+1,4} = Lv(i);
-    theoryDataCells{i+1,5} = Dv(i);
-    theoryDataCells{i+1,6} = Lv(i)/Dv(i);
-    theoryDataCells{i+1,7} = param;
+    theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
+    theoryDataCells{i+1,4} = V(i);
+    theoryDataCells{i+1,5} = param;
     
 end
 
 
-end
-
-
-function Lv = calcLFromLengthDiameterRatio(V,Dv)
-    Lv = (4*V) ./ (pi * Dv.^2);
-end
-
-function Dv = calcDFromLengthDiameterRatio(V,Lv)
-    Dv = ((4*V) ./ (pi * Lv)).^0.5;
 end

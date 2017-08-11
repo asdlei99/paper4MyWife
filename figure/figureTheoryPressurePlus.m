@@ -15,9 +15,11 @@ legendLabels = {};
 yLabelText = '';
 Y = nan;%如果Y赋??，将会以3d形式绘制
 sectionY = nan;
+markSectionY = 'none';% 是否对切片的y值进行标记，标记可选'none'-不标记,'markLine'-在图上以线的形式标记,'shadow'-投影到x,z面上
+sectionX = nan;
+markSectionX = 'none';% 是否对切片的x值进行标记，标记可选'none'-不标记,'markLine'-在图上以线的形式标记,'shadow'-投影到x,z面上
 fh = nan;
 edgeColor = 'none';
-markSectionY = 'none';% 是否对切片的y值进行标记，标记可选'none'-不标记,'markLine'-在图上以线的形式标记,'shadow'-投影到x,z面上
 %允许特殊的把地一个varargin作为legend
 chartType = 'plot3';
 if 0 ~= mod(length(pp),2)
@@ -39,6 +41,10 @@ while length(pp)>=2
             sectionY = val;
         case 'marksectiony'
             markSectionY = val;
+        case 'sectionx'%对一个指定的y值进行切片,形成一个切面，取值将会取最接近的y值
+            sectionX = val;
+        case 'marksectionx'
+            markSectionX = val;
         case 'edgecolor'
             edgeColor = val;
         otherwise
@@ -83,13 +89,13 @@ if isnan(Y)
     ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
 else
     if strcmp(chartType,'plot3')
-        fh = figurePlotPlot3(dataCells,X,Y,sectionY,markSectionY);
+        fh = figurePlotPlot3(dataCells,X,Y,sectionY,markSectionY,sectionX,markSectionX);
     elseif strcmp(chartType,'surf')
-        fh = figurePlotSurf(dataCells,X,Y,edgeColor,sectionY,markSectionY);
+        fh = figurePlotSurf(dataCells,X,Y,edgeColor,sectionY,markSectionY,sectionX,markSectionX);
     end
     xlabel('管线距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel(yLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
-    zlabel('脉动峰峰值(kPa))','FontName',paperFontName(),'FontSize',paperFontSize());
+    zlabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
     box on;
     grid on;
     
@@ -99,7 +105,7 @@ end
 
 end
 
-function fhRet = figurePlotPlot3(dataCells,X,Y)
+function fhRet = figurePlotPlot3(dataCells,X,Y,sectionY,markSectionY,sectionX,markSectionX)
     hold on;
      for i = 1:length(dataCells)
         z = dataCells{i}.pulsationValue;
@@ -118,7 +124,7 @@ function fhRet = figurePlotPlot3(dataCells,X,Y)
 end
 
 
-function fh = figurePlotSurf(dataCells,X,Y,edgeColor,sectionY,markSectionY)
+function fh = figurePlotSurf(dataCells,X,Y,edgeColor,sectionY,markSectionY,sectionX,markSectionX)
     maxLengthX = 0;
     hold on;
     for i = 1:length(dataCells)
@@ -177,6 +183,9 @@ function fh = figurePlotSurf(dataCells,X,Y,edgeColor,sectionY,markSectionY)
                 plot3(xl,yl,zl,'-k');
             end
         end
+    end
+    if ~isnan(sectionX)
+
     end
 end
 
