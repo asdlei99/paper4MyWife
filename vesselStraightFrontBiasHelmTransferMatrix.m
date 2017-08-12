@@ -192,13 +192,13 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,Lv2,lv3,k,Dv,Dbias,dp
         A = 0;
         B = 0;
         %考虑马赫数和不考虑马赫数对变径的传递矩阵有影响
-        if optMach.notMach%不考虑马赫数
-            Sv = pi.*Dv.^2./4;
-            A = optDamping.coeffDamping*optDamping.meanFlowVelocity/Sv;%不考虑马赫数变径传递矩阵的右上角项
-            B = A;%不考虑马赫数变径传递矩阵是相等的
-            Mv = [1,B;0,1]*ML*[1,A;0,1];%直管加两个变径
-            return;
-        end
+%         if optMach.notMach%不考虑马赫数
+%             Sv = pi.*Dv.^2./4;
+%             A = optDamping.coeffDamping*optDamping.meanFlowVelocity/Sv;%不考虑马赫数变径传递矩阵的右上角项
+%             B = A;%不考虑马赫数变径传递矩阵是相等的
+%             Mv = [1,B;0,1]*ML*[1,A;0,1];%直管加两个变径
+%             return;
+%         end
 %         %内插管腔体传递矩阵-左边
 %         innerLM = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
 %         innerRM = innerPipeCavityTransferMatrix(Dv,Dbias,Lv,'a',a,'k',k);
@@ -241,20 +241,27 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,Lv1,Lv2,lv3,k,Dv,Dbias,dp
         
         %法二
         %回流 出口管对应偏置腔(innerLM)
-        M1 = innerPipeCavityTransferMatrix(Dv,Dbias,Lv1,'a',a,'k',k);
-        % 亥姆霍兹共鸣器
-        V = pi.*Dv.^2./4.*(Lv./2);
-        M2 = HelmholtzResonatorTransferMatrix(V,Lv2,lc,dp,1 ...
-        ,'a',a,'k',k);
-        % 入流 腔体
-        M3 = straightPipeTransferMatrix(-lv3,'k',k,'D',Dv,'a',a,...
-                'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
-                ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵  
-        M4 = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
+%         M1 = innerPipeCavityTransferMatrix(Dv,Dbias,Lv1,'a',a,'k',k);
+%         % 亥姆霍兹共鸣器
+%         V = pi.*Dv.^2./4.*(Lv./2);
+%         M2 = HelmholtzResonatorTransferMatrix(V,Lv2,lc,dp,1 ...
+%         ,'a',a,'k',k);
+%         % 入流 腔体
+%         M3 = straightPipeTransferMatrix(-lv3,'k',k,'D',Dv,'a',a,...
+%                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+%                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵  
+%         M4 = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
+          M1 = straightPipeTransferMatrix(lv3,'k',k,'D',Dv,'a',a,...
+                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
+                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵  
+          V = pi.*Dv.^2./4.*(Lv./2);
+          M2 = HelmholtzResonatorTransferMatrix(V,Lv2,lc,dp,1 ...
+          ,'a',a,'k',k); 
+          M3 = innerPipeCavityTransferMatrix(Dv,Dbias,Lv1-lv3,'a',a,'k',k);
 % 
 %         Mv = M4 * M3 * M2 * M1;     
 
-        Mv = M1 * M2 * M3 * M4;     
+        Mv = M3 * M2 * M1;     
 
         return;
     end
