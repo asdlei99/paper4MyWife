@@ -2,6 +2,7 @@
 function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     pp = varargin;
     massflowData = nan;
+    param.meanFlowVelocity = nan;
     while length(pp)>=2
         prop =pp{1};
         val=pp{2};
@@ -9,6 +10,8 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
         switch lower(prop)
             case 'massflowdata'
                 massflowData = val;
+            case 'meanflowvelocity'
+                param.meanFlowVelocity = val;
         end
     end
     param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
@@ -28,6 +31,9 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
         time = makeTime(param.Fs,1024);
         param.fre = massflowData(1,:);
         param.massFlowE = massflowData(2,:);
+        if isnan(param.meanFlowVelocity)
+            param.meanFlowVelocity = 14;
+        end
     end
 
     param.acousticVelocity = 345;%声速
@@ -84,13 +90,18 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     calcDatas = {};
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     count = 1;
+    theoryDataCells{count,1} = '名称';
+    theoryDataCells{count,2} = 'dataStrcutCell';
+    theoryDataCells{count,3} = 'X';
+    theoryDataCells{count,4} = 'param';
+    count = count + 1;
     straightPipeLength = param.L1 + 2*param.l + param.Lv1 + param.Lv2 + param.L2;
     straightPipeSection = [param.sectionL1,...
                             param.L1 + 2*param.l+param.Lv1+param.Lv2 + param.sectionL2];
     temp = find(straightPipeLength>param.L1);%找到缓冲罐所在的索引
     sepratorIndex = temp(1);
 
-    pressure = straightPipePulsationCalc(massFlowE,param.fre,time...
+    pressure = straightPipePulsationCalc(param.massFlowE,param.fre,time...
             ,straightPipeLength,straightPipeSection...
             ,'d',param.Dpipe,'a',param.acousticVelocity,'isDamping',param.isDamping...
             ,'friction',param.coeffFriction,'meanFlowVelocity',param.meanFlowVelocity...
@@ -108,7 +119,8 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
                                 );
     param.straightPipeLength = straightPipeLength;
     param.straightPipeSection = straightPipeSection;
-    theoryDataCells{count,3} = param;
+    theoryDataCells{count,3} = straightPipeSection;
+    theoryDataCells{count,4} = param;
     %  长度 L1     l    Lv   l    L2  
     %                   __________        
     %                  |          |      
@@ -117,7 +129,7 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     % 直径 Dpipe       Dv       Dpipe  
         %计算单一缓冲罐
     count = count + 1;    
-    [pressure1,pressure2] = oneVesselPulsationCalc(massFlowE,param.fre,time,...
+    [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time,...
             param.L1,param.L2,...
             param.LV1,param.l,param.Dpipe,param.DV1,...
             param.sectionL1,param.sectionL2,...
@@ -137,7 +149,8 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
         );
     theoryDataCells{count,1} = '单一缓冲罐';
     theoryDataCells{count,2} = rawDataStruct;
-    theoryDataCells{count,3} = param;
+    theoryDataCells{count,3} = [param.sectionL1,param.sectionL2+param.L1+2*param.l+param.LV1];
+    theoryDataCells{count,4} = param;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
     %   Detailed explanation goes here
@@ -152,7 +165,7 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
         %计算入口顺接出口前偏置
     count = count + 1;
     [pressure1,pressure2] = ...
-        vesselStraightFrontBiasPulsationCalc(massFlowE,param.fre,time,...
+        vesselStraightFrontBiasPulsationCalc(param.massFlowE,param.fre,time,...
             param.L1,param.L2,...
             param.LV1,param.l,param.Dpipe,param.DV1,...
             param.lv3,param.Dbias,...
@@ -174,7 +187,8 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
                                 ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
                                 ,'calcpeakpeakvaluesection',nan...
                                 );
-    theoryDataCells{count,3} = param;
+    theoryDataCells{count,3} = [param.sectionL1,param.sectionL2+param.L1+param.l+param.lv3+param.DV1/2];
+    theoryDataCells{count,4} = param;
     %       长度 L1     l    Lv    l    L2   l    Lv
     %                   __________            ___________ 
     %                  |          |          |           |   
@@ -187,7 +201,7 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     %计算双罐-罐二作弯头 入口流速调节到45时与模拟较接近(L1,L3,L4,0.045)
     count = count + 1;
     [pressure1,pressure2,pressure3] = ...
-        doubleVesselElbowPulsationCalc(massFlowE,param.fre,time,...
+        doubleVesselElbowPulsationCalc(param.massFlowE,param.fre,time,...
             param.L1,param.L3,param.L4,...
             param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
             param.lv3,param.Dbias,...
@@ -208,7 +222,10 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
             );
     theoryDataCells{count,1} = '双罐-罐二作弯头';
     theoryDataCells{count,2} = rawDataStruct;
-    theoryDataCells{count,3} = param;
+    theoryDataCells{count,3} = [param.sectionL1...
+                                ,param.L1+param.LV1+2*param.l+param.sectionL3...
+                                ,param.L1+param.LV1+2*param.l+param.L3+param.lv3+param.DV2/2+param.sectionL4];
+    theoryDataCells{count,4} = param;
 
     %       长度 L1     l    Lv   l l    Lv     l        L2
     %                   __________   ___________ 
@@ -219,7 +236,7 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     %计算双罐串联
     count = count + 1;
     [pressure1,pressure2] = ...
-        doubleVesselSeriesPulsationCalc(massFlowE,param.fre,time,...
+        doubleVesselSeriesPulsationCalc(param.massFlowE,param.fre,time,...
             param.L1,param.L5,...
             param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
             param.sectionL1,param.sectionL5,...
@@ -239,5 +256,8 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
             );
     theoryDataCells{count,1} = '双罐无间隔串联';
     theoryDataCells{count,2} = rawDataStruct;
-    theoryDataCells{count,3} = param;
+    theoryDataCells{count,3} = [param.sectionL1...
+                                ,param.L1+param.LV1+2*param.l+param.sectionL3...
+                                ,param.L1+param.LV1+2*param.l+param.L3+param.LV2+2*param.l+param.sectionL4];
+    theoryDataCells{count,4} = param;
 end
