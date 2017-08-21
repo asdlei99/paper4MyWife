@@ -90,10 +90,10 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     calcDatas = {};
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     count = 1;
-    theoryDataCells{count,1} = 'Ãû³Æ';
-    theoryDataCells{count,2} = 'dataStrcutCell';
-    theoryDataCells{count,3} = 'X';
-    theoryDataCells{count,4} = 'param';
+    theoryDataCells{1,1} = 'Ãû³Æ';
+    theoryDataCells{1,2} = 'dataStrcutCell';
+    theoryDataCells{1,3} = 'X';
+    theoryDataCells{1,4} = 'param';
     count = count + 1;
     straightPipeLength = param.L1 + 2*param.l + param.Lv1 + param.Lv2 + param.L2;
     straightPipeSection = [param.sectionL1,...
