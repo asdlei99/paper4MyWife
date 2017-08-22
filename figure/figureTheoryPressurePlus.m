@@ -26,7 +26,7 @@ markSectionYLabel = {};
 sectionX = nan;
 markSectionX = 'none';% 是否对切片的x值进行标记，标记可选'none'-不标记,'markLine'-在图上以线的形式标记,'shadow'-投影到x,z面上
 markSectionXLabel = {};
-fh = nan;
+% fh = nan;
 fixAxis = 0;
 edgeColor = 'none';
 %允许特殊的把地一个varargin作为legend
@@ -62,6 +62,8 @@ while length(pp)>=2
             edgeColor = val;
         case 'fixaxis'
             fixAxis = val;
+        case 'legendlabels'
+            legendLabels = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -93,15 +95,18 @@ if isnan(Y)
             error('没有获取到数据');
         end
 
-        [fh.plotHandle(i)] = plot(x,y,'color',getPlotColor(i)...
+        plotHandle(i) = plot(x,y,'color',getPlotColor(i)...
             ,'Marker',getMarkStyle(i));
+        
     end
     if ~isempty(legendLabels)
-        fh.legend = legend(fh.plotHandle,legendLabels,0);
+        legHandle = legend(plotHandle,legendLabels,0);
     end
 
     xlabel('管线距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+    fh.plotHandle = plotHandle;
+    fh.legendHandle = legHandle;
 else
     if strcmp(chartType,'plot3')
         fh = figurePlotPlot3(dataCells,X,Y,sectionY,markSectionY,sectionX,markSectionX);

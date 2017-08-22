@@ -189,7 +189,7 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv3,k,Dv,Dpipe,Dbias,a,op
         end
     end
     if isUseStaightPipe%使用直管理论
-        ML = straightPipeTransferMatrix(-lv3,'k',k,'D',Dv,'a',a,...
+        ML = straightPipeTransferMatrix(lv3,'k',k,'D',Dv,'a',a,...
                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
         A = 0;
@@ -203,15 +203,15 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv3,k,Dv,Dpipe,Dbias,a,op
             return;
         end
         %内插管腔体传递矩阵-左边
-        innerLM = innerPipeCavityTransferMatrix(Dv,Dbias,lv3,'a',a,'k',k);
-        innerRM = innerPipeCavityTransferMatrix(Dv,Dbias,Lv,'a',a,'k',k);
+        innerLM = innerPipeCavityTransferMatrix(Dv,Dbias,Lv-lv3,'a',a,'k',k);
+%         innerRM = innerPipeCavityTransferMatrix(Dv,Dbias,Lv,'a',a,'k',k);
         %由渐缩管道引起的入口处急速变径的传递矩阵
         Sv = pi.*Dv.^2./4;
         S = pi.*Dpipe.^2./4;
         RM = sudEnlargeTransferMatrix(S,Sv,a,'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notMach',optMach.notMach);
         LM = sudReduceTransferMatrix(Sv,S,a,'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notMach',optMach.notMach);
-        Mv = LM * innerLM * ML * innerRM * RM;
-        return;
+        Mv = LM * innerLM * ML * RM;
+        return; 
     end
     %使用容积传递矩阵
     V = Sv*L;
