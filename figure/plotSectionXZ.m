@@ -41,6 +41,10 @@ for i = 1:length(yval)
     if strcmp(markSection,'all')
         fh.markPlotHandle = plot3(xl,yl,zl,'color',markColor);
     end
+    data.x = xl;
+    data.y = yl;
+    data.z = zl;
+    fh.data(i) = data;
     if length(markSectionLabel) >= i
         text(ax(1),val,ax(6),markSectionLabel{i});
         text(ax(2),val,ax(6),markSectionLabel{i});

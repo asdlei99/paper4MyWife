@@ -11,25 +11,49 @@ Dv = 0.372;
 Vmin = pi* Dpipe^2 / 4 * 1.1 *1.5;
 Vmid = pi* Dv^2 / 4 * 1.1;
 Vmax = Vmid*3;
+VApi618 = 0.1;
 V = Vmin:0.02:Vmax;
 theoryDataCellsChangVolume = oneVesselChangVolume(V,'massflowdata',[freRaw;massFlowERaw]...
                                                     );
+chartTypeChangVolume = 'surf';
 resChangVolume = theoryDataCellsChangVolume(2:end,2);
 XChangVolume = theoryDataCellsChangVolume(2:end,3);
+sectionX = [2,7,10];
+markSectionXLabel = {'b','c','d'};
 fh = figureTheoryPressurePlus(resChangVolume,XChangVolume,'Y',V...
     ,'yLabelText','体积'...
-    ,'chartType','surf'...
+    ,'chartType',chartTypeChangVolume...
     ,'edgeColor','none'...
     ,'sectionY',Vmid...
     ,'markSectionY','all'...
     ,'markSectionYLabel',{'a'}...
-    ,'sectionX',10 ...
+    ,'sectionX',sectionX ...
     ,'markSectionX','all'...
-    ,'markSectionXLabel',{'b'}...
+    ,'markSectionXLabel',markSectionXLabel...
     ,'fixAxis',1 ...
 );
 view(-161,37);
-highLowColorbar();                                        
+highLowColorbar();
+%绘制sectionX对应截面的图形
+if strcmp(chartTypeChangVolume,'surf')
+    h = [];
+    figure
+    paperFigureSet_normal();
+    for i = 1:length(fh.sectionXHandle.data)
+        x = fh.sectionXHandle.data(i).x(1);
+        labels{i} = sprintf('%s-%s(L=%g)',markSectionXLabel{i},markSectionXLabel{i},x);
+        x = fh.sectionXHandle.data(i).y;
+        y = fh.sectionXHandle.data(i).z;
+        hold on;
+        h(i) = plot(x,y,'color',getPlotColor(i),'marker',getMarkStyle(i));
+    end
+    box on;
+    legend(h,labels,'FontName',paperFontName(),'FontSize',paperFontSize());
+    hm = plotXMarkerLine(Vmid,':k');
+    hm = plotXMarkerLine(VApi618,'--r');
+    xlabel('缓冲罐体积(m^3)','FontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+end
 %% 单一缓冲罐变长径比对气流脉动的影响
 
 Lv = 0.5:0.1:3;
