@@ -1,4 +1,5 @@
 function theoryDataCells = doubleVesselBeElbowChangDistanceToFirstVessel(varargin)
+% 双罐第二个缓冲罐作为弯头迭代双罐中间连接管长距离
     pp = varargin;
     massflowData = nan;
     param.meanFlowVelocity = nan;
