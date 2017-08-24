@@ -7,7 +7,7 @@ freRaw = [7,14,21,28,14*3];
 massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
 Dpipe = 0.098;
 Dv = 0.372;
-%% 
+%% 缓冲罐改变体积对气流脉动的影响
 Vmin = pi* Dpipe^2 / 4 * 1.1 *1.5;
 Vmid = pi* Dv^2 / 4 * 1.1;
 Vmax = Vmid*3;
@@ -80,3 +80,17 @@ fh = figureTheoryPressurePlus(resChangLengthDiameterRatio,XChangLengthDiameterRa
 );
 view(-41,20);
 highLowColorbar();
+
+%% 缓冲罐改变接管位置对气流脉动的影响
+theoryDataCellsChangL1 = oneVesselChangL1FixL('massflowdata',[freRaw;massFlowERaw]);
+resChangL1 = theoryDataCellsChangL1(2:end,2);
+XChangL1 = theoryDataCellsChangL1(2:end,3);
+YChangL1 = cell2mat(theoryDataCellsChangL1(2:end,4));
+fh = figureTheoryPressurePlus(resChangL1,XChangL1...
+    ,'Y',YChangL1...
+    ,'yLabelText','缓冲罐距压缩机出口距离(m)'...
+    ,'chartType','contourf'...
+    ,'edgeColor','none'...
+);
+plot([YChangL1(1),YChangL1(end)],[YChangL1(1),YChangL1(end)],'--r');
+colorbar;

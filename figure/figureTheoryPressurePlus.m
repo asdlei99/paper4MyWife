@@ -110,18 +110,27 @@ if isnan(Y)
 else
     if strcmp(chartType,'plot3')
         fh = figurePlotPlot3(dataCells,X,Y,sectionY,markSectionY,sectionX,markSectionX);
+        box on;
     elseif strcmp(chartType,'surf')
         fh = figurePlotSurf(dataCells,X,Y,edgeColor...
             ,sectionY,markSectionY,markSectionYLabel...
             ,sectionX,markSectionX,markSectionXLabel...
             ,fixAxis...
             );
+        box on;
+        grid on;
+    elseif strcmp(chartType,'contourf')
+        fh =  figurePlotContourf(dataCells,X,Y,edgeColor...
+            ,sectionY,markSectionY,markSectionYLabel...
+            ,sectionX,markSectionX,markSectionXLabel...
+            ,fixAxis...
+            );
+        box on;
     end
     xlabel('管线距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel(yLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
     zlabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
-    box on;
-    grid on;
+    
     
         
     
@@ -209,3 +218,48 @@ function fh = figurePlotSurf(dataCells,X,Y,edgeColor...
     end
 end
 
+function fh = figurePlotContourf(dataCells,X,Y,edgeColor...
+    ,sectionY,markSectionY,markSectionYLabel...
+    ,sectionX,markSectionX,markSectionXLabel...
+    ,fixAxis...
+    )
+    maxLengthX = 0;
+    hold on;
+    for i = 1:length(dataCells)
+        z(i,:) = dataCells{i}.pulsationValue;
+        if size(X,1) > 1
+            x = X{i};
+        else
+            if iscell(X)
+                x(i,:) = X{1};
+            else
+                x(i,:) = X;
+            end
+        end
+        if(length(x) > maxLengthX )
+            maxLengthX = length(x);
+        end
+    end
+    z = z ./ 1000;
+    x = zeros(length(dataCells),maxLengthX);
+    x(:) = nan;
+    y = x;
+    for i = 1:length(dataCells)
+        if size(X,1) > 1
+            x(i,:) = X{i};
+        else
+            if iscell(X)
+                x(i,:) = X{1};
+            else
+                x(i,:) = X;
+            end
+        end
+        y(i,:) = Y(i);
+    end
+    fh.plotHandle = contourf(x,y,z);
+    if fixAxis
+        xlim([x(1,1),x(1,end)]);
+        ylim([y(1,1),y(end,1)]);
+    end
+
+end
