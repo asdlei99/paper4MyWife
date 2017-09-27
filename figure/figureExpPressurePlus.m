@@ -119,7 +119,7 @@ for i = 1:length(x)
 end
 xlabel('管线距离(m)');
 ylabel('脉动峰峰值(kPa)');
-
+fh.gca = gca;
 end
 
 

@@ -74,7 +74,7 @@ end
 
 xlabel('²âµã','FontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('·ùÖµ(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
-
+fh.gca = gca;
 end
 
 

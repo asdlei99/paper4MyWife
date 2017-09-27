@@ -73,6 +73,6 @@ end
 set(gca,'XTick',x,'XTickLabel',legendLabels);
 xlabel('¿‡–Õ');
 ylabel('—π¡¶Ωµ(kPa)');
-
+fh.gca = gca;
 end
 
