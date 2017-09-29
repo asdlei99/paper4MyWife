@@ -251,7 +251,7 @@ Z = magVesselDBE(:,1:beforeIndexDBE);
 contourf(X,Y,Z);
 xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title('surge tank','fontName',paperFontName(),'FontSize',paperFontSize());
+title('surge tank elbow','fontName',paperFontName(),'FontSize',paperFontSize());
 
 subplot(1,2,2)
 y = freVesselDBS(:,1);
@@ -261,7 +261,7 @@ Z = magVesselDBS(:,1:beforeIndexDBS);
 contourf(X,Y,Z);
 xlabel('Measurement point','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title(sprintf('volume-perforated \npipe-volume suppressor'),'fontName',paperFontName(),'FontSize',paperFontSize());
+title(sprintf('surge tank'),'fontName',paperFontName(),'FontSize',paperFontSize());
 
 set(gcf,'unit','centimeter','position',[8,4,14,7]);
 set(gcf,'color','w');
@@ -276,7 +276,7 @@ Z = magVesselDBE(:,afterIndexDBE:end);
 contourf(X,Y,Z);
 xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title('surge tank','fontName',paperFontName(),'FontSize',paperFontSize());
+title('surge tank elbow','fontName',paperFontName(),'FontSize',paperFontSize());
 
 subplot(1,2,2)
 y = freVesselDBS(:,1);
@@ -286,7 +286,7 @@ Z = magVesselDBS(:,afterIndexDBS:end);
 contourf(X,Y,Z);
 xlabel('Distances(m)','fontName',paperFontName(),'FontSize',paperFontSize());
 ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title(sprintf('volume-perforated \npipe-volume suppressor'),'fontName',paperFontName(),'FontSize',paperFontSize());
+title(sprintf('surge tank'),'fontName',paperFontName(),'FontSize',paperFontSize());
 
 set(gcf,'unit','centimeter','position',[8,4,14,7]);
 set(gcf,'color','w');

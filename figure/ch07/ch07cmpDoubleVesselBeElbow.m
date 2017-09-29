@@ -27,8 +27,9 @@ figureExpAndSimPressurePlus({expStraightLinkCombineData,expElbowLinkCombineData}
 %% 理论对比分析-对比{'直管';'单一缓冲罐';'直进侧前出';'双罐-罐二作弯头';'双罐无间隔串联'}
 freRaw = [7,14,21,28,14*3];
 massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
-theoryDataCells = cmpDoubleVesselBeElbow('massflowdata',[freRaw;massFlowERaw]...
-    ,'meanFlowVelocity',14);
+% theoryDataCells = cmpDoubleVesselBeElbow('massflowdata',[freRaw;massFlowERaw]...
+%     ,'meanFlowVelocity',14);
+theoryDataCells = cmpDoubleVesselBeElbow();
 theAnalysisRow = 5:6;
 plusValue = theoryDataCells(theAnalysisRow,2);%通过此函数的行索引设置不同的对比值
 X = theoryDataCells(theAnalysisRow,3);
