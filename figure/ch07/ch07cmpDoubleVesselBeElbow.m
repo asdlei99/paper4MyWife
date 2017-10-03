@@ -6,7 +6,7 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
-%% ¼ÓÔØÊµÑéÊý¾Ý
+%% ¼ÓÔØÊµÑéºÍÄ£ÄâÊý¾Ý
 expStraightLinkCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\Ë«»º³å¹ÞÑÐ¾¿\Ë«»º³å¹Þ´®Áª420×ª0.1mpa');
 expElbowLinkCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\Ë«»º³å¹ÞÑÐ¾¿\Ë«»º³å¹Þ´®Áª¹Þ¶þµ±ÍäÍ·420×ª0.1mpa');
 %¼ÓÔØÊµÑéÊý¾Ý ¼° Ä£ÄâÊý¾Ý
@@ -15,25 +15,59 @@ expElbowLinkCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\Ë«»º³å¹ÞÑÐ¾¿\Ë«»º³
 [expElbowLinkDataCells,expElbowLinkCombineData,simElbowLinkDataCells] ...
     = loadExpAndSimDataFromFolder(expElbowLinkCombineDataPath);
 legendText = {'Ë«»º³å¹Þ´®Áª','Ë«»º³å¹ÞÍäÍ·´®Áª'};
-%% »æÖÆÊµÑé¶Ô±È·ÖÎö
-xSim = {};
-figureExpPressurePlus({expStraightLinkCombineData,expElbowLinkCombineData});
-xSim{1} = 1:length(simStraightLinkDataCells.rawData.pulsationValue);
-xSim{1} = xSim{1}.*0.5;
-xSim{2} = 1:length(simElbowLinkDataCells.rawData.pulsationValue);
-xSim{2} = xSim{2}.*0.5;
-figureExpAndSimPressurePlus({expStraightLinkCombineData,expElbowLinkCombineData}...
-                        ,{simStraightLinkDataCells,simElbowLinkDataCells},legendText,'xsim',xSim);
-%% ÀíÂÛ¶Ô±È·ÖÎö-¶Ô±È{'Ö±¹Ü';'µ¥Ò»»º³å¹Þ';'Ö±½ø²àÇ°³ö';'Ë«¹Þ-¹Þ¶þ×÷ÍäÍ·';'Ë«¹ÞÎÞ¼ä¸ô´®Áª'}
+%% ¼ÓÔØÀíÂÛÊý¾Ý
+% ÀíÂÛ¶Ô±È·ÖÎö-¶Ô±È{'Ö±¹Ü';'µ¥Ò»»º³å¹Þ';'Ö±½ø²àÇ°³ö';'Ë«¹Þ-¹Þ¶þ×÷ÍäÍ·';'Ë«¹ÞÎÞ¼ä¸ô´®Áª'}
 freRaw = [7,14,21,28,14*3];
 massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
 % theoryDataCells = cmpDoubleVesselBeElbow('massflowdata',[freRaw;massFlowERaw]...
 %     ,'meanFlowVelocity',14);
 theoryDataCells = cmpDoubleVesselBeElbow();
-theAnalysisRow = 5:6;
-plusValue = theoryDataCells(theAnalysisRow,2);%Í¨¹ý´Ëº¯ÊýµÄÐÐË÷ÒýÉèÖÃ²»Í¬µÄ¶Ô±ÈÖµ
-X = theoryDataCells(theAnalysisRow,3);
+theAnalysisRow = [6,5];
+
 legendLabels = theoryDataCells(theAnalysisRow,1);
-fh = figureTheoryPressurePlus(plusValue,X...
-    ,'legendLabels',legendLabels...
-);
+
+%% »æÖÆÊµÑé¶Ô±È·ÖÎö
+
+%Ä£Äâ¶ÔÓ¦¾àÀë
+% xSim{1} = [[0.5,1,1.5,2,2.5,2.85,3]-0.25  ,[4.2] ,[5.5,6.5,7,7.5,8,8.5,9,9.5,10]] + 0.5;
+% xSim{2} = [[0.5,1,1.5,2,2.5,2.85,3]-0.25  ,[4.5,5,5.5],  [6.5,7,7.5,8,8.5,9,9.5,10]] + 0.5;
+xSim{1} = [[0.5,1,1.5,2,2.5]+0.5 ,[6.5,7,7.5,8,8.5,9,9.5,10]] ;
+xSim{2} = [[0.5,1,1.5,2,2.5,2.85]  ,[4.5,5,5.5]+0.65,  [7,7.5,8,8.5,9,9.5,10]+1.05];
+%ÊµÑé¶ÔÓ¦¾àÀë
+xExp{1} = [2.5,3,6.25,7.05,7.55,8.05,8.55,9.05,9.55,10.05];%»º³å¹Þ´®ÁªµÄ¾àÀë
+xExp{2} = [2.5,3,5.15,5.65,6.15,8.05,8.55,9.05,9.55,10.05,10.55,11.05];%»º³å¹Þ¹Þ¶þ×öÍäÍ·¾àÀë
+%ÊµÑé¶ÔÓ¦²âµã
+expRang{1} = [1,2,4,7,8,9,10,11,12,13];
+expRang{2} = [1,2,4,5,6,7,8,9,10,11,12,13];
+%ÀíÂÛÊý¾Ý
+thePlusValue = theoryDataCells(theAnalysisRow,2);%Í¨¹ý´Ëº¯ÊýµÄÐÐË÷ÒýÉèÖÃ²»Í¬µÄ¶Ô±ÈÖµ
+xThe = theoryDataCells(theAnalysisRow,3);
+%Á½¸öÇé¿ö»º³å¹Þ¶ÔÓ¦¾àÀë
+vesselRegion1 = [3.8,6];
+vesselRegion2_1 = [3.8,4.9];
+vesselRegion2_2 = [6.4,7.5];
+%Ä£Äâ²âµã
+simRang{1} = [1:5,10:17];
+simRang{2} = [1:6,8:10,12:18];
+fh = figureExpAndSimThePressurePlus({expStraightLinkCombineData,expElbowLinkCombineData}...
+                        ,{simStraightLinkDataCells,simElbowLinkDataCells}...
+                        ,thePlusValue...
+                        ,legendText...
+                        ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
+                        ,'expRang',expRang,'simRang',simRang...
+                        ,'showVesselRigion',0,'ylim',[0,40]...
+                        ,'xlim',[2,12]);
+set(fh.legend,...
+    'Position',[0.519612276666557 0.583185770197046 0.396874991851964 0.235920132580731]);
+plotVesselRegion(fh.gca,vesselRegion1,'color',getPlotColor(1),'yPercent',[0,0]...
+    ,'FaceAlpha',0.3,'EdgeAlpha',0.3);
+plotVesselRegion(fh.gca,vesselRegion2_1,'color',getPlotColor(2),'yPercent',[0,0]...
+    ,'FaceAlpha',0,'EdgeAlpha',1);
+plotVesselRegion(fh.gca,vesselRegion2_2,'color',getPlotColor(2),'yPercent',[0,0]...
+    ,'FaceAlpha',0,'EdgeAlpha',1);
+annotation(fh.figure,'textarrow',[0.336545138888889 0.391666666666667],...
+    [0.776614583333333 0.727005208333333],'String',{'A'});
+annotation(fh.figure,'textarrow',[0.23953125 0.268194444444445],...
+    [0.654244791666667 0.594713541666667],'String',{'B'});
+annotation(fh.figure,'textarrow',[0.415920138888889 0.468836805555556],...
+    [0.6509375 0.594713541666667],'String',{'C'});

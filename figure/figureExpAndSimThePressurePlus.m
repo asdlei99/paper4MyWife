@@ -1,4 +1,4 @@
-function fh = figureExpAndSimPressurePlus(expDataCombineStruct,simDataStruct,varargin)
+function fh = figureExpAndSimThePressurePlus(expDataCombineStruct,simDataStruct,theDataStruct,varargin)
 %绘制实验数据的压力脉动和抑制率图
 % dataCombineStruct 如果传入一个dataCombineStruct就绘制一个图，如果要绘制多个，传入一个dataCombineStructCells
 % varargin可选属性：
@@ -10,12 +10,14 @@ errorType = 'ci';
 errorBarType = 'bar';
 expRang = 1:13;
 simRang = {};
+theRang = {};
 showPureVessel = 0;
 pureVesselLegend = {};
 legendLabels = {};
 rpm = 420;
 xSim = {};
 xExp = {};
+xThe = {};
 xLimVal = [];
 yLimVal = [];
 showVesselRigion = 1;%是否显示缓冲罐区域
@@ -53,11 +55,18 @@ while length(pp)>=2
             yLimVal = val;
         case 'simrang'
             simRang = val;
+        case 'therang'
+            theRang = val;
+        case 'xthe'
+            xThe = val;
         otherwise
        		error('参数错误%s',prop);
     end
 end
 if isempty(xSim)
+    error('xSim必须指定');
+end
+if isempty(xThe)
     error('xSim必须指定');
 end
 fh.figure = figure();
@@ -77,33 +86,45 @@ end
 
    
 for plotCount = 1:length(expDataCombineStruct)
-    
     if(1 == length(expDataCombineStruct))
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(expDataCombineStruct);
         ySimVal = simDataStruct.rawData.pulsationValue;
+        yTheVal = theDataStruct.pulsationValue;
+        yTheVal = yTheVal ./ 1000;
     else
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(expDataCombineStruct{plotCount});
         ySimVal = simDataStruct{plotCount}.rawData.pulsationValue;
+        yTheVal = theDataStruct{plotCount}.pulsationValue;
+        yTheVal = yTheVal ./ 1000;
     end
+
     if ~iscell(xSim)
         xSimVal = xSim;
     else
         xSimVal = xSim{plotCount};
     end
-    
-    if isnan(y)
-        error('没有获取到数据，请确保数据进行过人工脉动读取');
+    if ~iscell(xThe)
+        xTheVal = xThe;
+    else
+        xTheVal = xThe{plotCount};
     end
     if ~iscell(xExp)
         x = xExp;
     else
         x = xExp{plotCount};
     end
+    if isnan(y)
+        error('没有获取到数据，请确保数据进行过人工脉动读取');
+    end
+
     rang = getCellRang(expRang,plotCount,1:length(y));
     y = y(rang);
     
     rangSim = getCellRang(simRang,plotCount,1:length(ySimVal));
     ySimVal = ySimVal(rangSim);
+    
+    rangThe = getCellRang(theRang,plotCount,1:length(yTheVal));
+    yTheVal = yTheVal(rangThe);
     
     if strcmp(errorType,'std')
         yUp = y + stdVal(rang);
@@ -131,6 +152,8 @@ for plotCount = 1:length(expDataCombineStruct)
     end
     fh.plotHandleSim(plotCount) = plot(xSimVal,ySimVal,'color',getPlotColor(plotCount)...
         ,'Marker',getMarkStyle(plotCount),'LineStyle','--');
+    fh.plotHandleThe(plotCount) = plot(xTheVal,yTheVal,'color',getPlotColor(plotCount)...
+        ,'LineStyle','-.');
 end
 if ~isempty(xLimVal)
     xlim(xLimVal);
