@@ -49,7 +49,7 @@ end
 
 fh.figure = figure;
 if 1 == length(meaPoint)
-    paperFigureSet_normal();
+    paperFigureSet_normal(figureHeight);
     wave=dataCells.pressure(:,meaPoint);
     [fh.plotHandles,spectrogramData] = plotSTFT( wave,STFT,Fs,varargin{:});
     box on;
@@ -58,7 +58,7 @@ if 1 == length(meaPoint)
     ylabel('Ê±¼ä(s)','FontName',paperFontName(),'FontSize',paperFontSize());
     zlabel('·ùÖµ(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
 else
-    paperFigureSet_FullWidth(figureHeight)
+    paperFigureSet_FullWidth(figureHeight);
     if subplotCol <= 0
         subplotCol = length(meaPoint) / subplotRow;
     end

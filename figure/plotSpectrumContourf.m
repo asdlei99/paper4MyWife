@@ -42,7 +42,7 @@ function fh = plotSpectrumContourf( mags,fres,y,varargin)
     end
     [~,fh.contourfHandle] = contourf(fres,y,mags,input_args{:});
     if isShowColorbar
-        colorbar;
+        fh.colorBar = colorbar;
     end
 end
 

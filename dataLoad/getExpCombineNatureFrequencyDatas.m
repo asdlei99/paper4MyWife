@@ -18,6 +18,8 @@ function [ meanVal,stdVal,maxVal,minVal,muci,sigmaci]  = getExpCombineNatureFreq
         [ meanVal,stdVal,maxVal,minVal,muci,sigmaci] = getExpCombineData(dataCombineStruct,'semiFreMag3',baseField);
     elseif 3 == freTimes
         [ meanVal,stdVal,maxVal,minVal,muci,sigmaci] = getExpCombineData(dataCombineStruct,'multFreMag3',baseField);
+    else
+        error('´íÎóµÄ±¶ÆµÊäÈë');
     end
 
 end

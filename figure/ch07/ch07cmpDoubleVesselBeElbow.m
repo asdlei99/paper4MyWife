@@ -1,4 +1,4 @@
-%% 第七章 绘图 - 双罐罐二做弯头理论分析对比
+%% 第七章 绘图 - 双罐弯头式缓冲罐理论分析对比
 %第七章画图的参数设置
 clear all;
 close all;
@@ -25,9 +25,16 @@ theoryDataCells = cmpDoubleVesselBeElbow();
 theAnalysisRow = [6,5];
 
 legendLabels = theoryDataCells(theAnalysisRow,1);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%  下面开始绘图
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% 绘制实验对比分析
-
+%% 绘制-模拟-实验-理论 对比分析
+if 1
 %模拟对应距离
 % xSim{1} = [[0.5,1,1.5,2,2.5,2.85,3]-0.25  ,[4.2] ,[5.5,6.5,7,7.5,8,8.5,9,9.5,10]] + 0.5;
 % xSim{2} = [[0.5,1,1.5,2,2.5,2.85,3]-0.25  ,[4.5,5,5.5],  [6.5,7,7.5,8,8.5,9,9.5,10]] + 0.5;
@@ -35,7 +42,7 @@ xSim{1} = [[0.5,1,1.5,2,2.5]+0.5 ,[6.5,7,7.5,8,8.5,9,9.5,10]] ;
 xSim{2} = [[0.5,1,1.5,2,2.5,2.85]  ,[4.5,5,5.5]+0.65,  [7,7.5,8,8.5,9,9.5,10]+1.05];
 %实验对应距离
 xExp{1} = [2.5,3,6.25,7.05,7.55,8.05,8.55,9.05,9.55,10.05];%缓冲罐串联的距离
-xExp{2} = [2.5,3,5.15,5.65,6.15,8.05,8.55,9.05,9.55,10.05,10.55,11.05];%缓冲罐罐二做弯头距离
+xExp{2} = [2.5,3,5.15,5.65,6.15,8.05,8.55,9.05,9.55,10.05,10.55,11.05];%缓冲罐弯头式缓冲罐距离
 %实验对应测点
 expRang{1} = [1,2,4,7,8,9,10,11,12,13];
 expRang{2} = [1,2,4,5,6,7,8,9,10,11,12,13];
@@ -71,3 +78,30 @@ annotation(fh.figure,'textarrow',[0.23953125 0.268194444444445],...
     [0.654244791666667 0.594713541666667],'String',{'B'});
 annotation(fh.figure,'textarrow',[0.415920138888889 0.468836805555556],...
     [0.6509375 0.594713541666667],'String',{'C'});
+
+end
+%% 绘制倍频特性
+fh = figureExpNatureFrequency({expElbowLinkCombineData,expStraightLinkCombineData}...
+    ,{'弯头式缓冲罐','双罐串联'}...
+    ,'showVesselRigon',0);
+plotVesselRegion(fh.gca,vesselRegion1,'color',getPlotColor(1),'yPercent',[0,0]...
+    ,'FaceAlpha',0.3,'EdgeAlpha',0.3);
+plotVesselRegion(fh.gca,vesselRegion2_1,'color',getPlotColor(2),'yPercent',[0,0]...
+    ,'FaceAlpha',0,'EdgeAlpha',1);
+plotVesselRegion(fh.gca,vesselRegion2_2,'color',getPlotColor(2),'yPercent',[0,0]...
+    ,'FaceAlpha',0,'EdgeAlpha',1);
+annotation(fh.figure,'textarrow',[0.345364583333333 0.409305555555556],...
+    [0.786536458333334 0.75015625],'String',{'A'});
+annotation(fh.figure,'textarrow',[0.248350694444445 0.283628472222222],...
+    [0.664166666666667 0.59140625],'String',{'B'});
+annotation(fh.figure,'textarrow',[0.471041666666667 0.512934027777778],...
+    [0.667473958333333 0.598020833333333],'String',{'C'});
+%% 绘制详细倍频特性
+fh = figureExpNatureFrequencyBar({expElbowLinkCombineData,expStraightLinkCombineData}...
+,1 ...
+,{'弯头式缓冲罐','双罐串联'}...
+);
+fh = figureExpNatureFrequencyBar({expElbowLinkCombineData,expStraightLinkCombineData}...
+,2 ...
+,{'弯头式缓冲罐','双罐串联'}...
+);

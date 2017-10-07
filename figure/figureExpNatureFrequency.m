@@ -1,5 +1,5 @@
 function fh = figureExpNatureFrequency(dataCombineStructCells,varargin)
-%绘制实验数据的压力脉动和抑制率图
+%绘制实验数据的倍频图
 pp = varargin;
 chartType = 'line';
 varargin = {};
@@ -25,7 +25,7 @@ end
     fh = plotInLine(dataCombineStructCells,varargin{:});
 % else
 %     fh = plotInBar(dataCombineStructCells,varargin{:});
-end
+% end
 end
 
 
@@ -37,7 +37,9 @@ function fh = plotInLine(dataCombineStructCells,varargin)
     legendLabels = {};
     baseField = 'rawData';
     showPureVessel = 0;
+    errorDrawType = 'errbar';
     rpm = 420;
+    showVesselRigon = 1;
     natureFre= [1,2];%固有频率，支持[0.5,1,1.5,2,2.5,3]
     %允许特殊的把地一个varargin作为legend
     if 0 ~= mod(length(pp),2)
@@ -51,6 +53,8 @@ function fh = plotInLine(dataCombineStructCells,varargin)
         switch lower(prop)
             case 'errortype' %误差带的类型
                 errorType = val;
+            case 'errordrawtype'
+                errorDrawType = val;
             case 'rang'
                 rang = val;
             case 'yfilterfunptr'
@@ -63,6 +67,8 @@ function fh = plotInLine(dataCombineStructCells,varargin)
                 natureFre = val;
             case 'showpurevessel'
                 showPureVessel = val;
+            case 'showvesselrigon'
+                showVesselRigon = val;
             case 'rpm'
                 rpm = val;
             otherwise
@@ -75,7 +81,7 @@ function fh = plotInLine(dataCombineStructCells,varargin)
     paperFigureSet_normal();
     x = constExpMeasurementPointDistance();%测点对应的距离
     %需要显示单一缓冲罐
-
+    fh.gca = gca;
     if showPureVessel
         dataPat = getPureVesselCombineDataPath(rpm);
         st = loadExpCombineDataStrcut(dataPat);
@@ -96,7 +102,9 @@ function fh = plotInLine(dataCombineStructCells,varargin)
         
         hold on;
     end
-
+    lengthShowPlotHandle = [];
+    lengthText = {};
+    curveCount = 1;
     for plotCount = 1:length(dataCombineStructCells)
         plotMarker = getMarkStyle(plotCount);
         plotColor = getPlotColor(plotCount);
@@ -118,29 +126,40 @@ function fh = plotInLine(dataCombineStructCells,varargin)
                     ,'color',getPlotColor(plotCount)...
                     ,'Marker',plotMarker...
                     ,'LineStyle',plotLineStyle);
+                
+                
             else
-                [fh.plotHandle(plotCount,i),fh.errFillHandle(plotCount,i)] = plotWithError(x,y,yUp,yDown...
+                [fh.plotHandle(plotCount,i),fh.errFillHandle(plotCount,i)] = ...
+                    plotWithError(x,y,yUp,yDown...
                     ,'color',plotColor...
                     ,'Marker',plotMarker...
-                    ,'LineStyle',plotLineStyle);
+                    ,'LineStyle',plotLineStyle...
+                    ,'type',errorDrawType);
             end
+            if ~isempty(legendLabels)
+                lengthShowPlotHandle(curveCount) = fh.plotHandle(plotCount,i);
+                lengthText{curveCount} = sprintf('%s-%d倍频',legendLabels{plotCount},i);
+            end
+            curveCount = curveCount + 1;
         end
     end
     xlim([2,11]);
     if ~isempty(legendLabels)
-        fh.legend = legend(fh.plotHandle,legendLabels,0);
+        fh.legend = legend(lengthShowPlotHandle,lengthText,0);
     end
     set(gca,'Position',[0.13 0.18 0.79 0.65]);
-    fh.textboxTopAxixTitle = annotation('textbox',...
-        [0.48 0.885 0.0998 0.0912],...
-        'String','测点',...
-        'FaceAlpha',0,...
-        'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
-    fh.textarrow = annotation('textarrow',[0.38 0.33],...
-        [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
-    fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
+    if showVesselRigon
+        fh.textarrow = annotation('textarrow',[0.38 0.33],...
+            [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
+        fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
+    end
     ax = axis;
     % 绘制测点线
+    fh.textboxTopAxixTitle = annotation('textbox',...
+            [0.48 0.885 0.0998 0.0912],...
+            'String','测点',...
+            'FaceAlpha',0,...
+            'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
     yLabel2Detal = (ax(4) - ax(3))/12;
     for i = 1:length(x)
         fh.measurementGridLine(i) = plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
