@@ -41,6 +41,7 @@ function fh = plotInLine(dataCombineStructCells,varargin)
     rpm = 420;
     showVesselRigon = 1;
     natureFre= [1,2];%固有频率，支持[0.5,1,1.5,2,2.5,3]
+    xs = {};
     %允许特殊的把地一个varargin作为legend
     if 0 ~= mod(length(pp),2)
         legendLabels = pp{1};
@@ -71,6 +72,8 @@ function fh = plotInLine(dataCombineStructCells,varargin)
                 showVesselRigon = val;
             case 'rpm'
                 rpm = val;
+            case 'xs'
+                xs = val;
             otherwise
                 error('参数错误%s',prop);
         end
@@ -79,17 +82,29 @@ function fh = plotInLine(dataCombineStructCells,varargin)
 
     fh.figure = figure;
     paperFigureSet_normal();
-    x = constExpMeasurementPointDistance();%测点对应的距离
+    if isempty(xs)
+        for i=1:length(dataCombineStructCells)
+            xs{i} = constExpMeasurementPointDistance();%测点对应的距离
+        end
+    elseif 1 == length(xs)
+        if 1 ~= length(dataCombineStructCells)
+            for i=2:length(dataCombineStructCells)
+                xs{i} = xs{1};%测点对应的距离
+            end
+        end
+    end
+    
     %需要显示单一缓冲罐
     fh.gca = gca;
     if showPureVessel
         dataPat = getPureVesselCombineDataPath(rpm);
         st = loadExpCombineDataStrcut(dataPat);
+        x = constExpMeasurementPointDistance();%测点对应的距离
         for i=1:length(natureFre)
             plotLineStyle = getLineStyle(i);
             [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(st,natureFre(i),baseField);
-            [yUp,yDown] = getUpDownRang(y,stdVal,maxVal,minVal,muci,errorType,rang);
-            y = y(rang);
+            [yUp,yDown] = getUpDownRang(y,stdVal,maxVal,minVal,muci,errorType,1:13);
+            y = y(1:13);
             if strcmp(errorType,'none')
                 fh.vesselHandle(i) = plot(x,y,'color',[160,162,162]./255 ...
                     ,'LineStyle',plotLineStyle');
@@ -108,7 +123,12 @@ function fh = plotInLine(dataCombineStructCells,varargin)
     for plotCount = 1:length(dataCombineStructCells)
         plotMarker = getMarkStyle(plotCount);
         plotColor = getPlotColor(plotCount);
-        
+        x = xs{plotCount};
+        if iscell(rang)
+            r = rang{plotCount};
+        else
+            r = rang;
+        end
         for i=1:length(natureFre)
             plotLineStyle = getLineStyle(i);
             if 1==length(dataCombineStructCells)
@@ -116,8 +136,8 @@ function fh = plotInLine(dataCombineStructCells,varargin)
             else
                 [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(dataCombineStructCells{plotCount},natureFre(i),baseField);
             end
-            [yUp,yDown] = getUpDownRang(y,stdVal,maxVal,minVal,muci,errorType,rang);
-            y = y(rang);
+            [yUp,yDown] = getUpDownRang(y,stdVal,maxVal,minVal,muci,errorType,r);
+            y = y(r);
             if isa(yFilterFunPtr,'function_handle')
                 [y,yUp,yDown]= yFilterFunPtr(y,yUp,yDown);
             end

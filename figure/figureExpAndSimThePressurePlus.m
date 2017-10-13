@@ -20,6 +20,7 @@ xExp = {};
 xThe = {};
 xLimVal = [];
 yLimVal = [];
+showMeasurePoint = 1;%是否显示测点
 showVesselRigion = 1;%是否显示缓冲罐区域
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
@@ -59,6 +60,8 @@ while length(pp)>=2
             theRang = val;
         case 'xthe'
             xThe = val;
+        case 'showmeasurepoint'
+            showMeasurePoint = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -177,13 +180,17 @@ if ~isempty(legendLabels)
         plotHandle(length(plotHandle)+1) = fh.plotHandle(i);
         legendLabels{length(legendLabels)+1} = sprintf('模拟-%s',tmp{i});
         plotHandle(length(plotHandle)+1) = fh.plotHandleSim(i);
+        legendLabels{length(legendLabels)+1} = sprintf('理论-%s',tmp{i});
+        plotHandle(length(plotHandle)+1) = fh.plotHandleThe(i);
     end
         
     fh.legend = legend(plotHandle,legendLabels,0);
 end
-
-set(gca,'Position',[0.13 0.18 0.79 0.65]);
-
+if showMeasurePoint
+    set(gca,'Position',[0.13 0.18 0.79 0.65]);
+else
+    set(gca,'Position',[0.13 0.18 0.79 0.75]);
+end
 if showVesselRigion
     fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
         [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
@@ -192,20 +199,22 @@ end
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;
 % 绘制测点线
-fh.textboxMeasurePoint = annotation('textbox',...
-    [0.48 0.885 0.0998 0.0912],...
-    'String','测点',...
-    'FaceAlpha',0,...
-    'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
-for i = 1:length(x)
-    plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
-    if 0 == mod(i,2)
-        continue;
-    end
-    if x(i) < 10
-        text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
-    else
-        text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
+if showMeasurePoint
+    fh.textboxMeasurePoint = annotation('textbox',...
+        [0.48 0.885 0.0998 0.0912],...
+        'String','测点',...
+        'FaceAlpha',0,...
+        'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
+    for i = 1:length(x)
+        plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
+        if 0 == mod(i,2)
+            continue;
+        end
+        if x(i) < 10
+            text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
+        else
+            text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
+        end
     end
 end
 xlabel('管线距离(m)');

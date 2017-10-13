@@ -121,12 +121,13 @@ function theoryDataCells = doubleVesselBeElbowChangDistanceToFirstVessel(varargi
                 ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
                 ,'calcpeakpeakvaluesection',calcPeakPeakValueSection...
                 );
-        theoryDataCells{count,1} = sprintf('双罐罐二作弯头L3=%g',L3(count));
-        theoryDataCells{count,2} = rawDataStruct;
-        theoryDataCells{count,3} = [param.sectionL1...
+        cellIndex = count + 1;
+        theoryDataCells{cellIndex,1} = sprintf('双罐罐二作弯头L3=%g',L3(count));
+        theoryDataCells{cellIndex,2} = rawDataStruct;
+        theoryDataCells{cellIndex,3} = [param.sectionL1...
                                     ,param.L1+param.LV1+2*param.l+param.sectionL3...
                                     ,param.L1+param.LV1+2*param.l+param.L3+param.lv3+param.DV2/2+param.sectionL4];
-        theoryDataCells{count,4} = param;
-        theoryDataCells{count,5} = L3(count);
+        theoryDataCells{cellIndex,4} = param;
+        theoryDataCells{cellIndex,5} = L3(count);
     end
 end

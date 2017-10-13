@@ -19,6 +19,8 @@ function fh = figureTheoryPressurePlus(dataCells,X,varargin)
 pp = varargin;
 legendLabels = {};
 yLabelText = '';
+xLabelText = '管线距离(m)';
+zLabelText = '脉动峰峰值(kPa)';
 Y = nan;%如果Y赋??，将会以3d形式绘制
 sectionY = nan;
 markSectionY = 'none';% 是否对切片的y值进行标记，标记可选'none'-不标记,'markLine'-在图上以线的形式标记,'shadow'-投影到x,z面上
@@ -46,6 +48,10 @@ while length(pp)>=2
             chartType = val;
         case 'ylabeltext'
             yLabelText = val;
+        case 'xlabeltext'
+            xLabelText = val;
+        case 'zlabeltext'
+            zLabelText = val;
         case 'sectiony'%对一个指定的y值进行切片,形成一个切面，取值将会取最接近的y值
             sectionY = val;
         case 'marksectiony'
@@ -103,8 +109,8 @@ if isnan(Y)
         legHandle = legend(plotHandle,legendLabels,0);
     end
 
-    xlabel('管线距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
-    ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel(xLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel(zLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
     fh.plotHandle = plotHandle;
     fh.legendHandle = legHandle;
 else
@@ -127,9 +133,9 @@ else
             );
         box on;
     end
-    xlabel('管线距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel(xLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel(yLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
-    zlabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+    zlabel(zLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
     
     
         
