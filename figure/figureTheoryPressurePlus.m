@@ -168,43 +168,31 @@ function fh = figurePlotSurf(dataCells,X,Y,edgeColor...
     ,sectionX,markSectionX,markSectionXLabel...
     ,fixAxis...
     )
-    maxLengthX = 0;
     hold on;
+    maxLengthX = max(cellfun(@(x) size(x.pulsationValue,2),dataCells));
+    z = zeros(length(dataCells),maxLengthX);
+    z(:) = nan;
+    x = z;
+    y = z;
     for i = 1:length(dataCells)
-        z(i,:) = dataCells{i}.pulsationValue;
+        z(i,1:length(dataCells{i}.pulsationValue)) = dataCells{i}.pulsationValue;
         if size(X,1) > 1
-            x = X{i};
+            x(i,1:length(X{i})) = X{i};
         else
             if iscell(X)
-                x(i,:) = X{1};
+                x(i,1:length(X{i})) = X{1};
             else
-                x(i,:) = X;
-            end
-        end
-        if(length(x) > maxLengthX )
-            maxLengthX = length(x);
-        end
-    end
-    z = z ./ 1000;
-    x = zeros(length(dataCells),maxLengthX);
-    x(:) = nan;
-    y = x;
-    for i = 1:length(dataCells)
-        if size(X,1) > 1
-            x(i,:) = X{i};
-        else
-            if iscell(X)
-                x(i,:) = X{1};
-            else
-                x(i,:) = X;
+                x(i,1:length(X)) = X;
             end
         end
         y(i,:) = Y(i);
     end
+    z = z ./ 1000;
+    
     fh.plotHandle = surf(x,y,z);
     if fixAxis
-        xlim([x(1,1),x(1,end)]);
-        ylim([y(1,1),y(end,1)]);
+        xlim([min(min(x)),max(max(x))]);
+        ylim([min(min(y)),max(max(y))]);
     end
     if ~isnan(edgeColor)
         set(fh.plotHandle,'EdgeColor',edgeColor);
@@ -229,39 +217,26 @@ function fh = figurePlotContourf(dataCells,X,Y,edgeColor...
     ,sectionX,markSectionX,markSectionXLabel...
     ,fixAxis...
     )
-    maxLengthX = 0;
     hold on;
+    maxLengthX = max(cellfun(@(x) size(x.pulsationValue,2),dataCells));
+    z = zeros(length(dataCells),maxLengthX);
+    z(:) = nan;
+    x = z;
+    y = z;
     for i = 1:length(dataCells)
-        z(i,:) = dataCells{i}.pulsationValue;
+        z(i,1:length(dataCells{i}.pulsationValue)) = dataCells{i}.pulsationValue;
         if size(X,1) > 1
-            x = X{i};
+            x(i,1:length(X{i})) = X{i};
         else
             if iscell(X)
-                x(i,:) = X{1};
+                x(i,1:length(X{i})) = X{1};
             else
-                x(i,:) = X;
-            end
-        end
-        if(length(x) > maxLengthX )
-            maxLengthX = length(x);
-        end
-    end
-    z = z ./ 1000;
-    x = zeros(length(dataCells),maxLengthX);
-    x(:) = nan;
-    y = x;
-    for i = 1:length(dataCells)
-        if size(X,1) > 1
-            x(i,:) = X{i};
-        else
-            if iscell(X)
-                x(i,:) = X{1};
-            else
-                x(i,:) = X;
+                x(i,1:length(X)) = X;
             end
         end
         y(i,:) = Y(i);
     end
+    z = z ./ 1000;
     fh.plotHandle = contourf(x,y,z);
     if fixAxis
         xlim([x(1,1),x(1,end)]);

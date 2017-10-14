@@ -40,6 +40,7 @@ function fh = plotInLine(dataCombineStructCells,varargin)
     errorDrawType = 'errbar';
     rpm = 420;
     showVesselRigon = 1;
+    ylimRang = [];
     natureFre= [1,2];%固有频率，支持[0.5,1,1.5,2,2.5,3]
     xs = {};
     %允许特殊的把地一个varargin作为legend
@@ -74,6 +75,8 @@ function fh = plotInLine(dataCombineStructCells,varargin)
                 rpm = val;
             case 'xs'
                 xs = val;
+            case 'ylim'
+                ylimRang = val;
             otherwise
                 error('参数错误%s',prop);
         end
@@ -164,6 +167,9 @@ function fh = plotInLine(dataCombineStructCells,varargin)
         end
     end
     xlim([2,11]);
+    if ~isempty(ylimRang)
+        ylim(ylimRang);
+    end
     if ~isempty(legendLabels)
         fh.legend = legend(lengthShowPlotHandle,lengthText,0);
     end
