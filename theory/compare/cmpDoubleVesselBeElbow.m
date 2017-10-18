@@ -43,11 +43,12 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     param.mach = param.meanFlowVelocity / param.acousticVelocity;
     param.notMach = 0;
 
-    param.L1 = 3.5;%L1(m)
+    param.L1 = 3.8;%L1(m)
     param.L2 = 6;%L2（m）长度
     param.L3 = 1.5;%1.5;%双罐串联罐二作弯头两罐间距
     param.L4 = 4;%4%双罐串联罐二作弯头出口管长
-    param.L5 = 5.85;%5.85;%4.5;%双罐无间隔串联L2（m）长度
+    param.L5 = 4;%5.85;%4.5;%双罐无间隔串联L2（m）长度
+    param.L5Temp = 5.85;%5.85;%由于计算误差，这里理论计算时用L5Temp计算，但只用到L5的长度数据
     param.Dpipe = 0.098;%管道直径（m）%应该是0.106
     param.l = 0.01;
     param.DV1 = 0.372;%缓冲罐的直径（m）
@@ -237,7 +238,7 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     count = count + 1;
     [pressure1,pressure2] = ...
         doubleVesselSeriesPulsationCalc(param.massFlowE,param.fre,time,...
-            param.L1,param.L5,...
+            param.L1,param.L5Temp,...
             param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
             param.sectionL1,param.sectionL5,...
             'a',param.acousticVelocity,'isDamping',param.isDamping,'friction',0.003,...
@@ -259,6 +260,6 @@ function theoryDataCells = cmpDoubleVesselBeElbow(varargin)
     theoryDataCells{count,3} = [param.sectionL1...
                                 ,param.L1+param.LV1+2*param.l+param.LV2+2*param.l+param.sectionL5];
     theoryDataCells{count,3} = [param.sectionL1+1 ...
-                                ,param.L1+param.LV1+2*param.l+param.LV2+2*param.l+param.sectionL5-1];                        
+                                ,param.L1+param.LV1+2*param.l+param.LV2+2*param.l+param.sectionL5];                        
     theoryDataCells{count,4} = param;
 end

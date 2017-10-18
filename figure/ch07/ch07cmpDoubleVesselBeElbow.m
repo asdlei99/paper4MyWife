@@ -47,10 +47,7 @@ xExp = {xStraightLinkVessel,xElbowLinkVessel};
 expRangStraightLinkVessel = [1,2,4,7,8,9,10,11,12,13];
 expRangElbowLinkVessel = [1,2,4,5,6,7,8,9,10,11,12,13];
 expRang = {expRangStraightLinkVessel,expRangElbowLinkVessel};
-if 1
-%理论数据
-thePlusValue = theoryDataCells(theAnalysisRow,2);%通过此函数的行索引设置不同的对比值
-xThe = theoryDataCells(theAnalysisRow,3);
+
 %两个情况缓冲罐对应距离
 vesselRegion1 = [3.8,6];
 vesselRegion2_1 = [3.8,4.9];
@@ -58,6 +55,14 @@ vesselRegion2_2 = [6.4,7.5];
 %模拟测点
 simRang{1} = [1:5,10:17];
 simRang{2} = [1:6,8:10,12:18];
+if 1
+%理论数据
+thePlusValue = theoryDataCells(theAnalysisRow,2);%通过此函数的行索引设置不同的对比值
+xThe = theoryDataCells(theAnalysisRow,3);
+%vesselRegion1下的数据都应该清除
+tmp = xThe{1} > vesselRegion1(1) & xThe{1} < vesselRegion1(2);
+xThe{1}(tmp) = [];
+thePlusValue{1}.pulsationValue(tmp) = [];
 fh = figureExpAndSimThePressurePlus({expStraightLinkCombineData,expElbowLinkCombineData}...
                         ,{simStraightLinkDataCells,simElbowLinkDataCells}...
                         ,thePlusValue...
@@ -82,6 +87,24 @@ annotation(fh.figure,'textarrow',[0.23953125 0.268194444444445],...
 annotation(fh.figure,'textarrow',[0.415920138888889 0.468836805555556],...
     [0.6509375 0.594713541666667],'String',{'C'});
 
+end
+%% 绘制脉动抑制率
+%获取单一缓冲罐的数据
+if 0
+    [ meanValSingleVessel,stdValSingleVessel,maxValSingleVessel,minValSingleVessel ...
+        ,muciSingleVessel,sigmaciSingleVessel] = constExpVesselPressrePlus(420);
+    fh = figureExpPressurePlusSuppressionRate({expStraightLinkCombineData,expElbowLinkCombineData}...
+        ,'errorDrawType','bar'...
+        ,'showVesselRigon',0 ...
+        ,'xs',xExp ...
+        ,'rangs',expRang...
+        );
+    plotVesselRegion(fh.gca,vesselRegion1,'color',getPlotColor(1),'yPercent',[0,0]...
+        ,'FaceAlpha',0.3,'EdgeAlpha',0.3);
+    plotVesselRegion(fh.gca,vesselRegion2_1,'color',getPlotColor(2),'yPercent',[0,0]...
+        ,'FaceAlpha',0,'EdgeAlpha',1);
+    plotVesselRegion(fh.gca,vesselRegion2_2,'color',getPlotColor(2),'yPercent',[0,0]...
+        ,'FaceAlpha',0,'EdgeAlpha',1);
 end
 %% 绘制倍频特性
 if 0
@@ -108,7 +131,7 @@ if 0
         'Position',[0.559299775549487 0.589800353530379 0.359392354080144 0.235920132580731]);
 end
 %% 绘制详细倍频特性
-if 1
+if 0
     fh = figureExpNatureFrequencyBar({expElbowLinkCombineData,expStraightLinkCombineData}...
     ,1 ...
     ,{'弯头式缓冲罐','双罐串联'}...

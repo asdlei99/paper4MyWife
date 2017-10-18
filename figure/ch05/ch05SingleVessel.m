@@ -12,7 +12,7 @@ vesselSideFontInSideFontOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÎŞÄ
 vesselSideFontInSideBackOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÎŞÄÚ¼ş»º³å¹Ş\µ¥¹Ş²àÇ°½ø²àºó³ö420×ª0.05mpa');
 vesselDirectInSideFontOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÎŞÄÚ¼ş»º³å¹Ş\µ¥¹ŞÖ±½ø²àÇ°³ö420×ª0.05mpa');
 vesselDirectInSideBackOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÎŞÄÚ¼ş»º³å¹Ş\µ¥¹ŞÖ±½ø²àºó³ö420×ª0.05mpa');
-vesselDirectInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÎŞÄÚ¼ş»º³å¹Ş\µ¥¹ŞÖ±½øÖ±³ö420×ª0.05mpa');
+vesselDirectInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÎŞÄÚ¼ş»º³å¹Ş\µ¥¹ŞÖ±½øÖ±³ö420×ª0.05mpaModify');
 %% ¼ÓÔØÖĞ¼ä¿×°åÒÔ¼°»º³å¹ŞÊı¾İ
 [vesselSideFontInDirectOutDataCells,vesselSideFontInDirectOutCombineData] ...
     = loadExpDataFromFolder(vesselSideFontInDirectOutCombineDataPath);
@@ -36,6 +36,8 @@ vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselDirectInDirectOutCombineData...
     };
 legendLabels = {'²àÇ°½øÖ±³ö','²àÇ°½ø²àÇ°³ö','²àÇ°½ø²àºó³ö','Ö±½ø²àÇ°³ö','Ö±½ø²àºó³ö','Ö±½øÖ±³ö'};
+pressureDropMeasureRang = cellfun(@(x) [2,3],legendLabels,'UniformOutput',0);
+pressureDropMeasureRang{end} = [2,4];
 %% ·ÖÎö²ÎÊıÉèÖÃ
 %Ê±Æµ·ÖÎö²ÎÊıÉèÖÃ
 Fs = 100;%ÊµÑé²ÉÑùÂÊ
@@ -74,23 +76,30 @@ end
 %»æÖÆ0.25DµÄÑ¹Á¦Âö¶¯
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% »æÖÆ¶à×éÑ¹Á¦Âö¶¯
-fh = figureExpPressurePlus(vesselCombineDataCells,legendLabels,'errorType',errorType...
-    ,'showPureVessel',0);
-
+if 1
+    fh = figureExpPressurePlus(vesselCombineDataCells,legendLabels...
+        ,'errorType','none'...
+        ,'showPureVessel',0);
+end
 %»æÖÆ0.25DµÄÑ¹Á¦Âö¶¯ÒÖÖÆÂÊ
 % fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
 %     ,'yfilterfunptr',@fixInnerOrificY ...
 % );
 %% »æÖÆ¶à×éÑ¹Á¦Âö¶¯ÒÖÖÆÂÊ
 %% »æÖÆ¶à×éÑ¹Á¦½µ
-fh = figureExpPressureDrop(vesselCombineDataCells,legendLabels,[2,3],'chartType','bar');
-%'chartType'== 'bar' Ê±ÓÃÓÚÉèÖÃbarµÄÑÕÉ«
-set(fh.barHandle,'FaceColor',getPlotColor(1));
-set(fh.gca,'XTickLabelRotation',30);
+if 0
+    
+    fh = figureExpPressureDrop(vesselCombineDataCells,legendLabels,pressureDropMeasureRang,'chartType','bar');
+    %'chartType'== 'bar' Ê±ÓÃÓÚÉèÖÃbarµÄÑÕÉ«
+    set(fh.barHandle,'FaceColor',getPlotColor(1));
+    set(fh.gca,'XTickLabelRotation',30);
+end
 %¶Ô²âµã1½øĞĞÊ±Æµ·ÖÎö²¨ĞÎ
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
 %»æÖÆ1±¶ÆµµÄ¶Ô±È
 %% »æÖÆ±¶Æµ
-fh = figureExpNatureFrequencyBar(vesselCombineDataCells,1,legendLabels);
-fh = figureExpNatureFrequencyBar(vesselCombineDataCells,2,legendLabels);
+if 0
+    fh = figureExpNatureFrequencyBar(vesselCombineDataCells,1,legendLabels);
+    fh = figureExpNatureFrequencyBar(vesselCombineDataCells,2,legendLabels);
+end
 fh = figureExpNatureFrequencyBar(vesselCombineDataCells,3,legendLabels);

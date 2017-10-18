@@ -30,15 +30,28 @@ fh.figure = figure;
 paperFigureSet_normal();
 
 x = 1:length(dataCombineStructCells);
-[ pressureDropMeanVal,pressureDropStdVal,pressureDropMaxVal,pressureDropMinVal,pressureDropMuci,~] ...
-    = cellfun(@(x) getExpCombinePressureDropData(x,measureRang,baseField),dataCombineStructCells,'UniformOutput',0);
+if iscell(measureRang)
+    for i=1:length(dataCombineStructCells)
+         [ pressureDropMeanVal,pressureDropStdVal,pressureDropMaxVal,pressureDropMinVal,pressureDropMuci,~] ...
+        = getExpCombinePressureDropData(dataCombineStructCells{i},measureRang{i},baseField);
+        pressureDropInfo.mean(i) = pressureDropMeanVal;
+        pressureDropInfo.std(i) = pressureDropStdVal;
+        pressureDropInfo.max(i) = pressureDropMaxVal;
+        pressureDropInfo.min(i) = pressureDropMinVal;
+        pressureDropInfo.muci(:,i) = pressureDropMuci(:);
+    end
+    y = pressureDropInfo.mean;
+else
+    [ pressureDropMeanVal,pressureDropStdVal,pressureDropMaxVal,pressureDropMinVal,pressureDropMuci,~] ...
+        = cellfun(@(x) getExpCombinePressureDropData(x,measureRang,baseField),dataCombineStructCells,'UniformOutput',0);
+    pressureDropInfo.mean = cell2mat(pressureDropMeanVal);
+    pressureDropInfo.std = cell2mat(pressureDropStdVal);
+    pressureDropInfo.max = cell2mat(pressureDropMaxVal);
+    pressureDropInfo.min = cell2mat(pressureDropMinVal);
+    pressureDropInfo.muci = [cell2mat(cellfun(@(x) x(1,1),pressureDropMuci,'UniformOutput',0));cell2mat(cellfun(@(x) x(2,1),pressureDropMuci,'UniformOutput',0))];
+    y = pressureDropInfo.mean;
+end
 
-pressureDropInfo.mean = cell2mat(pressureDropMeanVal);
-pressureDropInfo.std = cell2mat(pressureDropStdVal);
-pressureDropInfo.max = cell2mat(pressureDropMaxVal);
-pressureDropInfo.min = cell2mat(pressureDropMinVal);
-pressureDropInfo.muci = [cell2mat(cellfun(@(x) x(1,1),pressureDropMuci,'UniformOutput',0));cell2mat(cellfun(@(x) x(2,1),pressureDropMuci,'UniformOutput',0))];
-y = pressureDropInfo.mean;
 if strcmp(errorType,'std')
     yUp = y + pressureDropInfo.std;
     yDown = y - pressureDropInfo.std;

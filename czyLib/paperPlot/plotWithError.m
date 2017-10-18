@@ -22,7 +22,7 @@ while length(varargin)>=2
     val=varargin{2};
     varargin=varargin(3:end);
     switch lower(prop)
-        case 'type' %是否允许补0
+        case 'type' %area 使用区域填充来代替误差带，否则使用误差棒图bar
             type = val;
         case 'colorface'
             colorFace = val;
