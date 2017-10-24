@@ -27,7 +27,7 @@ vesselDirectInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\ÎŞÄÚ¼ş»
 [vesselDirectInDirectOutDataCells,vesselDirectInDirectOutCombineData] ...
     = loadExpDataFromFolder(vesselDirectInDirectOutCombineDataPath);
 
-%¶Ô±Èµ¥¿×
+%»º³å¹Ş²»Í¬½Ó·¨µÄÊµÑéÊı¾İ
 vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselSideFontInSideFontOutCombineData...
     ,vesselSideFontInSideBackOutCombineData...
@@ -35,7 +35,21 @@ vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselDirectInSideBackOutCombineData...
     ,vesselDirectInDirectOutCombineData...
     };
-legendLabels = {'²àÇ°½øÖ±³ö','²àÇ°½ø²àÇ°³ö','²àÇ°½ø²àºó³ö','Ö±½ø²àÇ°³ö','Ö±½ø²àºó³ö','Ö±½øÖ±³ö'};
+%ÊµÑéÊı¾İ×îºóÒ»¸ö²âµãµÄÖµ
+
+vesselDiffLinkLastMeasureMeanValues = cellfun(@(x) mean(x.readPlus(:,13)),vesselCombineDataCells,'UniformOutput',1);
+vesselDiffLinkLastMeasureMeanValuesUp = vesselDiffLinkLastMeasureMeanValues;
+vesselDiffLinkLastMeasureMeanValuesDown = vesselDiffLinkLastMeasureMeanValues;
+for i=1:length(vesselCombineDataCells)
+    [~,~,muci,sigmaci] = normfit(vesselCombineDataCells{i}.readPlus(:,13),0.05);
+    vesselDiffLinkLastMeasureMeanValuesUp(i) = muci(2,1);
+    vesselDiffLinkLastMeasureMeanValuesDown(i) = muci(1,1);
+end
+
+
+
+legendLabels = {'²àÇ°½øÖ±³ö(A)','²àÇ°½ø²àÇ°³ö(B)','²àÇ°½ø²àºó³ö(C)','Ö±½ø²àÇ°³ö(D)','Ö±½ø²àºó³ö(E)','Ö±½øÖ±³ö(F)'};
+legendLabelsAbb = {'A','B','C','D','E','F'};
 pressureDropMeasureRang = cellfun(@(x) [2,3],legendLabels,'UniformOutput',0);
 pressureDropMeasureRang{end} = [2,4];
 %% ·ÖÎö²ÎÊıÉèÖÃ
@@ -76,10 +90,28 @@ end
 %»æÖÆ0.25DµÄÑ¹Á¦Âö¶¯
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% »æÖÆ¶à×éÑ¹Á¦Âö¶¯
-if 1
+if 0
     fh = figureExpPressurePlus(vesselCombineDataCells,legendLabels...
         ,'errorType','none'...
         ,'showPureVessel',0);
+    set(fh.legend,...
+        'Position',[0.197702551027417 0.469635426128899 0.282222217491105 0.346163184982204]);
+    set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
+    annotation(fh.gcf,'ellipse',...
+        [0.857892361111112 0.674088541666667 0.0430972222222221 0.171979166666667]);
+    annotation(fh.gcf,'arrow',[0.865638766519824 0.814977973568282],...
+        [0.675567656765677 0.564356435643564]);
+    ax = axes('Parent',fh.gcf...
+        ,'Position',[0.618767361111111 0.257369791666667 0.275208333333337 0.29765625]...
+        ,'color','w');
+    box(ax,'on');
+    err = [vesselDiffLinkLastMeasureMeanValues'-vesselDiffLinkLastMeasureMeanValuesDown'...
+        ,vesselDiffLinkLastMeasureMeanValuesUp'-vesselDiffLinkLastMeasureMeanValues'];
+    barHandle = barwitherr(err,vesselDiffLinkLastMeasureMeanValues');
+    ylim([30,40]);
+    xlim([0,7]);
+    set(barHandle,'FaceColor',getPlotColor(1));
+    set(ax,'XTickLabel',legendLabelsAbb);
 end
 %»æÖÆ0.25DµÄÑ¹Á¦Âö¶¯ÒÖÖÆÂÊ
 % fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
@@ -87,7 +119,7 @@ end
 % );
 %% »æÖÆ¶à×éÑ¹Á¦Âö¶¯ÒÖÖÆÂÊ
 %% »æÖÆ¶à×éÑ¹Á¦½µ
-if 0
+if 1
     
     fh = figureExpPressureDrop(vesselCombineDataCells,legendLabels,pressureDropMeasureRang,'chartType','bar');
     %'chartType'== 'bar' Ê±ÓÃÓÚÉèÖÃbarµÄÑÕÉ«
@@ -101,5 +133,5 @@ end
 if 0
     fh = figureExpNatureFrequencyBar(vesselCombineDataCells,1,legendLabels);
     fh = figureExpNatureFrequencyBar(vesselCombineDataCells,2,legendLabels);
+    fh = figureExpNatureFrequencyBar(vesselCombineDataCells,3,legendLabels);
 end
-fh = figureExpNatureFrequencyBar(vesselCombineDataCells,3,legendLabels);

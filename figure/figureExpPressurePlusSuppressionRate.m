@@ -17,6 +17,8 @@ suppressionRateBase = {};
 xlimRang = [];
 ylimRang = [];
 showVesselRigon = 1;
+xIsMeasurePoint = 0;%
+figureHeight = 6;
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -45,13 +47,17 @@ while length(pp)>=2
             errorDrawType = val;
         case 'showvesselrigon'
             showVesselRigon = val;
+        case 'xismeasurepoint'
+            xIsMeasurePoint = val;%此属性设置为1，则绘图时x轴时测点
+        case 'figureheight'
+            figureHeight = val;
         otherwise
        		error('参数错误%s',prop);
     end
 end
 
 figure
-paperFigureSet_normal();
+paperFigureSet_normal(figureHeight);
 if isempty(rangs)
     rangs{1} = 1:13;
 end
@@ -63,7 +69,9 @@ if isempty(suppressionRateBase)
     end
 end
 if isempty(xs)
-    xs{1} = constExpMeasurementPointDistance();%测点对应的距离
+    if ~xIsMeasurePoint
+        xs{1} = constExpMeasurementPointDistance();%测点对应的距离
+    end
 end
    
 for plotCount = 1:length(dataCombineStruct)
@@ -131,33 +139,36 @@ if ~isempty(legendLabels)
         fh.legend = legend([fh.vesselHandle,fh.plotHandle],legendLabels,0);
     end
 end
-
-set(gca,'Position',[0.13 0.18 0.79 0.65]);
+if ~xIsMeasurePoint
+    set(gca,'Position',[0.13 0.18 0.79 0.65]);
+    fh.textboxMeasurePoint = annotation('textbox',...
+        [0.48 0.885 0.0998 0.0912],...
+        'String','测点',...
+        'FaceAlpha',0,...
+        'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
+    ax = axis;
+    yLabel2Detal = (ax(4) - ax(3))/12;
+    % 绘制测点线
+    for i = 1:length(x)
+        plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
+        if 0 == mod(i,2)
+            continue;
+        end
+        if x(i) < 10
+            text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
+        else
+            text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
+        end
+    end
+    xlabel('管线距离(m)');
+else
+    xlabel('测点');
+end
 if showVesselRigon
     fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
     [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
     fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
 end
-fh.textboxMeasurePoint = annotation('textbox',...
-    [0.48 0.885 0.0998 0.0912],...
-    'String','测点',...
-    'FaceAlpha',0,...
-    'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
-ax = axis;
-yLabel2Detal = (ax(4) - ax(3))/12;
-% 绘制测点线
-for i = 1:length(x)
-    plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
-    if 0 == mod(i,2)
-        continue;
-    end
-    if x(i) < 10
-        text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
-    else
-        text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
-    end
-end
-xlabel('管线距离(m)');
 ylabel('脉动抑制率(%)');
 fh.gca = gca;
 end

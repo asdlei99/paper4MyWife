@@ -58,7 +58,7 @@ for i = 1:length(dataCombineStructCells)
     end
 end
 ys = ys';
-err(:,:,1) = errUp';
+err(:,:,2) = errUp';
 err(:,:,1) = errDown';
 fh.barHandle = barwitherr(err,ys);
 % for i=1:length(fh.barHandle) %h = fh.barHandle

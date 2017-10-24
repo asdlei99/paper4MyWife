@@ -37,7 +37,7 @@ while length(pp)>=2
     end
 end
 
-figure
+fh.gcf = figure
 paperFigureSet_normal();
 x = constExpMeasurementPointDistance();%测点对应的距离
 %需要显示单一缓冲罐
@@ -102,7 +102,7 @@ fh.textboxMeasurePoint = annotation('textbox',...
     'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
 fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
     [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
-vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
+fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;
 % 绘制测点线
