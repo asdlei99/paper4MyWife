@@ -40,7 +40,9 @@ function fh = plotInLine(dataCombineStructCells,varargin)
     errorDrawType = 'errbar';
     rpm = 420;
     showVesselRigon = 1;
+    isShowMeasurePoint = 1;
     ylimRang = [];
+    figureHeight = 8;
     natureFre= [1,2];%固有频率，支持[0.5,1,1.5,2,2.5,3]
     xs = {};
     %允许特殊的把地一个varargin作为legend
@@ -77,6 +79,10 @@ function fh = plotInLine(dataCombineStructCells,varargin)
                 xs = val;
             case 'ylim'
                 ylimRang = val;
+            case 'isshowmeasurepoint'
+                isShowMeasurePoint = val;
+            case 'figureheight'
+                figureHeight = val;
             otherwise
                 error('参数错误%s',prop);
         end
@@ -84,7 +90,7 @@ function fh = plotInLine(dataCombineStructCells,varargin)
 
 
     fh.figure = figure;
-    paperFigureSet_normal();
+    paperFigureSet_normal(figureHeight);
     if isempty(xs)
         for i=1:length(dataCombineStructCells)
             xs{i} = constExpMeasurementPointDistance();%测点对应的距离
@@ -174,29 +180,36 @@ function fh = plotInLine(dataCombineStructCells,varargin)
         fh.legend = legend(lengthShowPlotHandle,lengthText,0);
     end
     set(gca,'Position',[0.13 0.18 0.79 0.65]);
+
+    ax = axis;
+    % 绘制测点线
+    if isShowMeasurePoint
+        set(gca,'Position',[0.13 0.18 0.79 0.65]);
+        fh.textboxTopAxixTitle = annotation('textbox',...
+                [0.48 0.885 0.0998 0.0912],...
+                'String','测点',...
+                'FaceAlpha',0,...
+                'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
+        yLabel2Detal = (ax(4) - ax(3))/12;
+        for i = 1:length(x)
+            fh.measurementGridLine(i) = plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
+            if 0 == mod(i,2)
+                continue;
+            end
+            if x(i) < 10
+                fh.measurementText(i) = text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
+            else
+                fh.measurementText(i) = text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
+            end
+        end
+    else
+        set(gca,'Position',[0.13 0.18 0.79 0.75]);
+    end
+    
     if showVesselRigon
         fh.textarrow = annotation('textarrow',[0.38 0.33],...
             [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
         fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
-    end
-    ax = axis;
-    % 绘制测点线
-    fh.textboxTopAxixTitle = annotation('textbox',...
-            [0.48 0.885 0.0998 0.0912],...
-            'String','测点',...
-            'FaceAlpha',0,...
-            'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
-    yLabel2Detal = (ax(4) - ax(3))/12;
-    for i = 1:length(x)
-        fh.measurementGridLine(i) = plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
-        if 0 == mod(i,2)
-            continue;
-        end
-        if x(i) < 10
-            fh.measurementText(i) = text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
-        else
-            fh.measurementText(i) = text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
-        end
     end
     xlabel('管线距离(m)','FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel('倍频幅值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
