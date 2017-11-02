@@ -27,7 +27,7 @@ isOpening = 0;
 % st.mach = st.meanFlowVelocity ./ st.a;
 % st.D = Dpipe;
 
-opt.acousticVelocity = 345;%声速
+opt.acousticVelocity = 345;%声速（60摄氏度）
 opt.meanFlowVelocity = 25.51;
 opt.isDamping = 1;%是否计算阻尼
 opt.coeffDamping = nan;%阻尼

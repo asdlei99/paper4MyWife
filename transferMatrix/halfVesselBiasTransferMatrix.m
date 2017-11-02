@@ -155,7 +155,7 @@ Ml = straightPipeTransferMatrix(l,'k',k,'S',S,'a',a,...
             'isDamping',isDamping,'coeffDamping',coeffDamping(1)...
             ,'mach',optMachStraight.mach,'notmach',optMachStraight.notMach);
 Mv = halfVesselMatrix(isUseStaightPipe,L,bias,k,S,Sv,a...
-            ,optDamp,optMachVessel,inVessel);
+            ,optDamping,optMachVessel,inVessel);
 if(inVessel)
     M = Mv*Ml;
 else
@@ -240,17 +240,15 @@ function Mv = halfVesselMatrix(isUseStaightPipe,L,bias,k,S,Sv,a,optDamping,optMa
             return;
         end
         if inVessel
-            MReduce = sudReduceTransferMatrix(S,Sv,1,a,...
-                'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,...
-                'isacoustics',1,'l',bias,'k',k);
+            MReduce = sudEnlargeTransferMatrix(S,Sv,a,...
+                'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notmach',optMach.notMach);
             Mv = ML*MReduce;
-            return;
+        else
+            MReduce = sudReduceTransferMatrix(Sv,S,a,...
+                'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notmach',optMach.notMach);
+            Mv = MReduce*ML;
         end
-        MReduce = sudReduceTransferMatrix(S,Sv,0,a,'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,...
-            'isacoustics',1,'l',bias,'k',k);
-        Mv = MReduce*ML;
         return;
-
     end
     %使用容积传递矩阵
     V = Sv*L;

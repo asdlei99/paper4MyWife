@@ -52,8 +52,8 @@ function theoryDataCells = doubleVesselShockResponse(varargin)
     param.notMach = 0;
 
     param.L1 = 3.5;%L1(m)
-    param.L2 = 4;%4%双罐串联接管长
-    param.L3 = 4;%4%双罐串联出口管长
+    param.L2 = 0;%4%双罐串联接管长
+    param.L3 = 5.85;%4;%4%双罐串联出口管长
     
     param.Dpipe = 0.098;%管道直径（m）%应该是0.106
     param.l = 0.01;

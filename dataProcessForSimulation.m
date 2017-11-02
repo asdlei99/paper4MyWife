@@ -6,7 +6,7 @@ currentPath = fileparts(mfilename('fullpath'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%下面是需要设置的参数，本程序仅在此需要更改参数，其他地方不需要更改
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-useGUI = 0;%如果需要合并多个数据为一个，不能使用GUI，需要从53行开始进行手动设置
+useGUI = 1;%如果需要合并多个数据为一个，不能使用GUI，需要从53行开始进行手动设置
 rpm = 420;
 if useGUI
     datasPath = getDataPath();
@@ -53,9 +53,9 @@ else
     %如果是分析单一文件夹的数据，只需要写成datasPath = 'D:\数据\xxx\'
     %如果是要连接两个模拟数据，写成一个元包数组datasPath ={'D:\数据\xxx1\','D:\数据\xxx2\'};
     %这样程序会按照元包数组的顺序进行数据提取和合并
-    datasPath = {'D:\马屈杨论文\share\【论文】罐二作弯头\DoubleTank_Tank2BeElbow_5%_28w'};
+    datasPath = {'G:\ansys_data\DoubleTank_Tank2BeElbow_5%\DoubleTank_Tank2BeElbow_5%_files\user_files\22'};
 %         ,'e:\netdisk\shareCloud\【大论文】\[04]数据\模拟数据\DoubleTank_Z_5%\New Folder'};%fullfile(currentPath,'北区实验数据\模拟\26米单容V=DV细化');
-    simulationDataSection = {1:18};
+    simulationDataSection = {1};
     beforeAfterMeaPoint = nan;%[14,15];%定义抑制装置的进口出口的测点号，如果没有定义为nan
     Fs = 200;%1/0.005
     calcPeakPeakValueSection = [0.8,1.0];%用于标记计算峰峰值的区间，例如[0.7,0.9]，表示70%~90%区间计算峰峰值

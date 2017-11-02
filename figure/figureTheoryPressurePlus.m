@@ -28,9 +28,11 @@ markSectionYLabel = {};
 sectionX = nan;
 markSectionX = 'none';% 是否对切片的x值进行标记，标记可选'none'-不标记,'markLine'-在图上以线的形式标记,'shadow'-投影到x,z面上
 markSectionXLabel = {};
+newFigure = 1;%是否调用figure，否则不会调用
 % fh = nan;
 fixAxis = 0;
 edgeColor = 'none';
+figureHeight = 6;%图片的高度，在newFigure == 1时生效
 %允许特殊的把地一个varargin作为legend
 chartType = 'plot3';
 if 0 ~= mod(length(pp),2)
@@ -70,13 +72,19 @@ while length(pp)>=2
             fixAxis = val;
         case 'legendlabels'
             legendLabels = val;
+        case 'newfigure'
+            newFigure = val;
+        case 'figureheight'
+            figureHeight = val;
         otherwise
        		error('参数错误%s',prop);
     end
 end
+if newFigure
+    fh.figure = figure;
+    paperFigureSet_normal(figureHeight);
+end
 
-figure
-paperFigureSet_normal();
 if isnan(Y)
     for i = 1:length(dataCells)
         if 2 == i
@@ -109,8 +117,8 @@ if isnan(Y)
         legHandle = legend(plotHandle,legendLabels,0);
     end
 
-    xlabel(xLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
-    ylabel(zLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel(xLabelText,'FontSize',paperFontSize());
+    ylabel(zLabelText,'FontSize',paperFontSize());
     fh.plotHandle = plotHandle;
     fh.legendHandle = legHandle;
 else
@@ -133,9 +141,9 @@ else
             );
         box on;
     end
-    xlabel(xLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
-    ylabel(yLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
-    zlabel(zLabelText,'FontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel(xLabelText);
+    ylabel(yLabelText,'FontSize',paperFontSize());
+    zlabel(zLabelText,'FontSize',paperFontSize());
     
     
         
@@ -237,7 +245,7 @@ function fh = figurePlotContourf(dataCells,X,Y,edgeColor...
         y(i,:) = Y(i);
     end
     z = z ./ 1000;
-    fh.plotHandle = contourf(x,y,z);
+    [~,fh.plotHandle] = contourf(x,y,z);
     if fixAxis
         xlim([x(1,1),x(1,end)]);
         ylim([y(1,1),y(end,1)]);
