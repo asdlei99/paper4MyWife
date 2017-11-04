@@ -1,5 +1,9 @@
-function theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio(varargin)
+function [XD,YV,ZPlus] = doubleVesselBeElbowChangLengthDiameterRatioAndV(resIndex,varargin)
 % 双罐第二个缓冲罐作为弯头迭代双罐中间连接管长距离
+% resIndex 是测点的索引
+    if 0 == nargin
+        resIndex = 'end';
+    end
     pp = varargin;
     massflowData = nan;
     param.acousticVelocity = 345;%声速
@@ -32,7 +36,10 @@ function theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio(varargin)
     param.beforeAfterMeaPoint = nan;
     param.calcPeakPeakValueSection = nan;
     param.notMach = 0;
-    DV2 = param.DV2/2:0.01:2*(param.DV2);%迭代的变量DV2
+    
+    DV2 = param.DV2/2:0.03:2*(param.DV2);%迭代的变量DV2
+    beElbowVesselV = ((pi * param.DV2 ^ 2) / 4) * param.LV1;
+    beElbowVesselV = 0.5*beElbowVesselV : 0.01 : beElbowVesselV*1.5;
     while length(pp)>=2
         prop =pp{1};
         val=pp{2};
@@ -44,6 +51,8 @@ function theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio(varargin)
                 param = val;
             case 'dv2'
                 DV2 = val;
+            case 'beelbowvesselv'
+                beElbowVesselV = val;
         end
     end
     
@@ -70,7 +79,7 @@ function theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio(varargin)
     
 
     
-    beElbowVesselV = ((pi * param.DV2 ^ 2) / 4) * param.LV1;
+
     count = 1;
 
 
@@ -95,23 +104,21 @@ function theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio(varargin)
     %                                           | |
     %计算双罐-罐二作弯头 入口流速调节到45时与模拟较接近(L1,L3,L4,0.045)
     %计算双罐-罐二作弯头 入口流速调节到45时与模拟较接近(L1,L3,L4,0.045)
-    theoryDataCells{1,1} = '名称';
-    theoryDataCells{1,2} = 'dataStrcutCell';
-    theoryDataCells{1,3} = 'X';
-    theoryDataCells{1,4} = 'param';
-    theoryDataCells{1,5} = '罐二直径';
-    theoryDataCells{1,6} = '罐二长径比';
+
     
-
-    for count = 1:length(DV2)
-        param.DV2 = DV2(count);
-        param.LV2 = beElbowVesselV / ((pi * param.DV2 ^ 2) / 4);
-
-
-        [pressure1,pressure2,pressure3] = ...
+    for i = 1:length(DV2)
+        for j = 1:length(beElbowVesselV)
+            tmpDV2 = DV2(i);
+            tmpbeElbowVesselV = beElbowVesselV(j);
+            DR = 4 * tmpbeElbowVesselV ./ (pi .* tmpDV2.^3);
+            LV2 = tmpbeElbowVesselV ./ (pi .* tmpDV2 .^ 2 ./ 4);
+            XD(i,j) = DR;
+            YV(i,j) = tmpbeElbowVesselV;
+            
+            [pressure1,pressure2,pressure3] = ...
             doubleVesselElbowPulsationCalc(param.massFlowE,param.fre,time,...
                 param.L1,param.L2,param.L3,...
-                param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
+                param.LV1,LV2,param.l,param.Dpipe,param.DV1,tmpDV2,...
                 param.lv3,param.Dbias,...
                 param.sectionL1,param.sectionL2,param.sectionL3,...
                 'a',param.acousticVelocity,'isDamping',param.isDamping,'friction',param.coeffFriction,...
@@ -119,23 +126,15 @@ function theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio(varargin)
                 'm',param.mach,'notMach',param.notMach...
                 ,'isOpening',param.isOpening...
                 );%,'coeffDamping',opt.coeffDamping
-         rawDataStruct = fun_dataProcessing([pressure1,pressure2,pressure3]...
-                ,'fs',param.Fs...
-                ,'basefrequency',param.baseFrequency...
-                ,'allowdeviation',param.allowDeviation...
-                ,'multfretimes',param.multFreTimes...
-                ,'semifretimes',param.semiFreTimes...
-                ,'beforeAfterMeaPoint',param.beforeAfterMeaPoint...
-                ,'calcpeakpeakvaluesection',param.calcPeakPeakValueSection...
-                );
-        cellIndex = count + 1;
-        theoryDataCells{cellIndex,1} = sprintf('双罐罐二作弯头DV2=%g,LV2=%g',param.DV2,param.LV2);
-        theoryDataCells{cellIndex,2} = rawDataStruct;
-        theoryDataCells{cellIndex,3} = [param.sectionL1...
-                                    ,param.L1+param.LV1+2*param.l+param.sectionL2...
-                                    ,param.L1+param.LV1+2*param.l+param.L2+param.lv3+param.DV2/2+param.sectionL3];
-        theoryDataCells{cellIndex,4} = param;
-        theoryDataCells{cellIndex,5} = param.DV2;
-        theoryDataCells{cellIndex,6} = param.LV2 / param.DV2;
+            pressure = [pressure1,pressure2,pressure3];
+            pressurePlus = calcPuls(pressure,dcpss);
+            if isstr(resIndex)
+                if strcmp(resIndex,'end')
+                    ZPlus(i,j) = pressurePlus(end);
+                end
+            else
+                ZPlus(i,j) = pressurePlus(resIndex);
+            end
+        end
     end
 end

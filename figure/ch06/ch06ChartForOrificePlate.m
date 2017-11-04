@@ -29,7 +29,31 @@ vesselCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
 %对比单孔
 orificDataCells = {expOrificD0_25CombineData,expOrificD0_5CombineData,expOrificD0_75CombineData,expOrificD01CombineData};
 %理论结果
+param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
+param.rpm = 420;
+param.outDensity = 1.5608;
+param.Fs = 4096;
+param.acousticVelocity = 345;%声速（m/s）
+param.isDamping = 1;
+param.coeffFriction = 0.03;
+param.meanFlowVelocity = 16;
+param.LBias = 0.168+0.15;
+param.Dbias = 0;
+param.L1 = 3.5;%(m)
+param.L2 = 6;
+param.Lv = 1.1;
+param.l = 0.01;%(m)缓冲罐的连接管长
+param.Dv = 0.372;
+param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
+param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+param.Dpipe = 0.098;%管道直径（m）
+param.X = [param.sectionL1, param.sectionL1(end) + param.l + param.Lv - param.Dbias + param.sectionL2];
+param.notMach = 0;
+param.allowDeviation = 0.5;
+param.multFreTimes = 3;
+param.semiFreTimes = 3;
 theDataCells = innerOrificTankChangD();
+vesselInBiasResultCell = vesselInBiasPulsationResult('param',param);
 legendLabels = {'0.25D','0.5D','0.75D','1D'};
 %% 分析参数设置
 %时频分析参数设置
@@ -39,10 +63,16 @@ STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
 %% 绘图 
+
 %% 绘制理论模拟实验
-fh = figureExpAndSimThePressurePlus({expStraightLinkCombineData,expElbowLinkCombineData}...
-                        ,{simStraightLinkDataCells,simElbowLinkDataCells}...
-                        ,thePlusValue...
+legendText = {'单一缓冲罐','内置孔板缓冲罐'};
+x = constExpMeasurementPointDistance();%测点对应的距离
+xExp = {x,x};
+xSim = {};
+xThe = {param.X,theDataCells{3, 3}};
+fh = figureExpAndSimThePressurePlus({expVesselCombineData,expOrificD0_5CombineData}...
+                        ,{simVesselDataCell,simOrificD0_5DataCell}...
+                        ,{vesselInBiasResultCell,theDataCells{3, 2}}...
                         ,legendText...
                         ,'showMeasurePoint',0 ...
                         ,'xsim',xSim,'xexp',xExp,'xThe',xThe...

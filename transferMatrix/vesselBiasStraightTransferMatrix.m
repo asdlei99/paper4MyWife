@@ -1,12 +1,13 @@
 function [M,k] = vesselBiasStraightTransferMatrix(Lv,l,lv3,Dbias,varargin )
 %缓冲罐入口错位，出口顺接的气流脉动计算
 % Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
+% lv3为偏置的距离
 %   Detailed explanation goes here
 %   inlet   |  L1
 %        l  |     Lv    
-%   bias2___|_______________
+%        ___|_______________
 %       |                   |  Dpipe
-%       |lv1  V          lv2|———— L2  
+%       |lv3  V             |———— L2  
 %       |___________________| outlet
 %           Dv              l      
 %                       
