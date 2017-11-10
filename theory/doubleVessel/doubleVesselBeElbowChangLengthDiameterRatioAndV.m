@@ -110,8 +110,10 @@ function [XD,YV,ZPlus] = doubleVesselBeElbowChangLengthDiameterRatioAndV(resInde
         for j = 1:length(beElbowVesselV)
             tmpDV2 = DV2(i);
             tmpbeElbowVesselV = beElbowVesselV(j);
-            DR = 4 * tmpbeElbowVesselV ./ (pi .* tmpDV2.^3);
-            LV2 = tmpbeElbowVesselV ./ (pi .* tmpDV2 .^ 2 ./ 4);
+            
+            LV2 = 4 * tmpbeElbowVesselV ./ (pi .* tmpDV2.^2);
+            DR = LV2 / tmpDV2;
+            
             XD(i,j) = DR;
             YV(i,j) = tmpbeElbowVesselV;
             

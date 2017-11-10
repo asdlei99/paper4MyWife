@@ -23,8 +23,10 @@ vesselCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
     = loadExpAndSimDataFromFolder(orificD0_75CombineDataPath);
 [expOrificD01DataCells,expOrificD01CombineData,simOrificD01DataCell] ...
     = loadExpAndSimDataFromFolder(orificD1CombineDataPath);
+%单一缓冲罐数据
 [expVesselDataCells,expVesselCombineData,simVesselDataCell] ...
-    = loadExpAndSimDataFromFolder(vesselCombineDataPath);%单一缓冲罐数据
+    = loadExpAndSimDataFromFolder(vesselCombineDataPath);
+%多孔孔板
 [expOrific28MultHoleD01DataCells,expOrific28MultHoleD01CombineData] = loadExpDataFromFolder(orific28MultHoleD1CombineDataPath);
 %对比单孔
 orificDataCells = {expOrificD0_25CombineData,expOrificD0_5CombineData,expOrificD0_75CombineData,expOrificD01CombineData};
@@ -63,22 +65,33 @@ STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
 %% 绘图 
-
+hold on;
+h(1) = plot(simOrificD01DataCell.rawData.pulsationValue);
+h(2) =plot(simOrificD0_25DataCell.rawData.pulsationValue);
+h(3) =plot(simOrificD0_5DataCell.rawData.pulsationValue);
+h(4) =plot(simOrificD0_75DataCell.rawData.pulsationValue);
+h(5) =plot(simVesselDataCell.rawData.pulsationValue);
+legend(h,{'1D','0.25D','0.5D','0.75D','vessel'});
 %% 绘制理论模拟实验
-legendText = {'单一缓冲罐','内置孔板缓冲罐'};
-x = constExpMeasurementPointDistance();%测点对应的距离
-xExp = {x,x};
-xSim = {};
-xThe = {param.X,theDataCells{3, 3}};
-fh = figureExpAndSimThePressurePlus({expVesselCombineData,expOrificD0_5CombineData}...
-                        ,{simVesselDataCell,simOrificD0_5DataCell}...
-                        ,{vesselInBiasResultCell,theDataCells{3, 2}}...
-                        ,legendText...
-                        ,'showMeasurePoint',0 ...
-                        ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
-                        ,'expRang',expRang,'simRang',simRang...
-                        ,'showVesselRigion',0,'ylim',[0,40]...
-                        ,'xlim',[2,12]);
+if 0
+    legendText = {'单一缓冲罐','内置孔板缓冲罐'};
+    x = constExpMeasurementPointDistance();%测点对应的距离
+    xExp = {x,x};
+    xSim = {...
+        [];
+        [0.5,1,1.5,2,2.5,3,3.5,4.802,5.302,5.802,6.302,6.802,7.302,7.802,8.302,8.802,9.302,9.802,10.302] ...%孔板模拟的x尺寸
+    };
+    xThe = {param.X,theDataCells{3, 3}};
+    fh = figureExpAndSimThePressurePlus({expVesselCombineData,expOrificD0_5CombineData}...
+                            ,{simVesselDataCell,simOrificD0_5DataCell}...
+                            ,{vesselInBiasResultCell,theDataCells{3, 2}}...
+                            ,legendText...
+                            ,'showMeasurePoint',0 ...
+                            ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
+                            ,'expRang',expRang,'simRang',simRang...
+                            ,'showVesselRigion',0,'ylim',[0,40]...
+                            ,'xlim',[2,12]);
+end
 %% 1D孔板的[1,3,7,13]测点的时频分析波形
 if 0
     dataNumIndex = 2;%读取的实验组数，<5
@@ -97,25 +110,33 @@ end
 %绘制0.25D的压力脉动
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% 绘制多组压力脉动
-fh = figureExpPressurePlus(orificDataCells,legendLabels,'errorType',errorType...
-    ,'showPureVessel',1,'purevessellegend','单一缓冲罐');
-set(fh.vesselHandle,'color','r');
+if 0
+    fh = figureExpPressurePlus(orificDataCells,legendLabels,'errorType',errorType...
+        ,'showPureVessel',1,'purevessellegend','单一缓冲罐');
+    set(fh.vesselHandle,'color','r');
+end
 %绘制0.25D的压力脉动抑制率
 % fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
 %     ,'yfilterfunptr',@fixInnerOrificY ...
 % );
 %% 绘制多组压力脉动抑制率
-fh = figureExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorType...
-    ,'yfilterfunptr',@fixInnerOrificY ...
-);
+if 0
+    fh = figureExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorType...
+        ,'yfilterfunptr',@fixInnerOrificY ...
+    );
+end
 %% 绘制多组压力降
-fh = figureExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
-%'chartType'== 'bar' 时用于设置bar的颜色
-set(fh.barHandle,'FaceColor',getPlotColor(1));
+if 0
+    fh = figureExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
+    %'chartType'== 'bar' 时用于设置bar的颜色
+    set(fh.barHandle,'FaceColor',getPlotColor(1));
+end
 %对测点1进行时频分析波形
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
 %绘制1倍频的对比
 %% 绘制倍频
-fh = figureExpNatureFrequencyBar(orificDataCells,1,legendLabels);
-fh = figureExpNatureFrequencyBar(orificDataCells,2,legendLabels);
-fh = figureExpNatureFrequencyBar(orificDataCells,3,legendLabels);
+if 0
+    fh = figureExpNatureFrequencyBar(orificDataCells,1,legendLabels);
+    fh = figureExpNatureFrequencyBar(orificDataCells,2,legendLabels);
+    fh = figureExpNatureFrequencyBar(orificDataCells,3,legendLabels);
+end

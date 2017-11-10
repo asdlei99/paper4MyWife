@@ -7,8 +7,49 @@ freRaw = [7,14,21,28,14*3];
 massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
 %% 冲击脉动响应
 if 0
-    shockResponseBeElbowDataCells = doubleVesselBeElbowShockResponse('meanflowvelocity',25.51);
-    shockResponseStraingDataCells = doubleVesselShockResponse('meanflowvelocity',25.51);
+    %参数
+    shockFreTimes = 1;
+    shockFs = 1024*shockFreTimes;
+    shockPulsWave = [100,zeros(1,1024*shockFreTimes-1)];
+    shockTime = 0:1:(size(shockPulsWave,2)-1);
+    shockTime = shockTime .* (1/shockFs);
+    [shockFrequency,~,~,shockMagE] = frequencySpectrum(shockPulsWave,shockFs);
+    shockFrequency(1) = [];
+    shockMagE(1) = [];
+    
+    param.meanFlowVelocity = 25.51;
+    param.Fs = shockFs;
+    param.fre = shockFrequency;
+    param.massFlowE = shockMagE; 
+    param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
+    param.rpm = 420;
+    param.outDensity = 1.5608;
+    param.acousticVelocity = 345;%声速
+    param.isDamping = 1;%是否计算阻尼
+    param.coeffFriction = 0.003;%管道摩察系数
+    param.mach = param.meanFlowVelocity / param.acousticVelocity;
+    param.notMach = 0;
+    param.L1 = 3.5;%L1(m)
+    param.L2 = 1.5;%1.5;%双罐串联罐二作弯头两罐间距
+    param.L3 = 4;%4%双罐串联罐二作弯头出口管长
+    param.Dpipe = 0.098;%管道直径（m）%应该是0.106
+    param.l = 0.01;
+    param.DV1 = 0.372;%缓冲罐的直径（m）
+    param.LV1 = 1.1;%缓冲罐总长 （1.1m）
+    param.DV2 = 0.372;%variant_DV2(i);%(4.*V2./(pi.*variant_r(i)))^(1/3);%缓冲罐的直径（0.372m）
+    param.LV2 = 1.1;%variant_r(i).*param.DV2;%缓冲罐总长 （1.1m）
+    param.Lv1 = param.LV1./2;%缓冲罐腔1总长
+    param.Lv2 = param.LV1-param.Lv1;%缓冲罐腔2总长   
+    param.lv3 = 0.150+0.168;%针对单一偏置缓冲罐入口偏置长度
+    param.Dbias = 0;%偏置管伸入罐体部分为0，所以对应直径为0
+    param.sectionL1 = 0:0.25:param.L1;%[2.5,3.5];%0:0.25:param.L1
+    param.sectionL2 = 0:0.25:param.L2;
+    param.sectionL3 = 0:0.25:param.L3;
+    %参数输入结束
+    
+    
+    shockResponseBeElbowDataCells = doubleVesselBeElbowShockResponse('param',param);
+    shockResponseStraingDataCells = doubleVesselShockResponse('param',param);
     
     dataCells = {shockResponseBeElbowDataCells{2, 2}...
         ,shockResponseStraingDataCells{2, 2}};
@@ -25,8 +66,46 @@ if 0
         ,'xlabel','频率(Hz)'...
         ,'ylabel','管线距离(m)'...
         );
+    ax = axis(fhBeElbow.gca(1));
+    %绘制罐二做弯头的L1分界
+    plot(fhBeElbow.gca(1),[ax(1),ax(2)],[param.L1,param.L1],'--w');
+    plot(fhBeElbow.gca(1),[ax(1),ax(2)],[param.L1+param.LV1+2*param.l,param.L1+param.LV1+2*param.l],'--w');
+    %绘制双罐罐前罐后分界
+    ax = axis(fhBeElbow.gca(2));
+    plot(fhBeElbow.gca(2),[ax(1),ax(2)],[param.L1,param.L1],'--w');
     set(fhBeElbow.contourfHandle(1).contourfHandle,'LevelList',0:5000:60000);
     set(fhBeElbow.contourfHandle(2).contourfHandle,'LevelList',0:5000:60000);
+    %
+    annotation('textbox',...
+        [0.095 0.34 0.05 0.11],...
+        'String',{'a'},...
+        'Color',[1 1 1],...
+        'EdgeColor','none');
+    annotation('textbox',...
+        [0.389 0.34 0.05 0.11],...
+        'String',{'a'},...
+        'Color',[1 1 1],...
+        'EdgeColor','none');
+    annotation('textbox',...
+        [0.095 0.5 0.05 0.11],...
+        'String',{'b'},...
+        'Color',[1 1 1],...
+        'EdgeColor','none');
+    annotation('textbox',...
+        [0.389 0.5 0.05 0.11],...
+        'Color',[1 1 1],...
+        'String',{'b'},...
+        'EdgeColor','none');
+    annotation('textbox',...
+        [0.501 0.42 0.05 0.11],...
+        'String',{'a'},...
+        'Color',[1 1 1],...
+        'EdgeColor','none');
+    annotation('textbox',...
+        [0.8 0.42 0.05 0.11],...
+        'String',{'a'},...
+        'Color',[1 1 1],...
+        'EdgeColor','none');
 end
 %% 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
 if 0 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
@@ -61,6 +140,9 @@ if 0 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
         ,'edgeColor','none'...
         ,'newFigure',0 ...
     );
+    hold on;
+    plot(linkPipeLength+3.5,linkPipeLength,'--w');
+    plot(ones(size(linkPipeLength)).*3.5,linkPipeLength,'--w');
     set(fh.plotHandle,'LevelList',0:3:25,'showText','on');
     xlim([0,10.37]);
     box on;
@@ -93,12 +175,12 @@ if 0 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
 end
 
 %% 研究改变长径比对脉动的影响
-if 0
+if 1
     param.acousticVelocity = 345;%声速
     param.isDamping = 1;%是否计算阻尼
     param.coeffFriction = 0.003;%管道摩察系数
     param.coeffFriction = 0.045;
-    param.meanFlowVelocity = 14;%14.6;%管道平均流速
+    param.meanFlowVelocity = 25.51;%14.6;%管道平均流速
     param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
     param.rpm = 420;
     param.outDensity = 1.5608;
@@ -124,8 +206,8 @@ if 0
     param.beforeAfterMeaPoint = nan;
     param.calcPeakPeakValueSection = nan;
     param.notMach = 0;
-    theoryDataCells =  doubleVesselBeElbowChangLengthDiameterRatio('massflowdata',[freRaw;massFlowERaw]...
-        ,'param',param);
+    theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio('massflowdata',[freRaw;massFlowERaw],...
+        'param',param);
     plusValue = theoryDataCells(2:end,2);
     X = theoryDataCells(2:end,3);
     legendLabels = theoryDataCells(2:end,1);
@@ -174,18 +256,20 @@ if 0
     plot(linkPipeLength,Y2./1000,'-');
     xlabel(ylabelText);
     ylabel(zLabelText);
-    annotation('textarrow',[0.39828125 0.4578125],...
-        [0.723697916666667 0.783229166666667],'String',{'A-A'});
+    annotation('textarrow',[0.411510416666667 0.4578125],...
+        [0.800625 0.72125],'String',{'A-A'});
     annotation('textarrow',[0.393871527777778 0.455607638888889],...
         [0.528567708333333 0.39296875],'String',{'B-B'});
 end
 
 
 %%
-if 1
+if 0
     [X,Y,Z] = doubleVesselBeElbowChangLengthDiameterRatioAndV();
     figure
     paperFigureSet_normal(7);
     [c,f] = contourf(X,Y,Z);
+    xlabel('长径比');
+    ylabel('缓冲罐体积');
     set(f,'levelList',1:500:14000);
 end

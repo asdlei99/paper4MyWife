@@ -1,19 +1,6 @@
 function theoryDataCells = doubleVesselBeElbowShockResponse(varargin)
 % 双罐第二个缓冲罐作为弯头的冲击脉动响应分析 - 频率特性分析
     pp = varargin;
-    param.meanFlowVelocity = nan;
-    while length(pp)>=2
-        prop =pp{1};
-        val=pp{2};
-        pp=pp(3:end);
-        switch lower(prop)
-            case 'meanflowvelocity'
-                param.meanFlowVelocity = val;
-        end
-    end
-    if isnan(param.meanFlowVelocity)
-        param.meanFlowVelocity = 14;
-    end
     shockFreTimes = 1;
     shockFs = 1024*shockFreTimes;
     shockPulsWave = [100,zeros(1,1024*shockFreTimes-1)];
@@ -22,18 +9,14 @@ function theoryDataCells = doubleVesselBeElbowShockResponse(varargin)
     [shockFrequency,~,~,shockMagE] = frequencySpectrum(shockPulsWave,shockFs);
     shockFrequency(1) = [];
     shockMagE(1) = [];
+    
+    param.meanFlowVelocity = nan;
     param.Fs = shockFs;
     param.fre = shockFrequency;
-    param.massFlowE = shockMagE;
-    
+    param.massFlowE = shockMagE; 
     param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
     param.rpm = 420;
     param.outDensity = 1.5608;
-    
-
-
-
-
     param.acousticVelocity = 345;%声速
     param.isDamping = 1;%是否计算阻尼
     param.coeffFriction = 0.003;%管道摩察系数
@@ -58,6 +41,22 @@ function theoryDataCells = doubleVesselBeElbowShockResponse(varargin)
     param.sectionL1 = 0:0.25:param.L1;%[2.5,3.5];%0:0.25:param.L1
     param.sectionL2 = 0:0.25:param.L2;
     param.sectionL3 = 0:0.25:param.L3;
+    while length(pp)>=2
+        prop =pp{1};
+        val=pp{2};
+        pp=pp(3:end);
+        switch lower(prop)
+            case 'meanflowvelocity'
+                param.meanFlowVelocity = val;
+            case 'param'
+                param = val;
+        end
+    end
+    if isnan(param.meanFlowVelocity)
+        param.meanFlowVelocity = 14;
+    end
+    
+    
     count = 1;
 
     baseFrequency = 14;
