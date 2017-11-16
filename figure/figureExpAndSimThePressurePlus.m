@@ -22,6 +22,9 @@ xLimVal = [];
 yLimVal = [];
 showMeasurePoint = 1;%是否显示测点
 showVesselRigion = 1;%是否显示缓冲罐区域
+figureHeight = 8;
+isFigure = 1;
+expVesselRang = constExpVesselRangDistance();
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -62,6 +65,12 @@ while length(pp)>=2
             xThe = val;
         case 'showmeasurepoint'
             showMeasurePoint = val;
+        case 'figureheight'
+            figureHeight = val;
+        case 'isfigure'
+            isFigure = val;
+        case 'expvesselrang'
+            expVesselRang = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -72,8 +81,10 @@ end
 if isempty(xThe)
     error('xSim必须指定');
 end
-fh.figure = figure();
-paperFigureSet_normal();
+if isFigure
+    fh.figure = figure();
+end
+paperFigureSet_normal(figureHeight);
 if isempty(xExp)
     for i = 1:length(expDataCombineStruct)
         xExp{i} = constExpMeasurementPointDistance();%测点对应的距离
@@ -194,7 +205,7 @@ end
 if showVesselRigion
     fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
         [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
-    vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
+    vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 end
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;

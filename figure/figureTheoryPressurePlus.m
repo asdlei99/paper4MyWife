@@ -144,7 +144,7 @@ else
     xlabel(xLabelText);
     ylabel(yLabelText,'FontSize',paperFontSize());
     zlabel(zLabelText,'FontSize',paperFontSize());
-    
+    fh.gca = gca;
     
         
     

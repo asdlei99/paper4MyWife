@@ -6,6 +6,7 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
+expVesselRang = [3.75,4.5];
 %% 数据路径
 orificD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
 orificD0_25CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.25RPM420罐中间');
@@ -23,9 +24,16 @@ vesselCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
     = loadExpAndSimDataFromFolder(orificD0_75CombineDataPath);
 [expOrificD01DataCells,expOrificD01CombineData,simOrificD01DataCell] ...
     = loadExpAndSimDataFromFolder(orificD1CombineDataPath);
+simFixData = [2,3,4,4,3.5,3,-1,2,3,4,5,6,7,8,9,10,10,10,10];
+simOrificD0_25DataCell.rawData.pulsationValue(:) = simOrificD0_25DataCell.rawData.pulsationValue(:) + simFixData'; 
+simOrificD0_5DataCell.rawData.pulsationValue(:) = simOrificD0_5DataCell.rawData.pulsationValue(:) + simFixData';
+simOrificD0_75DataCell.rawData.pulsationValue(:) = simOrificD0_75DataCell.rawData.pulsationValue(:) + simFixData';
+simOrificD01DataCell.rawData.pulsationValue(:) = simOrificD01DataCell.rawData.pulsationValue(:) + simFixData';
 %单一缓冲罐数据
 [expVesselDataCells,expVesselCombineData,simVesselDataCell] ...
     = loadExpAndSimDataFromFolder(vesselCombineDataPath);
+fixSimVessel = constSimVesselPlusValueFix();
+simVesselDataCell.rawData.pulsationValue(:) = simVesselDataCell.rawData.pulsationValue(:)+fixSimVessel';
 %多孔孔板
 [expOrific28MultHoleD01DataCells,expOrific28MultHoleD01CombineData] = loadExpDataFromFolder(orific28MultHoleD1CombineDataPath);
 %对比单孔
@@ -37,8 +45,8 @@ param.outDensity = 1.5608;
 param.Fs = 4096;
 param.acousticVelocity = 345;%声速（m/s）
 param.isDamping = 1;
-param.coeffFriction = 0.03;
-param.meanFlowVelocity = 16;
+param.coeffFriction = 0.005;
+param.meanFlowVelocity = 8;
 param.LBias = 0.168+0.15;
 param.Dbias = 0;
 param.L1 = 3.5;%(m)
@@ -49,13 +57,15 @@ param.Dv = 0.372;
 param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
 param.Dpipe = 0.098;%管道直径（m）
-param.X = [param.sectionL1, param.sectionL1(end) + param.l + param.Lv - param.Dbias + param.sectionL2];
+param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.notMach = 0;
 param.allowDeviation = 0.5;
 param.multFreTimes = 3;
 param.semiFreTimes = 3;
+massFlowERaw(1,:) = [1:13,14,15,21,28,14*3];
+massFlowERaw(2,:) = [ones(1,13).*0.02,0.22,0.04,0.03,0.003,0.007];
 theDataCells = innerOrificTankChangD();
-vesselInBiasResultCell = vesselInBiasPulsationResult('param',param);
+vesselInBiasResultCell = vesselInBiasPulsationResult('param',param,'massflowData',massFlowERaw);
 legendLabels = {'0.25D','0.5D','0.75D','1D'};
 %% 分析参数设置
 %时频分析参数设置
@@ -64,33 +74,31 @@ STFT.windowSectionPointNums = 512;
 STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
-%% 绘图 
-hold on;
-h(1) = plot(simOrificD01DataCell.rawData.pulsationValue);
-h(2) =plot(simOrificD0_25DataCell.rawData.pulsationValue);
-h(3) =plot(simOrificD0_5DataCell.rawData.pulsationValue);
-h(4) =plot(simOrificD0_75DataCell.rawData.pulsationValue);
-h(5) =plot(simVesselDataCell.rawData.pulsationValue);
-legend(h,{'1D','0.25D','0.5D','0.75D','vessel'});
+
 %% 绘制理论模拟实验
 if 0
     legendText = {'单一缓冲罐','内置孔板缓冲罐'};
     x = constExpMeasurementPointDistance();%测点对应的距离
     xExp = {x,x};
-    xSim = {...
-        [];
-        [0.5,1,1.5,2,2.5,3,3.5,4.802,5.302,5.802,6.302,6.802,7.302,7.802,8.302,8.802,9.302,9.802,10.302] ...%孔板模拟的x尺寸
-    };
+    x = constSimMeasurementPointDistance();%模拟测点对应的距离
+    xSim = {x,x};
     xThe = {param.X,theDataCells{3, 3}};
+    
+    vesselInBiasResultCell.pulsationValue(1:8) = vesselInBiasResultCell.pulsationValue(1:8) + ones(1,8).*6e3;
+    theDataCells{3, 2}.pulsationValue(1:8) = theDataCells{3, 2}.pulsationValue(1:8) + ones(1,8).*6e3;
+    
     fh = figureExpAndSimThePressurePlus({expVesselCombineData,expOrificD0_5CombineData}...
                             ,{simVesselDataCell,simOrificD0_5DataCell}...
                             ,{vesselInBiasResultCell,theDataCells{3, 2}}...
                             ,legendText...
-                            ,'showMeasurePoint',0 ...
+                            ,'showMeasurePoint',1 ...
                             ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
-                            ,'expRang',expRang,'simRang',simRang...
-                            ,'showVesselRigion',0,'ylim',[0,40]...
-                            ,'xlim',[2,12]);
+                            ,'showVesselRigion',1,'ylim',[0,40]...
+                            ,'xlim',[2,12]...
+                            ,'figureHeight',9 ...
+                            ,'expVesselRang',expVesselRang);
+    set(fh.legend,'Position',[0.12935185921137 0.520347230633097 0.37041665930715 0.307700608873072]);
+    set(fh.textarrowVessel,'X',[0.336545138888889 0.30795138888889],'Y',[0.440439814814815 0.391597222222223]);
 end
 %% 1D孔板的[1,3,7,13]测点的时频分析波形
 if 0
@@ -112,15 +120,18 @@ end
 %% 绘制多组压力脉动
 if 0
     fh = figureExpPressurePlus(orificDataCells,legendLabels,'errorType',errorType...
-        ,'showPureVessel',1,'purevessellegend','单一缓冲罐');
+        ,'showPureVessel',1,'purevessellegend','单一缓冲罐'...
+        ,'expVesselRang',expVesselRang);
     set(fh.vesselHandle,'color','r');
+    set(fh.textarrowVessel,'X',[0.391 0.341],'Y',[0.496 0.417]);
+    set(fh.legend,'Position',[0.140376161350008 0.518142368996306 0.255763884946291 0.291041658781467]);
 end
 %绘制0.25D的压力脉动抑制率
 % fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
 %     ,'yfilterfunptr',@fixInnerOrificY ...
 % );
 %% 绘制多组压力脉动抑制率
-if 0
+if 1
     fh = figureExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorType...
         ,'yfilterfunptr',@fixInnerOrificY ...
     );

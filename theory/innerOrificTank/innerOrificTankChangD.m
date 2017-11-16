@@ -54,7 +54,7 @@ param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
 param.Dpipe = 0.098;%π‹µ¿÷±æ∂£®m£©
 param.bias = 0.168+0.150;
-param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1-param.bias + param.Lv2 + param.sectionL2];
+param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
 
 baseFrequency = 14;
 multFreTimes = 3;
@@ -111,7 +111,7 @@ for i = 1:length(orificD)
                                 ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
                                 ,'calcpeakpeakvaluesection',nan...
                                 );
-    theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1-param.bias + param.Lv2 + param.sectionL2];
+    theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
     theoryDataCells{i+1,4} = d;
     theoryDataCells{i+1,5} = param;
     

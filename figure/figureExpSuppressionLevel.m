@@ -4,6 +4,7 @@ function fh = figureExpSuppressionLevel(dataCombineStructCells,varargin)
 pp = varargin;
 errorType = 'ci';%绘制误差带的模式，std：mean+-sd,ci为95%置信区间，minmax为最大最小
 rang = 1:13;
+expVesselRang = constExpVesselRangDistance();
 %允许特殊的把地一个varargin作为legend
 yFilterFunPtr = @fixY;
 legendLabels = {};
@@ -23,6 +24,8 @@ while length(pp)>=2
             rang = val;
         case 'yfilterfunptr'
             yFilterFunPtr = val;
+        case 'expvesselrang'
+            expVesselRang = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -79,7 +82,7 @@ fh.textboxTopAxixTitle = annotation('textbox',...
     'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
 fh.textarrow = annotation('textarrow',[0.38 0.33],...
     [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
-fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
+fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 ax = axis;
 % 绘制测点线
 yLabel2Detal = (ax(4) - ax(3))/12;

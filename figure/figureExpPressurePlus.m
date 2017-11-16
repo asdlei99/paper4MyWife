@@ -12,6 +12,7 @@ showPureVessel = 0;
 pureVesselLegend = {};
 legendLabels = {};
 rpm = 420;
+expVesselRang = constExpVesselRangDistance();
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -32,12 +33,14 @@ while length(pp)>=2
             pureVesselLegend = val;
         case 'rpm'
             rpm = val;
+        case 'expvesselrang'
+            expVesselRang = val;
         otherwise
        		error('参数错误%s',prop);
     end
 end
 
-fh.gcf = figure
+fh.gcf = figure();
 paperFigureSet_normal();
 x = constExpMeasurementPointDistance();%测点对应的距离
 %需要显示单一缓冲罐
@@ -102,7 +105,7 @@ fh.textboxMeasurePoint = annotation('textbox',...
     'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
 fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
     [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
-fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
+fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;
 % 绘制测点线
