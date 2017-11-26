@@ -37,9 +37,10 @@ function [XD,YV,ZPlus] = doubleVesselBeElbowChangLengthDiameterRatioAndV(resInde
     param.calcPeakPeakValueSection = nan;
     param.notMach = 0;
     
-    DV2 = param.DV2/2:0.03:2*(param.DV2);%迭代的变量DV2
     beElbowVesselV = ((pi * param.DV2 ^ 2) / 4) * param.LV1;
     beElbowVesselV = 0.5*beElbowVesselV : 0.01 : beElbowVesselV*1.5;
+    %长径比
+    Ldr = 1:0.5:23.66;
     while length(pp)>=2
         prop =pp{1};
         val=pp{2};
@@ -49,8 +50,8 @@ function [XD,YV,ZPlus] = doubleVesselBeElbowChangLengthDiameterRatioAndV(resInde
                 massflowData = val;
             case 'param'
                 param = val;
-            case 'dv2'
-                DV2 = val;
+            case 'ldr'
+                Ldr = val;
             case 'beelbowvesselv'
                 beElbowVesselV = val;
         end
@@ -106,21 +107,19 @@ function [XD,YV,ZPlus] = doubleVesselBeElbowChangLengthDiameterRatioAndV(resInde
     %计算双罐-罐二作弯头 入口流速调节到45时与模拟较接近(L1,L3,L4,0.045)
 
     
-    for i = 1:length(DV2)
-        for j = 1:length(beElbowVesselV)
-            tmpDV2 = DV2(i);
-            tmpbeElbowVesselV = beElbowVesselV(j);
-            
-            LV2 = 4 * tmpbeElbowVesselV ./ (pi .* tmpDV2.^2);
-            DR = LV2 / tmpDV2;
-            
-            XD(i,j) = DR;
-            YV(i,j) = tmpbeElbowVesselV;
+    for i = 1:length(beElbowVesselV)
+        for j = 1:length(Ldr)
+            %根据Ldr计算直径
+            Dv2 = calcDFromVAndLDR(beElbowVesselV(i),Ldr(j));
+            %根据长径比和体积计算长度
+            LV2 = calcLFromVAndLDR(beElbowVesselV(i),Ldr(j));
+            XD(i,j) = Ldr(j);
+            YV(i,j) = beElbowVesselV(i);
             
             [pressure1,pressure2,pressure3] = ...
             doubleVesselElbowPulsationCalc(param.massFlowE,param.fre,time,...
                 param.L1,param.L2,param.L3,...
-                param.LV1,LV2,param.l,param.Dpipe,param.DV1,tmpDV2,...
+                param.LV1,LV2,param.l,param.Dpipe,param.DV1,Dv2,...
                 param.lv3,param.Dbias,...
                 param.sectionL1,param.sectionL2,param.sectionL3,...
                 'a',param.acousticVelocity,'isDamping',param.isDamping,'friction',param.coeffFriction,...
@@ -139,4 +138,14 @@ function [XD,YV,ZPlus] = doubleVesselBeElbowChangLengthDiameterRatioAndV(resInde
             end
         end
     end
+end
+
+%根据长径比和体积计算直径
+function d = calcDFromVAndLDR(V,Ldr)
+    d = ((4.*V)/(pi.*Ldr)).^(1/3);
+end
+
+%根据长径比和体积计算长度
+function l = calcLFromVAndLDR(V,Ldr)
+    l = ((4.*V.*Ldr.^2)/pi).^(1/3);
 end

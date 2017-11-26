@@ -5,6 +5,8 @@ clear all;
 clc;
 freRaw = [7,14,21,28,14*3];
 massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
+% grootDefaultPlotPropertySet();
+isEnglish = 0;
 %% 冲击脉动响应
 if 0
     %参数
@@ -57,59 +59,85 @@ if 0
         ,shockResponseStraingDataCells{2, 1}};
     xs = {shockResponseBeElbowDataCells{2, 3}...
         ,shockResponseStraingDataCells{2, 3}};
-    
+    if isEnglish
+        fontName = 'Cambria';
+        barHighText = 'High';
+        barLowText = 'Low';
+        xlabelText = 'Frequency(Hz)';
+        ylabelText = 'Distance(m)';
+    else
+        fontName = '黑体';
+        barHighText = '高';
+        barLowText = '低';
+        xlabelText = '频率(Hz)';
+        ylabelText = '距离(m)';
+    end
     fhBeElbow = figureShockSpectrumContourf(dataCells,{'(a)','(b)'}...
         ,'x',xs...
         ,'LevelList',0:10000:60000 ...
         ,'figureHeight',6 ...
         ,'xlim',[0,100] ...
-        ,'xlabel','频率(Hz)'...
-        ,'ylabel','管线距离(m)'...
+        ,'xlabel',xlabelText...
+        ,'ylabel',ylabelText...
+        ,'fontName',fontName...
         );
     ax = axis(fhBeElbow.gca(1));
+    set(fhBeElbow.lowText,'String',barLowText);
+    set(fhBeElbow.heighText,'String',barHighText);
     %绘制罐二做弯头的L1分界
     plot(fhBeElbow.gca(1),[ax(1),ax(2)],[param.L1,param.L1],'--w');
     plot(fhBeElbow.gca(1),[ax(1),ax(2)],[param.L1+param.LV1+2*param.l,param.L1+param.LV1+2*param.l],'--w');
     %绘制双罐罐前罐后分界
     ax = axis(fhBeElbow.gca(2));
     plot(fhBeElbow.gca(2),[ax(1),ax(2)],[param.L1,param.L1],'--w');
-    set(fhBeElbow.contourfHandle(1).contourfHandle,'LevelList',0:5000:60000);
-    set(fhBeElbow.contourfHandle(2).contourfHandle,'LevelList',0:5000:60000);
+%     set(fhBeElbow.contourfHandle(1).contourfHandle,'LevelList',0:5000:60000);
+%     set(fhBeElbow.contourfHandle(2).contourfHandle,'LevelList',0:5000:60000);
     %
     annotation('textbox',...
         [0.095 0.34 0.05 0.11],...
         'String',{'a'},...
         'Color',[1 1 1],...
-        'EdgeColor','none');
+        'EdgeColor','none'...
+        ,'FontName',fontName...
+        ,'FontSize',paperFontSize());
     annotation('textbox',...
         [0.389 0.34 0.05 0.11],...
         'String',{'a'},...
         'Color',[1 1 1],...
-        'EdgeColor','none');
+        'EdgeColor','none'...
+        ,'FontName',fontName...
+        ,'FontSize',paperFontSize());
     annotation('textbox',...
         [0.095 0.5 0.05 0.11],...
         'String',{'b'},...
         'Color',[1 1 1],...
-        'EdgeColor','none');
+        'EdgeColor','none'...
+        ,'FontName',fontName...
+        ,'FontSize',paperFontSize());
     annotation('textbox',...
         [0.389 0.5 0.05 0.11],...
         'Color',[1 1 1],...
         'String',{'b'},...
-        'EdgeColor','none');
+        'EdgeColor','none'...
+        ,'FontName',fontName...
+        ,'FontSize',paperFontSize());
     annotation('textbox',...
         [0.501 0.42 0.05 0.11],...
-        'String',{'a'},...
+        'String',{'c'},...
         'Color',[1 1 1],...
-        'EdgeColor','none');
+        'EdgeColor','none'...
+        ,'FontName',fontName...
+        ,'FontSize',paperFontSize());
     annotation('textbox',...
         [0.8 0.42 0.05 0.11],...
-        'String',{'a'},...
+        'String',{'c'},...
         'Color',[1 1 1],...
-        'EdgeColor','none');
+        'EdgeColor','none'...
+        ,'FontName',fontName...
+        ,'FontSize',paperFontSize());
 end
 %% 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
-if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
-    
+if 0 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
     % 绘制 x:管线距离 y:连接两罐的距离 z:脉动峰峰值
     theoryDataCells = doubleVesselBeElbowChangDistanceToFirstVessel('massflowdata',[freRaw;massFlowERaw]...
         ,'meanFlowVelocity',14);
@@ -117,14 +145,20 @@ if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
     X = theoryDataCells(2:end,3);
     legendLabels = theoryDataCells(2:end,1);
     linkPipeLength = cell2mat(theoryDataCells(2:end,5));
-    if 0
-        xlabelText = 'distance(m)';
-        ylabelText = 'connect distance(m)';
-        zLabelText = 'pressure plus(kPa)';
+    if isEnglish
+        fontName = 'Cambria';
+        xlabelText = 'Distance(m)';
+        ylabelText = 'Lc(m)';
+        zLabelText = 'Peak-to-peak pressure pulsation(kPa)';
+        arr1Text = 'Point 1';
+        arr12Text = 'Point 12';
     else
+        fontName = '黑体';
         xlabelText = '管线距离(m)';
         ylabelText = '连接管长(m)';
         zLabelText = '压力脉动峰峰值(kPa)';
+        arr1Text = '测点 1';
+        arr12Text = '测点 12';
     end
     figure;
     paperFigureSet_large(7);
@@ -139,6 +173,7 @@ if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
         ,'chartType','contourf'...
         ,'edgeColor','none'...
         ,'newFigure',0 ...
+        ,'fontName',fontName...
     );
     hold on;
     plot(linkPipeLength+3.5,linkPipeLength,'--w');
@@ -175,12 +210,12 @@ if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
         'EdgeColor','none');
     annotation('textbox',...
         [0.242099674238252 0.864823348694316 0.052796356007495 0.0974408022490798],...
-        'String','L2',...
+        'String','Lc',...
         'FitBoxToText','off',...
         'EdgeColor','none');
     annotation('textbox',...
         [0.354892949762945 0.866359447004608 0.0496439122408364 0.0959047039387879],...
-         'String','L3',...
+         'String','L2',...
         'FitBoxToText','off',...
         'EdgeColor','none');
     % 对上图的罐前和罐后测点的趋势进行绘制
@@ -192,63 +227,69 @@ if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
     plot(linkPipeLength,Y1./1000,'--');
     hold on;
     plot(linkPipeLength,Y2./1000,'-');
-    xlabel(ylabelText);
-    ylabel(zLabelText);
+    xlabel(ylabelText,'fontName',fontName);
+    ylabel(zLabelText,'fontName',fontName);
     set(gca,'Position',[0.617587932900433 0.192364165480092 0.334659090909091 0.668013193010474]);
     annotation('textarrow',[0.794955357142858 0.753377976190477],...
-    [0.770902777777779 0.651840277777779],'String',{'罐后测点'});
+    [0.770902777777779 0.651840277777779],'String',{arr12Text},'fontName',fontName);
     annotation('textarrow',[0.728809523809524 0.764717261904762],...
-    [0.329930555555556 0.404895833333334],'String',{'罐前测点'});
+    [0.329930555555556 0.404895833333334],'String',{arr1Text},'fontName',fontName);
     titleHandle = title('(b)');
     set(titleHandle,'Position',[0.011,32.33,0]);
 end
 
 %% 研究改变长径比对脉动的影响
+param.acousticVelocity = 345;%声速
+param.isDamping = 1;%是否计算阻尼
+param.coeffFriction = 0.003;%管道摩察系数
+param.coeffFriction = 0.045;
+param.meanFlowVelocity = 25.51;%14.6;%管道平均流速
+param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
+param.rpm = 420;
+param.outDensity = 1.5608;
+param.Fs = 4096;
+param.L1 = 3.5;%L1(m)
+param.L2 = 1.5;%1.5;%双罐串联罐二作弯头两罐间距
+param.L3 = 4;%4%双罐串联罐二作弯头出口管长
+param.Dpipe = 0.098;%管道直径（m）%应该是0.106
+param.l = 0.01;
+param.DV1 = 0.372;%缓冲罐的直径（m）
+param.LV1 = 1.1;%缓冲罐总长 （1.1m）
+param.DV2 = 0.372;%variant_DV2(i);%(4.*V2./(pi.*variant_r(i)))^(1/3);%缓冲罐的直径（0.372m）
+param.LV2 = 1.1;%variant_r(i).*param.DV2;%缓冲罐总长 （1.1m） 
+param.lv3 = 0.150+0.168;%针对单一偏置缓冲罐入口偏置长度
+param.Dbias = 0;%偏置管伸入罐体部分为0，所以对应直径为0
+param.sectionL1 = 0:0.25:param.L1;%[2.5,3.5];%0:0.25:param.L1
+param.sectionL2 = 0:0.25:param.L2;%[2.5,3.5];%0:0.25:param.L1
+param.sectionL3 = 0:0.25:param.L3;%[2.5,3.5];%0:0.25:param.L1
+param.notMach = 0;
+param.multFreTimes = 3;
+param.semiFreTimes = 3;
+param.allowDeviation = 0.5;
+param.beforeAfterMeaPoint = nan;
+param.calcPeakPeakValueSection = nan;
+param.notMach = 0;
+
 if 0
-    param.acousticVelocity = 345;%声速
-    param.isDamping = 1;%是否计算阻尼
-    param.coeffFriction = 0.003;%管道摩察系数
-    param.coeffFriction = 0.045;
-    param.meanFlowVelocity = 25.51;%14.6;%管道平均流速
-    param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
-    param.rpm = 420;
-    param.outDensity = 1.5608;
-    param.Fs = 4096;
-    param.L1 = 3.5;%L1(m)
-    param.L2 = 1.5;%1.5;%双罐串联罐二作弯头两罐间距
-    param.L3 = 4;%4%双罐串联罐二作弯头出口管长
-    param.Dpipe = 0.098;%管道直径（m）%应该是0.106
-    param.l = 0.01;
-    param.DV1 = 0.372;%缓冲罐的直径（m）
-    param.LV1 = 1.1;%缓冲罐总长 （1.1m）
-    param.DV2 = 0.372;%variant_DV2(i);%(4.*V2./(pi.*variant_r(i)))^(1/3);%缓冲罐的直径（0.372m）
-    param.LV2 = 1.1;%variant_r(i).*param.DV2;%缓冲罐总长 （1.1m） 
-    param.lv3 = 0.150+0.168;%针对单一偏置缓冲罐入口偏置长度
-    param.Dbias = 0;%偏置管伸入罐体部分为0，所以对应直径为0
-    param.sectionL1 = 0:0.25:param.L1;%[2.5,3.5];%0:0.25:param.L1
-    param.sectionL2 = 0:0.25:param.L2;%[2.5,3.5];%0:0.25:param.L1
-    param.sectionL3 = 0:0.25:param.L3;%[2.5,3.5];%0:0.25:param.L1
-    param.notMach = 0;
-    param.multFreTimes = 3;
-    param.semiFreTimes = 3;
-    param.allowDeviation = 0.5;
-    param.beforeAfterMeaPoint = nan;
-    param.calcPeakPeakValueSection = nan;
-    param.notMach = 0;
+   
     theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio('massflowdata',[freRaw;massFlowERaw],...
         'param',param);
     plusValue = theoryDataCells(2:end,2);
     X = theoryDataCells(2:end,3);
     legendLabels = theoryDataCells(2:end,1);
     LengthDiameterRatio = cell2mat(theoryDataCells(2:end,6));
-    if 0
-        xlabelText = 'distance(m)';
-        ylabelText = 'Length-DiameterRatio';
-        zLabelText = 'pressure plus(kPa)';
+    if isEnglish
+        xlabelText = 'Distance(m)';
+        ylabelText = 'r';
+        zLabelText = 'Peak-to-peak pressure pulsation(kPa)';
+        arr1Text = 'A-A(Point 1)';
+        arr12Text = 'B-B(Point 12)';
     else
         xlabelText = '管线距离(m)';
         ylabelText = '长径比';
         zLabelText = '压力脉动峰峰值(kPa)';
+        arr1Text = 'A-A(测点 1)';
+        arr12Text = 'B-B(测点 12)';
     end
     figure
     paperFigureSet_large(7);
@@ -294,19 +335,62 @@ if 0
     set(gca,'Position',[0.649434523809524 0.229880952380953 0.308050595238096 0.646339285714286]);
     title('(b)');
     annotation('textarrow',[0.847872023809524 0.811964285714286],...
-    [0.766607142857143 0.675892857142858],'String',{'A-A'});
+    [0.766607142857143 0.675892857142858],'String',{arr1Text});
     annotation('textarrow',[0.838422619047619 0.806294642857143],...
-    [0.452886904761905 0.396190476190476],'String',{'B-B'});
+    [0.452886904761905 0.396190476190476],'String',{arr12Text});
 end
 
 
 %%
-if 0
-    [X,Y,Z] = doubleVesselBeElbowChangLengthDiameterRatioAndV();
+if 1
+    if isEnglish
+        fontName = 'Cambria';
+        contourfXlabelText = 'r';
+        contourfYlabelText = 'Surge Volume(m^3)';
+        linePlotXlabelText = 'r';
+        linePlotYlabelText = 'Peak-to-peak pressure pulsation(kPa)';
+        volumeText = 'Volume(m^3)';
+    else
+        fontName = '黑体';
+        contourfXlabelText = '长径比';
+        contourfYlabelText = '缓冲罐体积(m^3)';
+        linePlotXlabelText = '长径比';
+        linePlotYlabelText = '测点12气流脉动峰峰值(kPa)';
+        volumeText = '体积(m^3)';
+    end
+    setDefaultPlotFontName(fontName);
+    [X,Y,Z] = doubleVesselBeElbowChangLengthDiameterRatioAndV('end','massflowdata',[freRaw;massFlowERaw],...
+        'param',param);
     figure
     paperFigureSet_normal(7);
     [c,f] = contourf(X,Y,Z);
-    xlabel('长径比');
-    ylabel('缓冲罐体积');
+    xlabel(contourfXlabelText);
+    ylabel(contourfYlabelText);   
     set(f,'levelList',1:500:14000);
+    
+    figure
+    paperFigureSet_normal(7);
+    hold on;
+    for i=1:size(Y,1)
+        h = plot(X(1,:),Z(i,:)./1000);
+        plotColor = get(h,'color');
+        plot(X(1,1:5:end),Z(i,1:5:end)./1000,'color',plotColor,'Marker',getMarkStyle(i)...
+            ,'MarkerFaceColor',plotColor...
+            ,'LineStyle','none');
+    end
+    ylim([3,15]);
+    axValue = axis();
+    for i=1:size(Y,1)
+        text(axValue(2),Z(i,end)./1000,sprintf('%.2g',Y(i,1)));
+    end
+    xlabel(linePlotXlabelText);
+    ylabel(linePlotYlabelText);
+    annotation('textbox',...
+    [0.820445209251103 0.947862758310871 0.120267361111111 0.0604761904761906],...
+    'String',volumeText,...
+    'FitBoxToText','off',...
+    'EdgeColor','none');
+    set(gca,'Position',[0.13 0.165345907788607 0.718072916666667 0.755880509667427]);
+    box on;
+    resetDefaultPlotFontName();
 end

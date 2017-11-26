@@ -26,6 +26,10 @@ figureHeight = 8;
 isFigure = 1;
 expVesselRang = constExpVesselRangDistance();
 %允许特殊的把地一个varargin作为legend
+xlabelText = '管线距离(m)';
+xTopText = '测点';
+ylabelText = '脉动抑制率(%)';
+vesselText = '缓冲罐';
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
     pp=pp(2:end);
@@ -71,6 +75,14 @@ while length(pp)>=2
             isFigure = val;
         case 'expvesselrang'
             expVesselRang = val;
+        case 'xlabeltext'
+            xlabelText = val;
+        case 'ylabeltext'
+            ylabelText = val;    
+        case 'xtoptext'
+            xTopText = val;
+        case 'vesseltext'
+            vesselText = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -204,7 +216,7 @@ else
 end
 if showVesselRigion
     fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
-        [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
+        [0.744 0.665],'String',{vesselText},'FontName',paperFontName(),'FontSize',paperFontSize());
     vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 end
 ax = axis;
@@ -213,7 +225,7 @@ yLabel2Detal = (ax(4) - ax(3))/12;
 if showMeasurePoint
     fh.textboxMeasurePoint = annotation('textbox',...
         [0.48 0.885 0.0998 0.0912],...
-        'String','测点',...
+        'String',xTopText,...
         'FaceAlpha',0,...
         'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
     for i = 1:length(x)
@@ -228,8 +240,8 @@ if showMeasurePoint
         end
     end
 end
-xlabel('管线距离(m)');
-ylabel('脉动峰峰值(kPa)');
+xlabel(xlabelText);
+ylabel(ylabelText);
 fh.gca = gca;
 end
 

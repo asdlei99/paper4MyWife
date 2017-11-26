@@ -33,6 +33,7 @@ newFigure = 1;%是否调用figure，否则不会调用
 fixAxis = 0;
 edgeColor = 'none';
 figureHeight = 6;%图片的高度，在newFigure == 1时生效
+fontName = paperFontName();
 %允许特殊的把地一个varargin作为legend
 chartType = 'plot3';
 if 0 ~= mod(length(pp),2)
@@ -76,6 +77,8 @@ while length(pp)>=2
             newFigure = val;
         case 'figureheight'
             figureHeight = val;
+        case 'fontname'
+            fontName = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -84,7 +87,7 @@ if newFigure
     fh.figure = figure;
     paperFigureSet_normal(figureHeight);
 end
-
+set(gca,'FontName',fontName,'FontSize',paperFontSize());
 if isnan(Y)
     for i = 1:length(dataCells)
         if 2 == i
@@ -196,7 +199,6 @@ function fh = figurePlotSurf(dataCells,X,Y,edgeColor...
         y(i,:) = Y(i);
     end
     z = z ./ 1000;
-    
     fh.plotHandle = surf(x,y,z);
     if fixAxis
         xlim([min(min(x)),max(max(x))]);
@@ -245,6 +247,9 @@ function fh = figurePlotContourf(dataCells,X,Y,edgeColor...
         y(i,:) = Y(i);
     end
     z = z ./ 1000;
+    x = x(:,1:end-1);
+    y = y(:,1:end-1);
+    z = z(:,1:end-1);
     [~,fh.plotHandle] = contourf(x,y,z);
     if fixAxis
         xlim([x(1,1),x(1,end)]);

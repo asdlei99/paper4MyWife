@@ -45,6 +45,7 @@ function fh = plotInLine(dataCombineStructCells,varargin)
     figureHeight = 8;
     natureFre= [1,2];%固有频率，支持[0.5,1,1.5,2,2.5,3]
     xs = {};
+    
     %允许特殊的把地一个varargin作为legend
     if 0 ~= mod(length(pp),2)
         legendLabels = pp{1};

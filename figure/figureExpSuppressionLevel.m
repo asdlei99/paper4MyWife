@@ -6,8 +6,9 @@ errorType = 'ci';%»æÖÆÎó²î´øµÄÄ£Ê½£¬std£ºmean+-sd,ciÎª95%ÖÃÐÅÇø¼ä£¬minmaxÎª×î´ó×
 rang = 1:13;
 expVesselRang = constExpVesselRangDistance();
 %ÔÊÐíÌØÊâµÄ°ÑµØÒ»¸övarargin×÷Îªlegend
-yFilterFunPtr = @fixY;
+yFilterFunPtr = [];
 legendLabels = {};
+errorPlotType = 'bar';
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
     pp=pp(2:end);
@@ -20,6 +21,8 @@ while length(pp)>=2
     switch lower(prop)
         case 'errortype' %Îó²î´øµÄÀàÐÍ
         	errorType = val;
+        case 'errorplottype'
+            errorPlotType = val;
         case 'rang'
             rang = val;
         case 'yfilterfunptr'
@@ -66,7 +69,8 @@ for plotCount = 1:length(dataCombineStructCells)
             ,'Marker',getMarkStyle(plotCount));
     else
         [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount));
+            ,'Marker',getMarkStyle(plotCount)...
+            ,'type',errorPlotType);
     end
 end
 xlim([2,11]);

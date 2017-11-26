@@ -134,6 +134,7 @@ end
 if 1
     fh = figureExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorType...
         ,'yfilterfunptr',@fixInnerOrificY ...
+        ,'expVesselRang',expVesselRang ...
     );
 end
 %% 绘制多组压力降
@@ -150,4 +151,18 @@ if 0
     fh = figureExpNatureFrequencyBar(orificDataCells,1,legendLabels);
     fh = figureExpNatureFrequencyBar(orificDataCells,2,legendLabels);
     fh = figureExpNatureFrequencyBar(orificDataCells,3,legendLabels);
+end
+
+%% 理论扩展分析
+%无明显变化
+if 0
+    resCell = innerOrificTankChangLv1(0.5);
+    figure
+    for i = 2:size(resCell,1)
+        if 2 == i
+            hold on;
+        end
+        plot(resCell{i,3},resCell{i, 2}.pulsationValue);
+        
+    end
 end

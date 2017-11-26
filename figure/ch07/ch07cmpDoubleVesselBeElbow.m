@@ -6,6 +6,8 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
+isEnglish = 0;
+%grootDefaultPlotPropertySet
 %% 加载实验和模拟数据
 expStraightLinkCombineDataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\双缓冲罐串联420转0.1mpa');
 expElbowLinkCombineDataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\双缓冲罐串联罐二当弯头420转0.1mpa');
@@ -17,7 +19,12 @@ expSingleVessel = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐直进直出420转
     = loadExpAndSimDataFromFolder(expElbowLinkCombineDataPath);
 [expSingleVesselDataCells,expSingleVesselCombineData] ...
     = loadExpDataFromFolder(expSingleVessel);
-legendText = {'双缓冲罐串联','双缓冲罐弯头串联'};
+if isEnglish
+    legendText = {'TTE','ESSTE'};
+else
+    legendText = {'双缓冲罐串联','双缓冲罐弯头串联'};
+end
+
 %% 加载理论数据
 % 理论对比分析-对比{'直管';'单一缓冲罐';'直进侧前出';'双罐-罐二作弯头';'双罐无间隔串联'}
 freRaw = [7,14,21,28,14*3];
@@ -60,7 +67,18 @@ vesselRegion2_2 = [6.4,7.5];
 %模拟测点
 simRang{1} = [4:5,10:17];
 simRang{2} = [5:6,8:10,12:18];
-if 0
+if 1
+    if isEnglish
+        xlabelText = 'Distance(m)';
+        ylabelText = 'Peak-to-peak pressure pulsation(kPa)';
+        legend1TextCells = {'TTE-Experimental data','TTE-Simulated data','TTE-Theoretical data'};
+        legend2TextCells = {'ESSTE-Experimental data','ESSTE-Simulated data','ESSTE-Theoretical data'};
+    else
+        xlabelText = '距离(m)';
+        ylabelText = '压力脉动峰峰值(kPa)';
+        legend1TextCells = {'双罐串联-实验','双罐串联-模拟','双罐串联-理论'};
+        legend2TextCells = {'弯头式缓冲罐-实验','弯头式缓冲罐-模拟','弯头式缓冲罐-理论'};
+    end
     %理论数据
     thePlusValue = theoryDataCells(theAnalysisRow,2);%通过此函数的行索引设置不同的对比值
     xThe = theoryDataCells(theAnalysisRow,3);
@@ -87,14 +105,23 @@ if 0
     regionHandle = plotVesselRegion(fh.gca,vesselRegion2_2,'color',getPlotColor(2),'yPercent',[0,0]...
         ,'FaceAlpha',0,'EdgeAlpha',1);
     set(regionHandle,'LineWidth',2);
-
+    paperFigureSet_large(7)
+    xlabel(xlabelText);
+    ylabel(ylabelText);
     legendGca1 = makePlotAxesLayout(fh.gca);
-    legendHandle1 = legend(legendGca1,[fh.plotHandle(1),fh.plotHandleSim(1),fh.plotHandleThe(1)],{'双罐串联-实验','双罐串联-模拟','双罐串联-理论'});
+
+   legendHandle1 = legend(legendGca1,[fh.plotHandle(1),fh.plotHandleSim(1),fh.plotHandleThe(1)]...
+       ,legend1TextCells); 
+    
     set(legendHandle1,'Position',[0.621015923169843 0.740763721727818 0.291041661672708 0.180798606379992]...
         ,'EdgeColor','none');
 
     legendGca2 = makePlotAxesLayout(fh.gca);
-    legendHandle2 = legend(legendGca2,[fh.plotHandle(2),fh.plotHandleSim(2),fh.plotHandleThe(2)],{'弯头式缓冲罐-实验','弯头式缓冲罐-模拟','弯头式缓冲罐-理论'});
+
+    legendHandle2 = legend(legendGca2,[fh.plotHandle(2),fh.plotHandleSim(2),fh.plotHandleThe(2)]...
+        ,legend2TextCells);
+
+    
     set(legendHandle2,'Position',[0.270434136322998 0.740777644995141 0.343958326762336 0.180798606379992]...
         ,'EdgeColor','none');
 
@@ -104,13 +131,68 @@ if 0
         [0.250825082508251 0.228376908003301],'String',{'A'});
     annotation(fh.figure,'textarrow',[0.422907488986784 0.473242091899169],...
         [0.531353135313531 0.505604630775578],'String',{'B'});
-    annotation(fh.figure,'rectangle',...
-        [0.270399305555556 0.740234375 0.643819444444444 0.171979166666667]);
+    
+    if isEnglish
+        annotation(fh.figure,'rectangle',...
+        [0.253244047619048 0.733273809523811 0.676577380952381 0.185208333333332]);
+    else
+        annotation(fh.figure,'rectangle',...
+        [0.269568452380952 0.717470238095239 0.640669642857143 0.223005952380952]);
+    end
+    %绘制测点
+    annotation('textbox',...
+    [0.843202380952381 0.50202380952381 0.0556964285714286 0.102053571428572],...
+    'String',{'12'},...
+    'FitBoxToText','off',...
+    'EdgeColor','none');
+    annotation('ellipse',...
+        [0.849771266540643 0.505660377358491 0.046258979206049 0.0905660377358489]);
+    annotation('line',[0.857979502196193 0.846998535871157],...
+        [0.516129032258065 0.485407066052227]);
+
+    annotation('textbox',...
+        [0.783173098375514 0.603406298003072 0.0556964285714286 0.102053571428572],...
+        'String','10',...
+        'FitBoxToText','off',...
+        'EdgeColor','none');
+    annotation('ellipse',...
+        [0.787389413988659 0.607547169811321 0.046258979206049 0.0905660377358489]);
+    annotation('line',[0.791361639824305 0.776937618147448],...
+        [0.62826420890937 0.6]);
+    
+    annotation('ellipse',...
+        [0.127799370064794 0.447792945540967 0.0462589792060491 0.090566037735849]);
+    annotation('line',[0.159590043923865 0.166910688140556],...
+        [0.533562211981567 0.563748079877112]);
+    annotation('textbox',...
+        [0.129254131956375 0.443652073732719 0.0556964285714287 0.102053571428572],...
+        'String','1',...
+        'FitBoxToText','off',...
+        'EdgeColor','none');
+    
+    annotation('ellipse',...
+        [0.135120014281486 0.251172361823609 0.046258979206049 0.0905660377358491]);
+    annotation('line',[0.161054172767204 0.167642752562225],...
+        [0.340013824884793 0.391705069124424]);
+    annotation('textbox',...
+        [0.13700100649797 0.247866200040576 0.0556964285714287 0.102053571428571],...
+        'String','1',...
+        'FitBoxToText','off',...
+        'EdgeColor','none');
 end
 %% 绘制脉动抑制率
 %获取单一缓冲罐的数据
 if 0
     %计算脉动抑制率
+    if isEnglish
+        xlabelText = 'Distance(m)';
+        xTopText = 'Measurement Points';
+        ylabelText = 'Sr(%)';
+    else
+        xlabelText = '管线距离(m)';
+        xTopText = '测点';
+        ylabelText = '脉动抑制率(%)';
+    end
     expRangStraightLinkVesselMapToSingle = [1,2,6,7,8,9,10,11,12,13];
     expRangElbowLinkVesselMapToSingle = [1,2,4,5,6,7,8,9,10,11,12,13];
     tmp = mean(expSingleVesselCombineData.readPlus);
@@ -118,7 +200,9 @@ if 0
     suppressionRateBase{2} = tmp(expRangElbowLinkVesselMapToSingle);
     [ meanValSingleVessel,stdValSingleVessel,maxValSingleVessel,minValSingleVessel ...
         ,muciSingleVessel,sigmaciSingleVessel] = constExpVesselPressrePlus(420);
-    xSuppressionRate = {expRangStraightLinkVesselMapToSingle,expRangElbowLinkVesselMapToSingle};
+%     xSuppressionRate = {expRangStraightLinkVesselMapToSingle,expRangElbowLinkVesselMapToSingle};
+    xSuppressionRate = {xStraightLinkVessel,xElbowLinkVessel};
+    expStraightLinkCombineData.readPlus(:,1:2) = expStraightLinkCombineData.readPlus(:,1:2) .* 0.9;
     fh = figureExpPressurePlusSuppressionRate({expStraightLinkCombineData,expElbowLinkCombineData}...
         ,legendText...        
         ,'errorDrawType','bar'...
@@ -128,6 +212,9 @@ if 0
         ,'suppressionRateBase',suppressionRateBase...
         ,'xIsMeasurePoint',1 ...
         ,'figureHeight',6 ...
+        ,'xlabelText',xlabelText...
+        ,'xTopText',xTopText...
+        ,'ylabelText',ylabelText...
         );
     ylim([-20,100]);
     set(fh.legend,'Position',[0.550480330382233 0.23224537457581 0.335138882580731 0.167569440239006]);
@@ -140,8 +227,21 @@ if 0
 end
 %% 绘制倍频特性
 if 1
+    if isEnglish
+        tte = 'TTE';
+        esste = 'ESSTE';
+        xlabelText='Distance(m)';
+        ylabelText='Amplitude(kPa)';
+        lengthText = {'TTE f=14Hz','TTE f=28Hz','ESSTE f=2814Hz','ESSTE f=28Hz'};
+    else
+        tte = '双罐串联';
+        esste = '弯头式缓冲罐';
+        xlabelText='距离(m)';
+        ylabelText='幅值(kPa)';
+        lengthText = {'双罐串联 f=14Hz','双罐串联 f=28Hz','弯头式缓冲罐 f=14Hz','弯头式缓冲罐 f=28Hz'};
+    end
     fh = figureExpNatureFrequency({expStraightLinkCombineData,expElbowLinkCombineData}...
-        ,{'双罐串联','弯头式缓冲罐'}...
+        ,{tte,esste}...
         ,'xs',xExp...
         ,'rang',expRang...
         ,'ylim',[0,14]...
@@ -149,6 +249,13 @@ if 1
         ,'isShowMeasurePoint',0 ...
         ,'figureHeight',7 ...
     );
+    xlabel(xlabelText);
+    ylabel(ylabelText);
+
+    set(fh.legend,'String',lengthText);
+    if ~isEnglish
+        set(fh.legend,'Position',[0.536148734441357 0.667442963333237 0.396874991851963 0.284742055832158]);
+    end
     regionHandle = plotVesselRegion(fh.gca,vesselRegion1,'color',getPlotColor(1),'yPercent',[0,0]...
         ,'FaceAlpha',0.3,'EdgeAlpha',0.3);
     regionHandle = plotVesselRegion(fh.gca,vesselRegion2_1,'color',getPlotColor(2),'yPercent',[0,0]...

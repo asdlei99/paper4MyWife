@@ -5,6 +5,7 @@ errorType = 'ci';%»æÖÆÎó²î´øµÄÄ£Ê½£¬std£ºmean+-sd,ciÎª95%ÖÃĞÅÇø¼ä£¬minmaxÎª×î´ó×
 rang = 1:13;
 legendLabels = {};
 baseField = 'rawData';
+figureHeight = 6;
 %ÔÊĞíÌØÊâµÄ°ÑµØÒ»¸övarargin×÷Îªlegend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -23,6 +24,8 @@ while length(pp)>=2
             baseField = val;
         case 'legendlabels'
             legendLabels = val;
+        case 'figureHeight'
+            figureHeight = val;
         otherwise
        		error('²ÎÊı´íÎó%s',prop);
     end
@@ -30,7 +33,7 @@ end
 
 
 fh.figure = figure;
-paperFigureSet_normal();
+paperFigureSet_normal(figureHeight);
 
 %ĞèÒªÏÔÊ¾µ¥Ò»»º³å¹Ş
 ys = [];
