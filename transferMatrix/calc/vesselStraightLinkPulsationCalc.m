@@ -1,74 +1,16 @@
-function [pressure1,pressure2] = oneVesselPulsationCalc( massFlowE,Frequency,time ...
+function [pressure1,pressure2] = vesselStraightLinkPulsationCalc( massFlowE,Frequency,time ...
     ,L1,L2,Lv,l,Dpipe,Dv...
     ,sectionL1,sectionL2,varargin)
+%和oneVesselPulsationCalc一样
 %计算管容管容的脉动
-% StraightInStraightOut：直进直出
+%   massFlowE1 经过fft后的质量流量，直接对质量流量进行去直流fft
 %  长度 L1     l    Lv   l    L2  
 %              __________        
 %             |          |      
 %  -----------|          |----------
 %             |__________|       
 % 直径 Dpipe       Dv       Dpipe  
-
-%biasInBiasOut：侧进侧出 (侧前进侧后出)
-%   Detailed explanation goes here
-%           |  L2
-%        l  |     Lv    outlet
-%   bias2___|_______________
-%       |                   |
-%       |lv2  V          lv1|  Dv
-%       |___________________|
-%                    l  |   bias1  
-%                       |
-%              inlet:   | L1 Dpipe 
-
-%EqualBiasInOut:侧前进侧前出
-%   Detailed explanation goes here
-%                 |  L1
-%              l  |      inlet
-%       _________ |__________
-%       |                   |
-%       |     Lv            |  Dv
-%       |___________________|
-%              l  |    
-%                 |
-%        outlet:  | L2 Dpipe (Dbias为插入管的管道直径，取0即可)
-
-% BiasFontInStraightOut 侧前进直出
-% Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
-%   Detailed explanation goes here
-%   inlet   |  L1
-%        l  |     Lv    
-%   bias2___|_______________
-%       |                   |  Dpipe
-%       |lv1  V          lv2|———— L2  
-%       |___________________| outlet
-%           Dv              l  
-
-% straightInBiasBackOut:直进侧后出
-% Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
-%   Detailed explanation goes here
-%           |  L2
-%        l  |     Lv    outlet
-%   bias2___|_______________
-%       |                   |  Dpipe
-%       |lv2  V          lv1|———— L1  
-%       |___________________| inlet
-%           Dv              l      
-%          
-
-% straightInBiasFrontOut:直进侧前出
-%缓冲罐入口顺接，出口前错位的气流脉动计算
-% Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
-%                       |  L2
-%              Lv    l  | outlet
-%        _______________|___ bias2
-%       |                   |  Dpipe
-%       |lv2  V          lv1|———— L1  
-%       |___________________| inlet
-%           Dv              l   
-
-
+%   
 % massFlowE经过傅里叶变换后的质量流量,仅仅是fft，不进行幅值修正
 % Frequency 流量对应的频率，此长度是对应massFlowE的一半
 % L 管长
@@ -81,7 +23,7 @@ a = 345;%声速
 % S = nan;
 % Sv = nan;
 
-vtype = 'StraightInStraightOut';%默认直进直出
+
 isDamping = 1;
 coeffDamping = nan;
 coeffFriction = nan;
@@ -89,7 +31,7 @@ meanFlowVelocity = nan;
 isUseStaightPipe = 1;%使用直管理论代替缓冲罐，那么缓冲罐时相当于三个直管拼接
 mach = nan;
 notMach = 0;%强制不使用mach
-isOpening = 0;
+isOpening = 1;
 
 if 1 == size(pp,2)
 %如果多态参数只有一个，说明是个结构体
@@ -107,19 +49,18 @@ if 1 == size(pp,2)
     notMach = st.notMach;
     isOpening = st.isOpening;
     mach = st.mach;
-    vtype = st.vtype;
-    if ~(strcmpi(vtype,'StraightInStraightOut') || strcmpi(vtype,'EqualBiasInOut'))
-        lv1 = st.lv1;
-        lv2 = st.lv2;
-    end
 else
     while length(pp)>=2
         prop =pp{1};
         val=pp{2};
         pp=pp(3:end);
         switch lower(prop)
-            case 'vtype'
-                vtype = val;
+
+            % case 'sv' %h缓冲罐截面
+            %     Sv = val;
+            % case 'dv' %h缓冲罐截面
+            %     Dvessel = val;
+
             case 'a' %声速
                 a = val; 
             case 'acousticvelocity' %声速
@@ -148,10 +89,6 @@ else
                 notMach = val;
             case 'isopening'%管道末端是否为无反射端(开口)，如果为0，就是为闭口，无流量端
                 isOpening = val;
-            case 'lv1'
-                lv1 = val;
-            case 'lv2'
-                lv2 = val;
             otherwise
                 error('参数错误%s',prop);
         end
@@ -176,39 +113,12 @@ for i = 1:length(Frequency)
     matrix_2{count} = straightPipeTransferMatrix(L2,'f',f,'a',a,'D',Dpipe...
         ,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity...
         ,'m',mach,'notmach',notMach);
-
-    switch lower(vtype)
-    case 'straightinstraightout'
-        matrix_v1{count} = vesselTransferMatrix(Lv,l,'f',f,'a',a,'D',Dpipe,'Dv',Dv...
+    matrix_v1{count} = vesselTransferMatrix(Lv,l,'f',f,'a',a,'D',Dpipe,'Dv',Dv...
         ,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity...
         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
-    case 'biasinbiasout'
-        matrix_Mv{count} = vesselBiasTransferMatrix(Lv,l,lv1,lv2,0 ...
-        ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
-        ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
-    case 'equalbiasinout'
-        lv1 = Lv/2;
-        lv2 = Lv/2;
-        matrix_Mv{count} = vesselBiasTransferMatrix(Lv,l,lv1,lv2,0 ...
-        ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
-        ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
-    case 'biasfontinstraightout'
-        matrix_Mv{count} = vesselBiasStraightTransferMatrix(Lv,l,lv1,0 ...
-        ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
-        ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
-    case 'straightinbiasbackout'
-        matrix_Mv{count} = vesselStraightBiasTransferMatrix(Lv,l,lv2,Dbias ...
-        ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
-        ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
-    case 'straightinbiasfrontout'
-        matrix_Mv{count} = vesselStraightFrontBiasTransferMatrix(Lv,l,lv2,Dbias ...
-        ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
-        ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
-    end
-    
     matrix_1{count} = straightPipeTransferMatrix(L1,'f',f,'a',a,'D',Dpipe...
-    ,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity...
-    ,'m',mach,'notmach',notMach);
+        ,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity...
+        ,'m',mach,'notmach',notMach);
 
     matrix_total = matrix_2{count}*matrix_v1{count}*matrix_1{count};
 

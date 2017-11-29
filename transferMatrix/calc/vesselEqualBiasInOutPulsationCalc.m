@@ -1,16 +1,16 @@
-function [pressure1,pressure2] = vesselBiasPulsationCalc(massFlowE,Frequency,time ...
-,L1,L2,Lv,l,Dpipe,Dv,lv1,lv2,Dbias,sectionL1,sectionL2,varargin)
+function [pressure1,pressure2] = vesselEqualBiasInOutPulsationCalc(massFlowE,Frequency,time ...
+,L1,L2,Lv,l,Dpipe,Dv,Dbias,sectionL1,sectionL2,varargin)
 %错位缓冲罐的气流脉动计算
 %   Detailed explanation goes here
-%           |  L2
-%        l  |     Lv    outlet
-%   bias2___|_______________
+%                 |  L1
+%              l  |      inlet
+%       _________ |__________
 %       |                   |
-%       |lv2  V          lv1|  Dv
+%       |     Lv            |  Dv
 %       |___________________|
-%                    l  |   bias1  
-%                       |
-%              inlet:   | L1 Dpipe 
+%              l  |    
+%                 |
+%        outlet:  | L2 Dpipe (Dbias为插入管的管道直径，取0即可)
 %容器的传递矩阵
 pp=varargin;
 a = nan;%声速
@@ -67,6 +67,8 @@ if isnan(a)
 end
 count = 1;
 pressureE1 = [];
+lv1 = Lv/2;
+lv2 = Lv/2;
 for i = 1:length(Frequency)
     f = Frequency(i);
     %最末端管道

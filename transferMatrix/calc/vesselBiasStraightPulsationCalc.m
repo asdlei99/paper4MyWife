@@ -7,7 +7,7 @@ function [pressure1,pressure2] = vesselBiasStraightPulsationCalc(massFlowE,Frequ
 %        l  |     Lv    
 %   bias2___|_______________
 %       |                   |  Dpipe
-%       |lv1  V          lv2|¡ª¡ª¡ª¡ª L2  
+%       |lv3  V          lv2|¡ª¡ª¡ª¡ª L2  
 %       |___________________| outlet
 %           Dv              l     
 %ÈÝÆ÷µÄ´«µÝ¾ØÕó
