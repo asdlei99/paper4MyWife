@@ -102,8 +102,8 @@ while length(pp)>=2
             massflowData = val;
         case 'param'
             param = val;
-        case 'vesseltype'
-            vesselType = val;
+        case 'vtype'
+            vType = val;
     end
 end
 
