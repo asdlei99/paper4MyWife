@@ -68,6 +68,17 @@ function [pressure1,pressure2] = oneVesselPulsationCalc( massFlowE,Frequency,tim
 %       |___________________| inlet
 %           Dv              l   
 
+%BiasFrontInBiasFrontOut:侧前进侧前出
+%   Detailed explanation goes here
+%           |  L1
+%      lv1  |      inlet
+%       ___ |_______________
+%       |                   |
+%       |     Lv            |  Dv
+%       |___________________|
+%           |    
+%           |
+%  outlet:  | L2 Dpipe (Dbias为插入管的管道直径，取0即可)
 
 % massFlowE经过傅里叶变换后的质量流量,仅仅是fft，不进行幅值修正
 % Frequency 流量对应的频率，此长度是对应massFlowE的一半
@@ -197,12 +208,18 @@ for i = 1:length(Frequency)
         ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
     case 'straightinbiasbackout'
-        matrix_Mv{count} = vesselStraightBiasTransferMatrix(Lv,l,lv2,0 ...
+        lv2Tmp = Lv - lv1;
+        matrix_Mv{count} = vesselStraightBiasTransferMatrix(Lv,l,lv2Tmp,0 ...
         ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
     case 'straightinbiasfrontout'
-        matrix_Mv{count} = vesselStraightFrontBiasTransferMatrix(Lv,l,lv2,0 ...
+        lv2Tmp = Lv - lv1;
+        matrix_Mv{count} = vesselStraightFrontBiasTransferMatrix(Lv,l,lv2Tmp,0 ...
         ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
+        ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
+    case 'biasfrontinbiasfrontout'
+        matrix_Mv{count} = vesselBiasFrontInBiasFrontOutTransferMatrix(Lv,l,lv1,0 ...
+            ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
     end
     

@@ -1,13 +1,6 @@
-%% 单一缓冲罐迭代体积固定长径比
-function theoryDataCells = oneVesselChangVolume(V,varargin)
-vType = 'StraightInStraightOut';
-% StraightInStraightOut：直进直出
-%  长度 L1     l    Lv   l    L2  
-%              __________        
-%             |          |      
-%  -----------|          |----------
-%             |__________|       
-% 直径 Dpipe       Dv       Dpipe  
+%% 单一缓冲罐固定管长,体积，改变lv1(x)和Lv(y)
+function [X,Y,Z] = oneVesselChangBiasLengthAndAspectRatio(lv1,Lv,index,varargin)
+vType = 'straightInBiasFrontOut';
 
 %biasInBiasOut：侧进侧出 (侧前进侧后出)
 %   Detailed explanation goes here
@@ -80,7 +73,6 @@ vType = 'StraightInStraightOut';
 %  outlet:  | L2 Dpipe (Dbias为插入管的管道直径，取0即可)
 pp = varargin;
 massflowData = nan;
-
 %% 初始参数
 %
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
@@ -90,7 +82,8 @@ param.Fs = 4096;
 param.acousticVelocity = 345;%声速（m/s）
 param.isDamping = 1;
 param.coeffFriction = 0.03;
-param.meanFlowVelocity = 12;
+param.meanFlowVelocity = 16;
+param.L = 10;%总长度
 param.L1 = 3.5;%(m)
 param.L2 = 6;
 param.Lv = 1.1;
@@ -102,7 +95,7 @@ param.Dpipe = 0.098;%管道直径（m）
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.lv1 = 0.318;
 param.lv2 = 0.318;
-ratioOfLengthDiameter = param.Lv/param.Dv;
+Dv = nan;
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -110,14 +103,19 @@ while length(pp)>=2
     switch lower(prop)
         case 'massflowdata'
             massflowData = val;
-        case 'param'
-            param = val;
         case 'vtype'
             vType = val;
-        case 'ratiooflengthdiameter'
-            ratioOfLengthDiameter =val;
+        case 'param'
+            param = val;
+        case 'dv'
+            Dv = val;
+        case 'lv'
+            Lv = val;
+        otherwise
+            error('错误参数:%s',prop);
     end
 end
+
 
 if isnan(massflowData)
     [massFlowRaw,time,~,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
@@ -140,6 +138,11 @@ multFreTimes = 3;
 semiFreTimes = 3;
 allowDeviation = 0.5;
 
+V = (pi * param.Dv.^2 / 4) .* param.Lv;%缓冲罐体积
+%开始计算迭代的Lv和Dv
+
+Dv = calcDFromLengthDiameterRatio(V,Lv);
+
 
 dcpss = getDefaultCalcPulsSetStruct();
 dcpss.calcSection = [0.2,0.8];
@@ -152,46 +155,49 @@ dcpss.rs = 30;%截止区衰减DB数设置
 theoryDataCells{1,1} = '描述';
 theoryDataCells{1,2} = 'dataCells';
 theoryDataCells{1,3} = 'X';
-theoryDataCells{1,4} = 'V';
-theoryDataCells{1,5} = 'input';
-
-for i = 1:length(V)
-    if isnan(ratioOfLengthDiameter)
-        param.Dv = (4*(V(i) / (param.Lv + 2*param.l))/pi)^0.5;
-    else
-        param.Dv = ((4 .* V(i)) ./ (pi .* ratioOfLengthDiameter)).^(1/3);
+theoryDataCells{1,4} = '偏置距离';
+theoryDataCells{1,5} = '长径比';
+theoryDataCells{1,6} = 'input';
+Z = [];
+X = [];
+Y = [];
+for i=1:length(Lv)
+    for j = 1:length(lv1)
+        param.lv1 = lv1(j);
+        param.Lv = Lv(i);
+        aspectR = param.Lv / param.Dv;
+        X(i,j) = lv1(j);
+        Y(i,j) = aspectR;
+        maxLv1 = Lv(i) - param.Dpipe;
+        if lv1(j) > maxLv1
+            Z(i,j) = nan;
+            continue;
+        end
+        
+        [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
+            ,param.L1,param.L2,param.Lv,param.l,param.Dpipe,param.Dv ...
+            ,param.sectionL1,param.sectionL2 ...
+            ,'vType',vType...
+            ,'a',param.acousticVelocity...
+            ,'isDamping',param.isDamping...
+            ,'friction',param.coeffFriction...
+            ,'isOpening',param.isOpening...
+            ,'meanFlowVelocity',param.meanFlowVelocity...
+            ,'lv1',param.lv1...
+            ,'lv2',param.lv2...
+            );
+        pressure = [pressure1,pressure2];
+        plus = calcPuls(pressure,dcpss);
+        Z(i,j) = plus(index);
     end
-    [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
-        ,param.L1,param.L2,param.Lv,param.l,param.Dpipe,param.Dv ...
-        ,param.sectionL1,param.sectionL2 ...
-        ,'vType',vType...
-        ,'a',param.acousticVelocity...
-        ,'isDamping',param.isDamping...
-        ,'friction',param.coeffFriction...
-        ,'isOpening',param.isOpening...
-        ,'meanFlowVelocity',param.meanFlowVelocity...
-        ,'lv1',param.lv1...
-        ,'lv2',param.lv2...
-        );
-    
-    beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
-    pressure = [pressure1,pressure2];
-    %[plus,filterData] = calcPuls(pressure,dcpss);
-    theoryDataCells{i+1,1} = sprintf('缓冲罐体积:%g',V(i));
-    theoryDataCells{i+1,2} = fun_dataProcessing(pressure...
-                                ,'fs',param.Fs...
-                                ,'basefrequency',baseFrequency...
-                                ,'allowdeviation',allowDeviation...
-                                ,'multfretimes',multFreTimes...
-                                ,'semifretimes',semiFreTimes...
-                                ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
-                                ,'calcpeakpeakvaluesection',nan...
-                                );
-    theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
-    theoryDataCells{i+1,4} = V(i);
-    theoryDataCells{i+1,5} = param;
     
 end
 
 
+end
+
+
+
+function Dv = calcDFromLengthDiameterRatio(V,Lv)
+    Dv = ((4*V) ./ (pi * Lv)).^0.5;
 end

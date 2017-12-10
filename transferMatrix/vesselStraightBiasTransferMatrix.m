@@ -209,8 +209,9 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv2,k,Dv,Dpipe,Dbias,a,op
         Sv = pi.*Dv.^2./4;
         S = pi.*Dpipe.^2./4;
         RM = sudEnlargeTransferMatrix(S,Sv,a,'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notMach',optMach.notMach);
-        LM = sudReduceTransferMatrix(Sv,S,a,'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notMach',optMach.notMach);
-        Mv = LM * innerLM * ML * RM;
+        %LM = sudReduceTransferMatrix(Sv,S,a,'coeffdamping',optDamping.coeffDamping,'mach',optMach.mach,'notMach',optMach.notMach);
+        %Mv = LM * innerLM * ML * RM;
+        Mv = innerLM * ML * RM;
         return;
     end
     %使用容积传递矩阵

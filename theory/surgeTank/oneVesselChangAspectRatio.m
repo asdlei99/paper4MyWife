@@ -1,5 +1,5 @@
-%% 单一缓冲罐迭代体积固定长径比
-function theoryDataCells = oneVesselChangVolume(V,varargin)
+%% 单一缓冲罐迭代长径比研究
+function theoryDataCells = oneVesselChangAspectRatio(V,varargin)
 vType = 'StraightInStraightOut';
 % StraightInStraightOut：直进直出
 %  长度 L1     l    Lv   l    L2  

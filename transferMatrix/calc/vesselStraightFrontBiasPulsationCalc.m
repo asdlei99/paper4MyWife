@@ -1,12 +1,12 @@
 function [pressure1,pressure2] = vesselStraightFrontBiasPulsationCalc(massFlowE,Frequency,time ...
-,L1,L2,Lv,l,Dpipe,Dv,lv3,Dbias,sectionL1,sectionL2,varargin)
+,L1,L2,Lv,l,Dpipe,Dv,lv1,Dbias,sectionL1,sectionL2,varargin)
 %缓冲罐入口顺接，出口前错位的气流脉动计算
 % Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
 %                       |  L2
 %              Lv    l  | outlet
 %        _______________|___ bias2
 %       |                   |  Dpipe
-%       |lv3  V          lv1|———— L1  
+%       |lv2  V          lv1|———— L1  
 %       |___________________| inlet
 %           Dv              l       
 %                       
@@ -93,7 +93,8 @@ for i = 1:length(Frequency)
     matrix_L2{count} = straightPipeTransferMatrix(L2,'f',f,'a',a,'d',Dpipe...
         ,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity...
         ,'m',mach,'notmach',notMach);
-    matrix_Mv{count} = vesselStraightFrontBiasTransferMatrix(Lv,l,lv3,Dbias ...
+    lv2 = Lv - lv1;
+    matrix_Mv{count} = vesselStraightFrontBiasTransferMatrix(Lv,l,lv2,Dbias ...
         ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
     matrix_L1{count} = straightPipeTransferMatrix(L1,'f',f,'a',a,'D',Dpipe...
