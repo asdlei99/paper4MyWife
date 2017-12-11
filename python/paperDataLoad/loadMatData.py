@@ -64,7 +64,7 @@ def getCombineDataStructFieldInfo(combineDataStructMatData, fieldName):
         folderName {[string]} -- 文件夹
         fieldName {[string]} -- 对应键值
     Returns:
-        (均值,最大值,最小值,方差)
+        dict{均值=array,最大值=array,最小值=array,方差=array}
     """
     result = getCombineDataStruct(combineDataStructMatData, fieldName)
     #计算均值
