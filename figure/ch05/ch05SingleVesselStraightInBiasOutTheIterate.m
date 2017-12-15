@@ -6,10 +6,10 @@ param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%
 param.rpm = 420;
 param.outDensity = 1.5608;
 param.Fs = 4096;
-param.acousticVelocity = 345;%声速（m/s）
+param.acousticVelocity = 335;%声速（m/s）
 param.isDamping = 1;
-param.coeffFriction = 0.03;
-param.meanFlowVelocity = 10;
+param.coeffFriction = 0.001;
+param.meanFlowVelocity = 12;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
 param.L = 10;
@@ -30,10 +30,10 @@ freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 
 %% 1迭代长径比
-if 0
+if 1
     chartType = 'surf';
     Lv = 0.3:0.05:3;
-    theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType','straightInBiasFrontOut'...
+    theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType','straightInBiasOut'...
         ,'massflowdata',[freRaw;massFlowERaw]...
         ,'param',param...
         ,'Lv',Lv);
@@ -61,7 +61,7 @@ if 0
     L1 = 0:0.1:8;
     
     theoryDataCellsChangL1 = oneVesselChangL1FixL(L1,param.L...
-        ,'vType','straightInBiasFrontOut'...
+        ,'vType','straightInBiasOut'...
         ,'massflowdata',[freRaw;massFlowERaw]...
         ,'param',param);
     %x
@@ -81,24 +81,60 @@ end
 
 %% 迭代偏置距离和长径比
 if 1
-    chartType = 'surf';
+%     chartType = 'surf';
+    chartType = 'contourf';
     endIndex = length(param.sectionL1) + length(param.sectionL2);
     Lv = linspace(0.3,3,42);
     lv1 = linspace(0,param.Lv-param.Dpipe,32);
     
     [X,Y,Z] = oneVesselChangBiasLengthAndAspectRatio(lv1,Lv,endIndex...
-        ,'vType','straightInBiasFrontOut'...
+        ,'vType','straightInBiasOut'...
         ,'massflowdata',[freRaw;massFlowERaw]...
         ,'param',param);
-    paper
+    Z = Z./1000;
+%     paper
     figure
-    paperFigureSet_normal(8);
-    surf(X,Y,Z);
-    xlabel('lv1');
+    paperFigureSet_normal(9);
+    if strcmpi(chartType,'surf')
+        surf(X,Y,Z);
+        view(131,29);
+    else
+        [C,h] = contourf(X,Y,Z,'ShowText','on','LevelStep',0.3);
+    end
+    annotation('textbox',...
+    [0.794313266242073 0.953667953667954 0.12216715542522 0.0540540540540539],...
+    'String',{'kPa'},...
+    'FitBoxToText','off',...
+    'EdgeColor','none');
+    colorbar;
+    xlabel('偏置距离l1(m)');%l1就是lv1
     ylabel('长径比');
-    zlabel('脉动峰峰值');
+    zlabel('压力脉动峰峰值(kPa)');
     box on;
-    view(131,29);
+    
 end
 
+%% 迭代缓冲罐lv1的偏置入口管长
+if 0
+    chartType = 'surf';
+    Lv1 = 0:0.05:1;
+    
+    theoryDataCellsChangLv1 = oneVesselChangLv1(Lv1...
+        ,'vType','straightInBiasOut'...
+        ,'massflowdata',[freRaw;massFlowERaw]...
+        ,'param',param);
+    %x
+    xCells = theoryDataCellsChangLv1(2:end,3);
+    %y
+    zCells = theoryDataCellsChangLv1(2:end,2);
+    fh = figureTheoryPressurePlus(zCells,xCells,'Y',Lv1...
+        ,'yLabelText','Lv1'...
+        ,'chartType',chartType...
+        ,'fixAxis',1 ...
+        ,'edgeColor','none'...
+        ,'sectionY',param.lv1...
+        ,'markSectionY','all'...
+        ,'markSectionYLabel',{'a'}...
+        );
+end
 

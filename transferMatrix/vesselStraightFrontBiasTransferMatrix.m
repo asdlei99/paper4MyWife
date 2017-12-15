@@ -1,4 +1,4 @@
-function [M,k] = vesselStraightFrontBiasTransferMatrix(Lv,l,lv3,Dbias,varargin )
+function [M,k] = vesselStraightFrontBiasTransferMatrix(Lv,l,lv1,Dbias,varargin )
 %缓冲罐入口顺接，出口前错位的气流脉动计算
 % Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
 %                       |  L2
@@ -166,7 +166,7 @@ M1 = straightPipeTransferMatrix(l,'k',k,'S',S,'a',a,...
 optDamp.isDamping = 0;
 optDamp.coeffDamping = coeffDamping(2);
 optDamp.meanFlowVelocity = meanFlowVelocity(2);
-Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv3,k,Dvessel,Dpipe,Dbias,a,optDamp,optMachVessel);
+Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv1,k,Dvessel,Dpipe,Dbias,a,optDamp,optMachVessel);
 %后管道传递矩阵
 M2 = straightPipeTransferMatrix(l,'k',k,'S',S,'a',a,...
      'isDamping',isDamping,'coeffDamping',coeffDamping(1)...
@@ -174,7 +174,7 @@ M2 = straightPipeTransferMatrix(l,'k',k,'S',S,'a',a,...
     
 M = M2*Mv*M1;
 end
-function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv3,k,Dv,Dpipe,Dbias,a,optDamping,optMach)
+function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv1,k,Dv,Dpipe,Dbias,a,optDamping,optMach)
     if ~isstruct(optDamping)
         if isnan(optDamping)
             optDamping.isDamping = 0;
@@ -189,7 +189,7 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv3,k,Dv,Dpipe,Dbias,a,op
         end
     end
     if isUseStaightPipe%使用直管理论
-        ML = straightPipeTransferMatrix(lv3,'k',k,'D',Dv,'a',a,...
+        ML = straightPipeTransferMatrix(lv1,'k',k,'D',Dv,'a',a,...
                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDamping...
                 ,'mach',optMach.mach,'notmach',optMach.notMach);%直管传递矩阵
         A = 0;
@@ -203,7 +203,7 @@ function Mv = vesselMatrix_StrBias(isUseStaightPipe,Lv,lv3,k,Dv,Dpipe,Dbias,a,op
             return;
         end
         %内插管腔体传递矩阵-左边
-        innerLM = innerPipeCavityTransferMatrix(Dv,Dbias,Lv-lv3,'a',a,'k',k);
+        innerLM = innerPipeCavityTransferMatrix(Dv,Dbias,Lv-lv1,'a',a,'k',k);
 %         innerRM = innerPipeCavityTransferMatrix(Dv,Dbias,Lv,'a',a,'k',k);
         %由渐缩管道引起的入口处急速变径的传递矩阵
         Sv = pi.*Dv.^2./4;

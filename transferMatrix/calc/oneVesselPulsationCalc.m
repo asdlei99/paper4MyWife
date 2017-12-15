@@ -45,19 +45,7 @@ function [pressure1,pressure2] = oneVesselPulsationCalc( massFlowE,Frequency,tim
 %       |___________________| outlet
 %           Dv              l  
 
-% straightInBiasBackOut:直进侧后出
-% Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
-%   Detailed explanation goes here
-%           |  L2
-%        l  |     Lv    outlet
-%   bias2___|_______________
-%       |                   |  Dpipe
-%       |lv2  V          lv1|———— L1  
-%       |___________________| inlet
-%           Dv              l      
-%          
-
-% straightInBiasFrontOut:直进侧前出
+% straightInBiasOut:直进侧前出
 %缓冲罐入口顺接，出口前错位的气流脉动计算
 % Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
 %                       |  L2
@@ -207,14 +195,13 @@ for i = 1:length(Frequency)
         matrix_Mv{count} = vesselBiasStraightTransferMatrix(Lv,l,lv1,0 ...
         ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
-    case 'straightinbiasbackout'
-        lv2Tmp = Lv - lv1;
-        matrix_Mv{count} = vesselStraightBiasTransferMatrix(Lv,l,lv2Tmp,0 ...
-        ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
-        ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
-    case 'straightinbiasfrontout'
-        lv2Tmp = Lv - lv1;
-        matrix_Mv{count} = vesselStraightFrontBiasTransferMatrix(Lv,l,lv2Tmp,0 ...
+%     case 'straightinbiasbackout'
+%         lv2Tmp = Lv - lv1;
+%         matrix_Mv{count} = vesselStraightBiasTransferMatrix(Lv,l,lv2Tmp,0 ...
+%         ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
+%         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
+    case 'straightinbiasout'
+        matrix_Mv{count} = vesselStraightFrontBiasTransferMatrix(Lv,l,lv1,0 ...
         ,'a',a,'d',Dpipe,'dv',Dv,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity,'f',f ...
         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
     case 'biasfrontinbiasfrontout'

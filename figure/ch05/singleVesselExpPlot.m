@@ -1,5 +1,5 @@
 %% 缓冲罐的绘制
-function res = singleVesselExpPlot(CombineData,DataCells,cmpCombineData,cmpDataCells,legendLabels)
+function res = singleVesselExpPlot(CombineDataCells,cmpCombineData,legendLabels)
 %要分析的CombineData
 %要分析的DataCells
 %作为抑制率分母的CombineData
@@ -8,7 +8,7 @@ baseField = 'rawData';
 errorType = 'ci';
 legendLabelsAbb = {'A','B'};
 pressureDropMeasureRang = [2,3];
-leg = {legendLabels,'直进直出'};
+leg = legendLabels;
 %% 实验直进侧前出
 
 %% 分析参数设置
@@ -22,7 +22,7 @@ STFTChartType = 'plot3';%contour|plot3
 STFT.measurePoint = [1,3,5,7,9,13];%时频分析波形的测点
 %% 绘图 
 %% [1,3,5,7,9,13]测点的时频分析波形
-if 1
+if 0
     dataNumIndex = 2;%读取的实验组数，<5
 
     stftLabels = {};
@@ -37,7 +37,7 @@ end
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% 绘制多组压力脉动
 if 1
-    vesselCombineDataCells = {CombineData,cmpCombineData};
+    vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
     
     fh = figureExpPressurePlus(vesselCombineDataCells,leg...
         ,'errorType','none'...
@@ -56,10 +56,10 @@ if 1
     ddMean = ddMean(1:13);
     suppressionRateBase = {ddMean};
     xlabelText = '距离';
-    ylabelText = '脉动抑制率(%)';
+    ylabelText = '压力脉动抑制率(%)';
 
-    fh = figureExpPressurePlusSuppressionRate(CombineData...
-            ,[]...        
+    fh = figureExpPressurePlusSuppressionRate(CombineDataCells...
+            ,legendLabels(1:end-1)...        
             ,'errorDrawType','bar'...
             ,'showVesselRigon',0 ...
             ,'suppressionRateBase',suppressionRateBase...
@@ -68,22 +68,16 @@ if 1
             ,'xlabelText',xlabelText...
             ,'ylabelText',ylabelText...
             );
+        
 end
-%% 绘制多组压力降
-if 0
-    
-    fh = figureExpPressureDrop(vesselCombineDataCells,legendLabels,pressureDropMeasureRang,'chartType','bar');
-    %'chartType'== 'bar' 时用于设置bar的颜色
-    set(fh.barHandle,'FaceColor',getPlotColor(1));
-    set(fh.gca,'XTickLabelRotation',30);
-end
+
 %对测点1进行时频分析波形
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
 %绘制1倍频的对比
 %% 绘制倍频
 if 1
-    fh = figureExpNatureFrequencyBar({CombineData,cmpCombineData},1,leg);
-    fh = figureExpNatureFrequencyBar({CombineData,cmpCombineData},2,leg);
-    fh = figureExpNatureFrequencyBar({CombineData,cmpCombineData},3,leg);
+    fh = figureExpNatureFrequencyBar(CombineDataCells,1,legendLabels(1:end-1));
+    fh = figureExpNatureFrequencyBar(CombineDataCells,2,legendLabels(1:end-1));
+    fh = figureExpNatureFrequencyBar(CombineDataCells,3,legendLabels(1:end-1));
 end
 end

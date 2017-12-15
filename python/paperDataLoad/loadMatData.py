@@ -36,9 +36,10 @@ def loadSimMatData(folderName):
     Arguments:
         folderName {[stringtype]} -- 目录路径
     """
-    matDataFilePath = os.path.join(folderName, "simulationDataStruct.mat")
-    if os.path.exists(matDataFilePath):
-        matDict = sciio.loadmat(matDataFilePath)
+    MAT_DATA_FILE_PATH = os.path.join(folderName, "simulationDataStruct.mat")
+    if os.path.exists(MAT_DATA_FILE_PATH):
+        matDict = sciio.loadmat(MAT_DATA_FILE_PATH)
+        result = dict()
         result["simulationDataStruct"] = matDict
     return result
 

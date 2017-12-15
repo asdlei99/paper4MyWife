@@ -1,10 +1,10 @@
 function fh = figureExpPressurePlusSuppressionRate(dataCombineStruct,varargin)
-%ç»˜åˆ¶å®éªŒæ•°æ®çš„å‹åŠ›è„‰åŠ¨å’ŒæŠ‘åˆ¶ç‡å›¾
-% dataCombineStruct å¦‚æœä¼ å…¥ä¸€ä¸ªdataCombineStructå°±ç»˜åˆ¶ä¸€ä¸ªå›¾ï¼Œå¦‚æœè¦ç»˜åˆ¶å¤šä¸ªï¼Œä¼ å…¥ä¸€ä¸ªdataCombineStructCells
-% vararginå¯é€‰å±æ€§ï¼š
-% errortype:'std':ä¸Šä¸‹è¯¯å·®å¸¦æ˜¯æ ‡å‡†å·®ï¼Œ'ci'ä¸Šä¸‹è¯¯å·®å¸¦æ˜¯95%ç½®ä¿¡åŒºé—´ï¼Œ'minmax'ä¸Šä¸‹è¯¯å·®å¸¦æ˜¯minå’Œmaxç½®ä¿¡åŒºé—´ï¼Œâ€˜noneâ€™ä¸ç»˜åˆ¶è¯¯å·®å¸¦
-% rangï¼šâ€˜æµ‹ç‚¹èŒƒå›´â€™é»˜è®¤ä¸º1:13,é™¤éæ”¹å˜æµ‹ç‚¹é¡ºåºï¼Œå¦åˆ™ä¸éœ€è¦å˜æ›´
-% showpurevesselï¼šâ€˜æ˜¯å¦æ˜¾ç¤ºå•ä¸€ç¼“å†²ç½â€™
+%»æÖÆÊµÑéÊı¾İµÄÑ¹Á¦Âö¶¯ºÍÒÖÖÆÂÊÍ¼
+% dataCombineStruct Èç¹û´«ÈëÒ»¸ödataCombineStruct¾Í»æÖÆÒ»¸öÍ¼£¬Èç¹ûÒª»æÖÆ¶à¸ö£¬´«ÈëÒ»¸ödataCombineStructCells
+% varargin¿ÉÑ¡ÊôĞÔ£º
+% errortype:'std':ÉÏÏÂÎó²î´øÊÇ±ê×¼²î£¬'ci'ÉÏÏÂÎó²î´øÊÇ95%ÖÃĞÅÇø¼ä£¬'minmax'ÉÏÏÂÎó²î´øÊÇminºÍmaxÖÃĞÅÇø¼ä£¬¡®none¡¯²»»æÖÆÎó²î´ø
+% rang£º¡®²âµã·¶Î§¡¯Ä¬ÈÏÎª1:13,³ı·Ç¸Ä±ä²âµãË³Ğò£¬·ñÔò²»ĞèÒª±ä¸ü
+% showpurevessel£º¡®ÊÇ·ñÏÔÊ¾µ¥Ò»»º³å¹Ş¡¯
 % fh = figureExpPressurePlusSuppressionRate({expStraightLinkCombineData,expElbowLinkCombineData}...
 %         ,legendText...        
 %         ,'errorDrawType','bar'...
@@ -32,11 +32,11 @@ ylimRang = [];
 showVesselRigon = 1;
 xIsMeasurePoint = 0;%
 figureHeight = 6;
-xlabelText = 'ç®¡çº¿è·ç¦»(m)';
-xTopText = 'æµ‹ç‚¹';
-ylabelText = 'è„‰åŠ¨æŠ‘åˆ¶ç‡(%)';
-vesselText = 'ç¼“å†²ç½';
-%å…è®¸ç‰¹æ®Šçš„æŠŠåœ°ä¸€ä¸ªvararginä½œä¸ºlegend
+xlabelText = '¹ÜÏß¾àÀë(m)';
+xTopText = '²âµã';
+ylabelText = 'Âö¶¯ÒÖÖÆÂÊ(%)';
+vesselText = '»º³å¹Ş';
+%ÔÊĞíÌØÊâµÄ°ÑµØÒ»¸övarargin×÷Îªlegend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
     pp=pp(2:end);
@@ -46,7 +46,7 @@ while length(pp)>=2
     val=pp{2};
     pp=pp(3:end);
     switch lower(prop)
-        case 'errortype' %è¯¯å·®å¸¦çš„ç±»å‹
+        case 'errortype' %Îó²î´øµÄÀàĞÍ
         	errorType = val;
         case 'rangs'
             rangs = val;
@@ -54,7 +54,7 @@ while length(pp)>=2
             rpm = val;
         case 'xs'
             xs = val;
-        case 'suppressionratebase' %è„‰åŠ¨æŠ‘åˆ¶ç‡è®¡ç®—çš„åˆ†æ¯é¡¹
+        case 'suppressionratebase' %Âö¶¯ÒÖÖÆÂÊ¼ÆËãµÄ·ÖÄ¸Ïî
             suppressionRateBase = val;
         case 'xlim'
             xlimRang = val;
@@ -65,7 +65,7 @@ while length(pp)>=2
         case 'showvesselrigon'
             showVesselRigon = val;
         case 'xismeasurepoint'
-            xIsMeasurePoint = val;%æ­¤å±æ€§è®¾ç½®ä¸º1ï¼Œåˆ™ç»˜å›¾æ—¶xè½´æ—¶æµ‹ç‚¹
+            xIsMeasurePoint = val;%´ËÊôĞÔÉèÖÃÎª1£¬Ôò»æÍ¼Ê±xÖáÊ±²âµã
         case 'figureheight'
             figureHeight = val;
         case 'xlabeltext'
@@ -77,7 +77,7 @@ while length(pp)>=2
         case 'vesseltext'
             vesselText = val;
         otherwise
-       		error('å‚æ•°é”™è¯¯%s',prop);
+       		error('²ÎÊı´íÎó%s',prop);
     end
 end
 
@@ -86,7 +86,7 @@ paperFigureSet_normal(figureHeight);
 if isempty(rangs)
     rangs{1} = 1:13;
 end
-%æŠ‘åˆ¶ç‡çš„åˆ†æ¯é¡¹ç›®
+%ÒÖÖÆÂÊµÄ·ÖÄ¸ÏîÄ¿
 if isempty(suppressionRateBase)
     for plotCount = 1:length(dataCombineStruct)
         suppressionRateBase{plotCount} = constExpVesselPressrePlus(rpm);
@@ -95,7 +95,7 @@ if isempty(suppressionRateBase)
 end
 if isempty(xs)
     if ~xIsMeasurePoint
-        xs{1} = constExpMeasurementPointDistance();%æµ‹ç‚¹å¯¹åº”çš„è·ç¦»
+        xs{1} = constExpMeasurementPointDistance();%²âµã¶ÔÓ¦µÄ¾àÀë
     end
 end
    
@@ -109,7 +109,7 @@ for plotCount = 1:length(dataCombineStruct)
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct{plotCount});
     end
     if isnan(y)
-        error('æ²¡æœ‰è·å–åˆ°æ•°æ®ï¼Œè¯·ç¡®ä¿æ•°æ®è¿›è¡Œè¿‡äººå·¥è„‰åŠ¨è¯»å–');
+        error('Ã»ÓĞ»ñÈ¡µ½Êı¾İ£¬ÇëÈ·±£Êı¾İ½øĞĞ¹ıÈË¹¤Âö¶¯¶ÁÈ¡');
     end
     if 1 == length(xs)
         x = xs{1};
@@ -173,7 +173,7 @@ if ~xIsMeasurePoint
         'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
     ax = axis;
     yLabel2Detal = (ax(4) - ax(3))/12;
-    % ç»˜åˆ¶æµ‹ç‚¹çº¿
+    % »æÖÆ²âµãÏß
     for i = 1:length(x)
         plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
         if 0 == mod(i,2)

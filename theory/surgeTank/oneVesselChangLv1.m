@@ -1,6 +1,13 @@
-%% 单一缓冲罐固定管长,体积，改变lv1(x)和Lv(y)
-function [X,Y,Z] = oneVesselChangBiasLengthAndAspectRatio(lv1,Lv,index,varargin)
-vType = 'straightInBiasFrontOut';
+%% 单一缓冲罐迭代进口偏置距离lv1，必须有lv1
+function theoryDataCells = oneVesselChangLv1(lv1,varargin)
+vType = 'StraightInStraightOut';
+% StraightInStraightOut：直进直出
+%  长度 L1     l    Lv   l    L2  
+%              __________        
+%             |          |      
+%  -----------|          |----------
+%             |__________|       
+% 直径 Dpipe       Dv       Dpipe  
 
 %biasInBiasOut：侧进侧出 (侧前进侧后出)
 %   Detailed explanation goes here
@@ -37,19 +44,10 @@ vType = 'straightInBiasFrontOut';
 %       |___________________| outlet
 %           Dv              l  
 
-% straightInBiasBackOut:直进侧后出
-% Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
-%   Detailed explanation goes here
-%           |  L2
-%        l  |     Lv    outlet
-%   bias2___|_______________
-%       |                   |  Dpipe
-%       |lv2  V          lv1|———— L1  
-%       |___________________| inlet
-%           Dv              l      
+
 %          
 
-% straightInBiasFrontOut:直进侧前出
+% straightInBiasOut:直进侧前出
 %缓冲罐入口顺接，出口前错位的气流脉动计算
 % Dbias 偏置管内插入缓冲罐的管径，如果偏置管没有内插如缓冲罐，Dbias为0
 %                       |  L2
@@ -95,6 +93,7 @@ param.Dpipe = 0.098;%管道直径（m）
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.lv1 = 0.318;
 param.lv2 = 0.318;
+
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -133,11 +132,6 @@ multFreTimes = 3;
 semiFreTimes = 3;
 allowDeviation = 0.5;
 
-V = (pi * param.Dv.^2 / 4) .* param.Lv;%缓冲罐体积
-%开始计算迭代的Lv和Dv
-
-Dv = calcDFromLengthDiameterRatio(V,Lv);
-
 
 dcpss = getDefaultCalcPulsSetStruct();
 dcpss.calcSection = [0.2,0.8];
@@ -150,50 +144,42 @@ dcpss.rs = 30;%截止区衰减DB数设置
 theoryDataCells{1,1} = '描述';
 theoryDataCells{1,2} = 'dataCells';
 theoryDataCells{1,3} = 'X';
-theoryDataCells{1,4} = '偏置距离';
-theoryDataCells{1,5} = '长径比';
-theoryDataCells{1,6} = 'input';
-Z = [];
-X = [];
-Y = [];
-for i=1:length(Lv)
-    for j = 1:length(lv1)
-        param.lv1 = lv1(j);
-        param.Lv = Lv(i);
-        param.Dv = Dv(i);
-        aspectR = param.Lv / param.Dv;
-        X(i,j) = lv1(j);
-        Y(i,j) = aspectR;
-        maxLv1 = Lv(i) - param.Dpipe;
-        if lv1(j) > maxLv1
-            Z(i,j) = nan;
-            continue;
-        end
-        
-        [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
-            ,param.L1,param.L2,param.Lv,param.l,param.Dpipe,param.Dv ...
-            ,param.sectionL1,param.sectionL2 ...
-            ,'vType',vType...
-            ,'a',param.acousticVelocity...
-            ,'isDamping',param.isDamping...
-            ,'friction',param.coeffFriction...
-            ,'isOpening',param.isOpening...
-            ,'meanFlowVelocity',param.meanFlowVelocity...
-            ,'lv1',param.lv1...
-            ,'lv2',param.lv2...
-            );
-        pressure = [pressure1,pressure2];
-        plus = calcPuls(pressure,dcpss);
-        Z(i,j) = plus(index);
-    end
+theoryDataCells{1,4} = 'lv1';
+theoryDataCells{1,5} = 'input';
+
+for i = 1:length(lv1)
+    
+    param.lv1 = lv1(i);
+    [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
+        ,param.L1,param.L2,param.Lv,param.l,param.Dpipe,param.Dv ...
+        ,param.sectionL1,param.sectionL2 ...
+        ,'vType',vType...
+        ,'a',param.acousticVelocity...
+        ,'isDamping',param.isDamping...
+        ,'friction',param.coeffFriction...
+        ,'isOpening',param.isOpening...
+        ,'meanFlowVelocity',param.meanFlowVelocity...
+        ,'lv1',param.lv1...
+        ,'lv2',param.lv2...
+        );
+    beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
+    pressure = [pressure1,pressure2];
+    %[plus,filterData] = calcPuls(pressure,dcpss);
+    theoryDataCells{i+1,1} = sprintf('缓冲罐偏置距离:%g',param.lv1);
+    theoryDataCells{i+1,2} = fun_dataProcessing(pressure...
+                                ,'fs',param.Fs...
+                                ,'basefrequency',baseFrequency...
+                                ,'allowdeviation',allowDeviation...
+                                ,'multfretimes',multFreTimes...
+                                ,'semifretimes',semiFreTimes...
+                                ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
+                                ,'calcpeakpeakvaluesection',nan...
+                                );
+    theoryDataCells{i+1,3} = param.X;
+    theoryDataCells{i+1,4} = param.lv1;
+    theoryDataCells{i+1,5} = param;
     
 end
 
 
-end
-
-
-
-function Dv = calcDFromLengthDiameterRatio(V,Lv)
-    Dv = ((4*V) ./ (pi * Lv)).^0.5;
 end

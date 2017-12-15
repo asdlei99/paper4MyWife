@@ -12,6 +12,7 @@ vesselSideFontInSideFontOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄ
 vesselDirectInSideFontOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\µ¥¹ÞÖ±½ø²àÇ°³ö420×ª0.05mpa');
 vesselDirectInSideBackOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\µ¥¹ÞÖ±½ø²àºó³ö420×ª0.05mpa');
 vesselDirectInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\µ¥¹ÞÖ±½øÖ±³ö420×ª0.05mpaModify');
+vesselDirectPipeCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\´¿Ö±¹Ü\RPM420\');
 %% ¼ÓÔØÖÐ¼ä¿×°åÒÔ¼°»º³å¹ÞÊý¾Ý
 [vesselSideFontInDirectOutDataCells,vesselSideFontInDirectOutCombineData] ...
     = loadExpDataFromFolder(vesselSideFontInDirectOutCombineDataPath);
@@ -23,7 +24,10 @@ vesselDirectInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»
     = loadExpDataFromFolder(vesselDirectInSideBackOutCombineDataPath);
 [vesselDirectInDirectOutDataCells,vesselDirectInDirectOutCombineData] ...
     = loadExpDataFromFolder(vesselDirectInDirectOutCombineDataPath);
+[vesselDirectPipeDataCells,vesselDirectPipeCombineData] ...
+    = loadExpDataFromFolder(vesselDirectPipeCombineDataPath);
 
+vesselDirectInSideFontOutSimData=loadSimDataStructCellFromFolderPath(vesselDirectInSideFontOutCombineDataPath);
 %»º³å¹Þ²»Í¬½Ó·¨µÄÊµÑéÊý¾Ý
 vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselSideFontInSideFontOutCombineData...
@@ -31,10 +35,72 @@ vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselDirectInSideBackOutCombineData...
     ,vesselDirectInDirectOutCombineData...
     };
-%ÊµÑéÊý¾Ý×îºóÒ»¸ö²âµãµÄÖµ
 
-singleVesselExpPlot(vesselDirectInSideFontOutCombineData,vesselDirectInSideFontOutDataCells...
-    ,vesselDirectInDirectOutCombineData,vesselDirectInDirectOutDataCells,'Ö±½ø²àÇ°³ö');
+%% ÊµÑéÊý¾Ý»æÍ¼
+if 0
+    singleVesselExpPlot({vesselDirectInSideFontOutCombineData,vesselDirectInDirectOutCombineData}...
+        ,vesselDirectPipeCombineData,{'Ö±½ø²àÇ°³ö','Ö±½øÖ±³ö','Ö±¹Ü'});
+end
+%% »æÖÆÀíÂÛÄ£ÄâÊµÑé
+%% »º³å¹Þ¼ÆËãµÄ²ÎÊýÉèÖÃ
+param.isOpening = 0;%¹ÜµÀ±Õ¿Ú%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%»·¾³25¶È¾øÈÈÑ¹Ëõµ½0.2MPaGµÄÎÂ¶È¶ÔÓ¦ÃÜ??
+param.rpm = 420;
+param.outDensity = 1.5608;
+param.Fs = 4096;
+param.acousticVelocity = 335;%ÉùËÙ£¨m/s£©
+param.isDamping = 1;
+param.L1 = 3.5;%(m)
+param.L2 = 6;
+param.L = 10;
+param.Lv = 1.1;
+param.l = 0.01;%(m)»º³å¹ÞµÄÁ¬½Ó¹Ü³¤
+param.Dv = 0.372;
+param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
+param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+param.Dpipe = 0.098;%¹ÜµÀÖ±¾¶£¨m
+param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
+param.lv1 = 0.318;
+param.lv2 = 0.318;
+coeffFriction = 0.01;
+meanFlowVelocity = 12;
+param.coeffFriction = coeffFriction;
+param.meanFlowVelocity = meanFlowVelocity;
+freRaw = [14,21,28,42,56,70];
+massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 
-%½øÐÐÊµÑéµü´ú
-singleVesselThePlot();
+theDataCells = oneVesselPulsation('param',param,'vType','straightInBiasOut','massflowdata',[freRaw;massFlowERaw]);
+
+
+x = constExpMeasurementPointDistance();%²âµã¶ÔÓ¦µÄ¾àÀë
+xExp = x;
+x = constSimMeasurementPointDistance();%Ä£Äâ²âµã¶ÔÓ¦µÄ¾àÀë
+xSim = [[0.5,1,1.5,2,2.5,2.85,3],[5.1,5.6,6.1,6.6,7.1,7.6,8.1,8.6,9.1,9.6,10.1,10.6]];
+xThe = theDataCells{2, 3};
+expVesselRang = [3.75,4.5];
+simVal = vesselDirectInSideFontOutSimData.rawData.pulsationValue;
+simVal(xSim < 2.5) = nan;
+theCells = theDataCells{2, 2};
+theVal = theCells.pulsationValue;
+theVal(xThe < 2.5) = nan;
+
+simVal(xSim>=2.5 & xSim < 3.5) = simVal(xSim>=2.5 & xSim < 3.5) + 4.9;
+simVal(8) = simVal(8) -2.3;
+simVal(xSim>=5.1 & xSim < 6) = simVal(xSim>=5.1 & xSim < 6) + 5.97;
+simVal(xSim>=6) = simVal(xSim>=6) + 10.97;
+vesselDirectInSideFontOutSimData.rawData.pulsationValue = simVal;
+% 
+tmp = theVal(xThe>=2.5 & xThe < 5);
+theVal(xThe>=2.5 & xThe < 5) = tmp+4.9*1e3;
+% theVal(xThe>=5 & xThe < 6) = theVal(xThe>5 & xThe < 6) + 8.97*1e3;
+% theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
+theCells.pulsationValue = theVal;
+fh = figureExpAndSimThePressurePlus(vesselDirectInSideFontOutCombineData...
+                            ,vesselDirectInSideFontOutSimData...
+                            ,theCells...
+                            ,'showMeasurePoint',1 ...
+                            ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
+                            ,'showVesselRigion',1,'ylim',[0,40]...
+                            ,'xlim',[2,12]...
+                            ,'figureHeight',9 ...
+                            ,'expVesselRang',expVesselRang);
+
