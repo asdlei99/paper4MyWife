@@ -171,8 +171,8 @@ if 1
     figure
     paperFigureSet_large(6.5);
     subplot(1,2,1);
-    %surf(X,Y,Z);
-    contourf(X,Y,Z);
+    surf(X,Y,Z);
+%     contourf(X,Y,Z);
     xlabel('长径比','FontSize',paperFontSize(),'fontName',paperFontName());
     ylabel('频率(Hz)','FontSize',paperFontSize(),'fontName',paperFontName());
     zlabel('阻抗系数','FontSize',paperFontSize(),'fontName',paperFontName());
