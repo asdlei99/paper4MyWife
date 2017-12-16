@@ -1,3 +1,4 @@
+#-*-coding:UTF-8-*-
 import scipy.io as sciio
 import numpy as np
 import os
