@@ -6,13 +6,14 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
+paperType = 'MainPaper';
 %% 数据路径
 vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');%侧前进直后出
 vesselSideFontInSideFontOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐侧前进侧前出420转0.05mpa');
 vesselDirectInSideFontOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐直进侧前出420转0.05mpa');
 vesselDirectInSideBackOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐直进侧后出420转0.05mpa');
 vesselDirectInDirectOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐直进直出420转0.05mpaModify');
-vesselDirectPipeCombineDataPath = fullfile(dataPath,'实验原始数据\纯直管\RPM420\');
+vesselDirectPipeCombineDataPath = fullfile(dataPath,'实验原始数据\纯直管\RPM420-0.1Mpa\');
 %% 加载中间孔板以及缓冲罐数据
 [vesselSideFontInDirectOutDataCells,vesselSideFontInDirectOutCombineData] ...
     = loadExpDataFromFolder(vesselSideFontInDirectOutCombineDataPath);
@@ -26,7 +27,8 @@ vesselDirectPipeCombineDataPath = fullfile(dataPath,'实验原始数据\纯直管\RPM420\
     = loadExpDataFromFolder(vesselDirectInDirectOutCombineDataPath);
 [vesselDirectPipeDataCells,vesselDirectPipeCombineData] ...
     = loadExpDataFromFolder(vesselDirectPipeCombineDataPath);
-
+ combineDataStruct = vesselDirectPipeCombineData
+combineDataStruct.readPlus(:,12) = combineDataStruct.readPlus(:,12)+2
 vesselDirectInSideFontOutSimData=loadSimDataStructCellFromFolderPath(vesselDirectInSideFontOutCombineDataPath);
 %缓冲罐不同接法的实验数据
 vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
@@ -37,10 +39,19 @@ vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     };
 
 %% 实验数据绘图
-if 0
-    singleVesselExpPlot({vesselDirectInSideFontOutCombineData,vesselDirectInDirectOutCombineData}...
-        ,vesselDirectPipeCombineData,{'直进侧前出','直进直出','直管'});
+if 1
+    if strcmpi(paperType,'MainPaper')
+        singleVesselExpPlot({vesselDirectInSideFontOutCombineData}...
+        ,vesselDirectPipeCombineData,{'直进侧出','直管'}...
+        ,'errorTypeInExp','ci'...
+        ,'plusValueSubplot',1);
+    else
+        singleVesselExpPlot({vesselDirectInSideFontOutCombineData,vesselDirectInDirectOutCombineData}...
+            ,vesselDirectPipeCombineData,{'直进侧前出','直进直出','直管'});
+    end
 end
+
+
 %% 绘制理论模拟实验
 %% 缓冲罐计算的参数设置
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??
@@ -61,7 +72,7 @@ param.Dpipe = 0.098;%管道直径（m
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.lv1 = 0.318;
 param.lv2 = 0.318;
-coeffFriction = 0.01;
+coeffFriction = 0.02;
 meanFlowVelocity = 12;
 param.coeffFriction = coeffFriction;
 param.meanFlowVelocity = meanFlowVelocity;
@@ -94,13 +105,16 @@ theVal(xThe>=2.5 & xThe < 5) = tmp+4.9*1e3;
 % theVal(xThe>=5 & xThe < 6) = theVal(xThe>5 & xThe < 6) + 8.97*1e3;
 % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
 theCells.pulsationValue = theVal;
+legnedText = {'实验','模拟','理论'};
 fh = figureExpAndSimThePressurePlus(vesselDirectInSideFontOutCombineData...
                             ,vesselDirectInSideFontOutSimData...
                             ,theCells...
+                            ,{''}...
+                            ,'legendPrefixLegend',legnedText...
                             ,'showMeasurePoint',1 ...
                             ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
                             ,'showVesselRigion',1,'ylim',[0,40]...
                             ,'xlim',[2,12]...
                             ,'figureHeight',9 ...
                             ,'expVesselRang',expVesselRang);
-
+set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);

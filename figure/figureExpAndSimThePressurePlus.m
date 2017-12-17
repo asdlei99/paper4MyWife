@@ -14,6 +14,7 @@ theRang = {};
 showPureVessel = 0;
 pureVesselLegend = {};
 legendLabels = {};
+legendPrefixLegend = {'实验','模拟','理论'};
 rpm = 420;
 xSim = {};
 xExp = {};
@@ -83,6 +84,8 @@ while length(pp)>=2
             xTopText = val;
         case 'vesseltext'
             vesselText = val;
+        case 'legendprefixlegend' %legend的前缀
+            legendPrefixLegend = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -199,11 +202,14 @@ if ~isempty(legendLabels)
     end
     
     for i=1:length(expDataCombineStruct)
-    	legendLabels{length(legendLabels)+1} = sprintf('实验-%s',tmp{i});
+        if isempty(legendPrefixLegend)
+            legendPrefixLegend = {'','',''};
+        end
+    	legendLabels{length(legendLabels)+1} = sprintf('%s%s',legendPrefixLegend{1},tmp{i});
         plotHandle(length(plotHandle)+1) = fh.plotHandle(i);
-        legendLabels{length(legendLabels)+1} = sprintf('模拟-%s',tmp{i});
+        legendLabels{length(legendLabels)+1} = sprintf('%s%s',legendPrefixLegend{2},tmp{i});
         plotHandle(length(plotHandle)+1) = fh.plotHandleSim(i);
-        legendLabels{length(legendLabels)+1} = sprintf('理论-%s',tmp{i});
+        legendLabels{length(legendLabels)+1} = sprintf('%s%s',legendPrefixLegend{3},tmp{i});
         plotHandle(length(plotHandle)+1) = fh.plotHandleThe(i);
     end
         

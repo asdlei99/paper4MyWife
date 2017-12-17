@@ -40,7 +40,7 @@ ys = [];
 errUp = [];
 errDown = [];
 for i = 1:length(dataCombineStructCells)
-    if 1==length(dataCombineStructCells)
+    if 1==length(dataCombineStructCells) && ~iscell(dataCombineStructCells)
         [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(dataCombineStructCells,natureFre,baseField);
     else
         [y,stdVal,maxVal,minVal,muci] = getExpCombineNatureFrequencyDatas(dataCombineStructCells{i},natureFre,baseField);

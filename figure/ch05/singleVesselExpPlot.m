@@ -1,5 +1,5 @@
 %% 缓冲罐的绘制
-function res = singleVesselExpPlot(CombineDataCells,cmpCombineData,legendLabels)
+function res = singleVesselExpPlot(CombineDataCells,cmpCombineData,legendLabels,varargin)
 %要分析的CombineData
 %要分析的DataCells
 %作为抑制率分母的CombineData
@@ -8,7 +8,23 @@ baseField = 'rawData';
 errorType = 'ci';
 legendLabelsAbb = {'A','B'};
 pressureDropMeasureRang = [2,3];
+pp = varargin;
 leg = legendLabels;
+errorTypeInExp = 'none';
+plusValueSubplot = 0;
+while length(pp)>=2
+    prop =pp{1};
+    val=pp{2};
+    pp=pp(3:end);
+    switch lower(prop)
+        case 'errortypeinexp' %误差带的类型
+        	errorTypeInExp = val;
+        case 'plusvaluesubplot'% 此值为1时，脉动压力和脉动抑制率使用一张图subplot(1,2,1)的形式
+            plusValueSubplot = val;
+        otherwise
+       		error('参数错误%s',prop);
+    end
+end
 %% 实验直进侧前出
 
 %% 分析参数设置
@@ -36,40 +52,94 @@ end
 %绘制0.25D的压力脉动
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% 绘制多组压力脉动
-if 1
-    vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
-    
-    fh = figureExpPressurePlus(vesselCombineDataCells,leg...
-        ,'errorType','none'...
-        ,'showPureVessel',0);
-    set(fh.legend,...
-         'Position',[0.168290657927067 0.667473958333333 0.256448925406267 0.128921438212402]);
-    set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
+if plusValueSubplot
+    if 1
+        figure
+        paperFigureSet_large();
+        subplot(1,2,1)
+        vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
+        fh = figureExpPressurePlus(vesselCombineDataCells,leg...
+            ,'errorType',errorTypeInExp...
+            ,'showPureVessel',0 ...
+            ,'isFigure',0);
+        set(fh.legend,...
+             'Position',[0.168290657927067 0.667473958333333 0.256448925406267 0.128921438212402]);
+%         set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
+%         
+        subplot(1,2,2)
+        ddMean = mean(cmpCombineData.readPlus);
+        ddMean = ddMean(1:13);
+        suppressionRateBase = {ddMean};
+        xlabelText = '距离';
+        ylabelText = '压力脉动抑制率(%)';
+
+        fh = figureExpPressurePlusSuppressionRate(CombineDataCells...
+                ,legendLabels(1:end-1)...        
+                ,'errorDrawType','bar'...
+                ,'showVesselRigon',0 ...
+                ,'suppressionRateBase',suppressionRateBase...
+                ,'xIsMeasurePoint',0 ...
+                ,'figureHeight',8 ...
+                ,'xlabelText',xlabelText...
+                ,'ylabelText',ylabelText...
+                ,'isFigure',0 ...
+                );
+    end
+else
+    if 1
+        vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
+
+        fh = figureExpPressurePlus(vesselCombineDataCells,leg...
+            ,'errorType',errorTypeInExp...
+            ,'showPureVessel',0);
+        set(fh.legend,...
+             'Position',[0.168290657927067 0.667473958333333 0.256448925406267 0.128921438212402]);
+        set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
+    end
+    if 1
+        ddMean = mean(cmpCombineData.readPlus);
+        ddMean = ddMean(1:13);
+        suppressionRateBase = {ddMean};
+        xlabelText = '距离';
+        ylabelText = '压力脉动抑制率(%)';
+
+        fh = figureExpPressurePlusSuppressionRate(CombineDataCells...
+                ,legendLabels(1:end-1)...        
+                ,'errorDrawType','bar'...
+                ,'showVesselRigon',0 ...
+                ,'suppressionRateBase',suppressionRateBase...
+                ,'xIsMeasurePoint',0 ...
+                ,'figureHeight',8 ...
+                ,'xlabelText',xlabelText...
+                ,'ylabelText',ylabelText...
+                );
+
+    end
 end
+
+%% 绘制压力不均度
+% if 1
+%     vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
+%     figure;
+%     paperFigureSet_normal();
+%     hold on;
+%     rang = 1:13;
+%     x = constExpMeasurementPointDistance();%测点对应的距离
+%     for i = 1:length(vesselCombineDataCells)
+%         [y,stdVal,maxVal,minVal,muci,sigmaci] = getExpCombinePressureBalanced(vesselCombineDataCells{i});
+%         y = y(rang);
+%         yUp = muci(2,rang);
+%         yDown = muci(1,rang);
+%         h = plotWithError(x,y,yUp,yDown,'color',getPlotColor(i)...
+%             ,'Marker',getMarkStyle(i),'type','errbar');
+%     end
+% end
 %绘制0.25D的压力脉动抑制率
 % fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
 %     ,'yfilterfunptr',@fixInnerOrificY ...
 % );
 %% 绘制多组压力脉动抑制率
-if 1
-    ddMean = mean(cmpCombineData.readPlus);
-    ddMean = ddMean(1:13);
-    suppressionRateBase = {ddMean};
-    xlabelText = '距离';
-    ylabelText = '压力脉动抑制率(%)';
 
-    fh = figureExpPressurePlusSuppressionRate(CombineDataCells...
-            ,legendLabels(1:end-1)...        
-            ,'errorDrawType','bar'...
-            ,'showVesselRigon',0 ...
-            ,'suppressionRateBase',suppressionRateBase...
-            ,'xIsMeasurePoint',0 ...
-            ,'figureHeight',8 ...
-            ,'xlabelText',xlabelText...
-            ,'ylabelText',ylabelText...
-            );
-        
-end
 
 %对测点1进行时频分析波形
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);

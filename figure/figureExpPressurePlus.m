@@ -7,11 +7,13 @@ function fh = figureExpPressurePlus(dataCombineStruct,varargin)
 % showpurevessel：‘是否显示单一缓冲罐’
 pp = varargin;
 errorType = 'ci';
+errorPlotType = 'bar';
 rang = 1:13;
 showPureVessel = 0;
 pureVesselLegend = {};
 legendLabels = {};
 rpm = 420;
+isFigure = 1;
 expVesselRang = constExpVesselRangDistance();
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
@@ -35,13 +37,18 @@ while length(pp)>=2
             rpm = val;
         case 'expvesselrang'
             expVesselRang = val;
+        case 'errorplottype'
+            errorPlotType =val;
+        case 'isfigure'
+            isFigure = val;
         otherwise
        		error('参数错误%s',prop);
     end
 end
-
-fh.gcf = figure();
-paperFigureSet_normal();
+if isFigure
+    fh.gcf = figure();
+    paperFigureSet_normal();
+end
 x = constExpMeasurementPointDistance();%测点对应的距离
 %需要显示单一缓冲罐
 if showPureVessel
@@ -82,7 +89,8 @@ for plotCount = 1:length(dataCombineStruct)
             ,'Marker',getMarkStyle(plotCount));
     else
         [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount));
+            ,'Marker',getMarkStyle(plotCount)...
+            ,'type',errorPlotType);
     end
 end
 
@@ -96,15 +104,17 @@ if ~isempty(legendLabels)
         fh.legend = legend([fh.vesselHandle,fh.plotHandle],legendLabels,0);
     end
 end
+if  isFigure
+    set(gca,'Position',[0.13 0.18 0.79 0.65]);
+    fh.textboxMeasurePoint = annotation('textbox',...
+        [0.48 0.885 0.0998 0.0912],...
+        'String','测点',...
+        'FaceAlpha',0,...
+        'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
+    fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
+        [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
+end
 
-set(gca,'Position',[0.13 0.18 0.79 0.65]);
-fh.textboxMeasurePoint = annotation('textbox',...
-    [0.48 0.885 0.0998 0.0912],...
-    'String','测点',...
-    'FaceAlpha',0,...
-    'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
-fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
-    [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
 fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;

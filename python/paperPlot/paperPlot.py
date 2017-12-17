@@ -27,7 +27,7 @@ LINE_STYLE_STR = ['-','--','-.',':']
 """
 LINE_MARKER_STR = ['.','o','v','^','<','1','>','2','s','3','p','4','*','8','h','+','x','D','H','d']
 
-def paperFigure(sizeType='normal',height=4):
+def paperFigure(sizeType='normal',height=3):
 	"""替代plt.figure的函数，可以根据论文的固定格式生成figure
 	
 	替代plt.figure的函数，可以根据论文的固定格式生成figure
@@ -39,11 +39,11 @@ def paperFigure(sizeType='normal',height=4):
 	a = 1
 	print(a)
 	fs = (3.5433071,height)
-	if sizeType.lower() is 'normal':
+	if sizeType.lower() == 'normal':
 		fs = (3.5433071,height)
-	elif sizeType.lower() is 'large':
+	elif sizeType.lower() == 'large':
 		fs = (5.511811,height)
-	elif sizeType.lower() is 'fullWidth':
+	elif sizeType.lower() == 'fullWidth':
 		fs = (7.480315,height)
 
 	fig = plt.figure(figsize=fs)
@@ -67,24 +67,28 @@ def getLineMarker(index):
 	index = (index) % len(LINE_MARKER_STR)
 	return LINE_MARKER_STR[index]
 
-def showMarkerStyleFigure():
+def showMarkerStyleFigure(isCreateFigure = True):
 	"""显示marker样式
 	显示marker样式
 	"""
-	fig = paperFigure()
+	fig = None
+	if isCreateFigure:
+		fig = paperFigure()
 	for i in range(0,len(LINE_MARKER_STR)):
 		x = range(1,10)
 		y = np.ones(len(x))
 		y = y * i
 		plt.plot(x,y,marker=getLineMarker(i))
 		plt.text(x[-1]+0.5,y[-1],LINE_MARKER_STR[i])
-	
+	return [fig]
 
-def showLineStyleFigure():
-	"""显示LineStyleF样式
-	显示LineStyleF样式
+def showLineStyleFigure(isCreateFigure = True):
+	"""显示LineStyle样式
+	显示LineStyle样式
 	"""
-	fig = paperFigure()
+	fig = None
+	if isCreateFigure:
+		fig = paperFigure()
 	for i in range(0,len(LINE_STYLE_STR)):
 		x = range(1,10)
 		y = np.ones(len(x))
@@ -92,8 +96,17 @@ def showLineStyleFigure():
 		plt.plot(x,y,linestyle=getLineStyle(i))
 		plt.text(x[-1],y[-1],LINE_STYLE_STR[i])
 
+def showLineAndMarkStyle():
+	"""显示LineStyle和marker样式
+	
+	此函数是showMarkerStyleFigure()和showLineStyleFigure()的结合
+	"""
+	fig = paperFigure(sizeType = "large")
+	plt.subplot(121)
+	showLineStyleFigure(isCreateFigure = False)
+	plt.subplot(122)
+	showMarkerStyleFigure(isCreateFigure = False)
 
 if __name__ == "__main__":
-	showMarkerStyleFigure()
-	showLineStyleFigure()
+	showLineAndMarkStyle()
 	plt.show()

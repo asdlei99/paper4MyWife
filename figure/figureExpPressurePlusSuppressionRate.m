@@ -36,6 +36,7 @@ xlabelText = '管线距离(m)';
 xTopText = '测点';
 ylabelText = '脉动抑制率(%)';
 vesselText = '缓冲罐';
+isFigure = 1;
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -76,13 +77,16 @@ while length(pp)>=2
             xTopText = val;
         case 'vesseltext'
             vesselText = val;
+        case 'isfigure'
+            isFigure = val;
         otherwise
        		error('参数错误%s',prop);
     end
 end
-
-figure
-paperFigureSet_normal(figureHeight);
+if isFigure
+    fh.gcf = figure();
+    paperFigureSet_normal(figureHeight);
+end
 if isempty(rangs)
     rangs{1} = 1:13;
 end
@@ -103,7 +107,7 @@ for plotCount = 1:length(dataCombineStruct)
     if 2 == plotCount
         hold on;
     end
-    if(1 == length(dataCombineStruct))
+    if(1 == length(dataCombineStruct) && ~iscell(dataCombineStruct))
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct);
     else
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct{plotCount});
@@ -165,12 +169,14 @@ if ~isempty(legendLabels)
     end
 end
 if ~xIsMeasurePoint
-    set(gca,'Position',[0.13 0.18 0.79 0.65]);
-    fh.textboxMeasurePoint = annotation('textbox',...
-        [0.48 0.885 0.0998 0.0912],...
-        'String',xTopText,...
-        'FaceAlpha',0,...
-        'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
+    if isFigure
+        set(gca,'Position',[0.13 0.18 0.79 0.65]);
+        fh.textboxMeasurePoint = annotation('textbox',...
+            [0.48 0.885 0.0998 0.0912],...
+            'String',xTopText,...
+            'FaceAlpha',0,...
+            'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
+    end
     ax = axis;
     yLabel2Detal = (ax(4) - ax(3))/12;
     % 绘制测点线
@@ -189,8 +195,10 @@ end
 
 xlabel(xlabelText);
 if showVesselRigon
-    fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
-    [0.744 0.665],'String',{vesselText},'FontName',paperFontName(),'FontSize',paperFontSize());
+    if isFigure
+        fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
+        [0.744 0.665],'String',{vesselText},'FontName',paperFontName(),'FontSize',paperFontSize());
+    end
     fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
 end
 ylabel(ylabelText);

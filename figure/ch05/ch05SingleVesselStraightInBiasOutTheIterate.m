@@ -8,8 +8,6 @@ param.outDensity = 1.5608;
 param.Fs = 4096;
 param.acousticVelocity = 335;%声速（m/s）
 param.isDamping = 1;
-param.coeffFriction = 0.001;
-param.meanFlowVelocity = 12;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
 param.L = 10;
@@ -22,7 +20,7 @@ param.Dpipe = 0.098;%管道直径（m
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.lv1 = 0.318;
 param.lv2 = 0.318;
-coeffFriction = 0.03;
+coeffFriction = 0.02;
 meanFlowVelocity = 12;
 param.coeffFriction = coeffFriction;
 param.meanFlowVelocity = meanFlowVelocity;
@@ -30,7 +28,7 @@ freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 
 %% 1迭代长径比
-if 1
+if 0
     chartType = 'surf';
     Lv = 0.3:0.05:3;
     theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType','straightInBiasOut'...
@@ -81,8 +79,8 @@ end
 
 %% 迭代偏置距离和长径比
 if 1
-%     chartType = 'surf';
-    chartType = 'contourf';
+     chartType = 'surf';
+%     chartType = 'contourf';
     endIndex = length(param.sectionL1) + length(param.sectionL2);
     Lv = linspace(0.3,3,42);
     lv1 = linspace(0,param.Lv-param.Dpipe,32);
