@@ -42,6 +42,8 @@ def plotCombineMatData(*combineData,**kwargs):
 
 
 if __name__ == "__main__":
-	combineData = [1,2,3]
-	lengendTexts = filter(lambda x: "line:{0}".format(x),range(1,len(combineData)))
-	print(lengendTexts)
+    d={"x":1,"y":2,"z":3}
+    for key in d:
+        print("key:{0}".format(key))
+    for key,val in d.items():
+        print("{0}:{1}".format(key,val))

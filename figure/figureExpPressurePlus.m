@@ -10,6 +10,7 @@ errorType = 'ci';
 errorPlotType = 'bar';
 rang = 1:13;
 showPureVessel = 0;
+showVesselRegion = 1;
 pureVesselLegend = {};
 legendLabels = {};
 rpm = 420;
@@ -41,6 +42,8 @@ while length(pp)>=2
             errorPlotType =val;
         case 'isfigure'
             isFigure = val;
+        case 'showvesselregion'
+            showVesselRegion = val;
         otherwise
        		error('≤Œ ˝¥ÌŒÛ%s',prop);
     end
@@ -111,11 +114,14 @@ if  isFigure
         'String','≤‚µ„',...
         'FaceAlpha',0,...
         'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
-    fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
-        [0.744 0.665],'String',{'ª∫≥Âπﬁ'},'FontName',paperFontName(),'FontSize',paperFontSize());
+    if showVesselRegion
+        fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
+            [0.744 0.665],'String',{'ª∫≥Âπﬁ'},'FontName',paperFontName(),'FontSize',paperFontSize());
+    end
 end
-
-fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
+if showVesselRegion
+    fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
+end
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;
 % ªÊ÷∆≤‚µ„œﬂ
