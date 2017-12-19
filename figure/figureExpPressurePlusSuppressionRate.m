@@ -169,13 +169,13 @@ if ~isempty(legendLabels)
     end
 end
 if ~xIsMeasurePoint
-    if isFigure
-        set(gca,'Position',[0.13 0.18 0.79 0.65]);
-        fh.textboxMeasurePoint = annotation('textbox',...
+    fh.textboxMeasurePoint = annotation('textbox',...
             [0.48 0.885 0.0998 0.0912],...
             'String',xTopText,...
             'FaceAlpha',0,...
             'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
+    if isFigure
+        set(gca,'Position',[0.13 0.18 0.79 0.65]);
     end
     ax = axis;
     yLabel2Detal = (ax(4) - ax(3))/12;

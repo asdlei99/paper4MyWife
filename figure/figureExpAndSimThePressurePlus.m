@@ -29,7 +29,7 @@ expVesselRang = constExpVesselRangDistance();
 %允许特殊的把地一个varargin作为legend
 xlabelText = '管线距离(m)';
 xTopText = '测点';
-ylabelText = '脉动抑制率(%)';
+ylabelText = '压力脉动峰峰值(kPa)';
 vesselText = '缓冲罐';
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};

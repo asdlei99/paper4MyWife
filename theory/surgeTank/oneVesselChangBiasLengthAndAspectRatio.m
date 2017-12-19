@@ -153,9 +153,10 @@ theoryDataCells{1,3} = 'X';
 theoryDataCells{1,4} = 'Æ«ÖÃ¾àÀë';
 theoryDataCells{1,5} = '³¤¾¶±È';
 theoryDataCells{1,6} = 'input';
-Z = [];
+Z = cell(length(index),1);
 X = [];
 Y = [];
+
 for i=1:length(Lv)
     for j = 1:length(lv1)
         param.lv1 = lv1(j);
@@ -166,7 +167,11 @@ for i=1:length(Lv)
         Y(i,j) = aspectR;
         maxLv1 = Lv(i) - param.Dpipe;
         if lv1(j) > maxLv1
-            Z(i,j) = nan;
+            count = 1;
+            for kk=index
+                Z{count}(i,j) = nan;
+                count = count + 1;
+            end
             continue;
         end
         
@@ -184,9 +189,12 @@ for i=1:length(Lv)
             );
         pressure = [pressure1,pressure2];
         plus = calcPuls(pressure,dcpss);
-        Z(i,j) = plus(index);
+        count = 1;
+        for kk=index
+            Z{count}(i,j) = plus(kk);
+            count = count + 1;
+        end
     end
-    
 end
 
 

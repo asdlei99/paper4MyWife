@@ -7,10 +7,10 @@ param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%
 param.rpm = 420;
 param.outDensity = 1.5608;
 param.Fs = 4096;
-param.acousticVelocity = 345;%声速（m/s）
+param.acousticVelocity = 335;%声速（m/s）
 param.isDamping = 1;
-param.coeffFriction = 0.03;
-param.meanFlowVelocity = 10;
+param.coeffFriction = 0.02;
+param.meanFlowVelocity = 12;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
 param.Lv = 1.1;
