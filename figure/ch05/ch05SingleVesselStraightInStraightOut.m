@@ -100,7 +100,7 @@ if 0
     %绘制0.5,1.5,2.5倍频
     %figureExpMultNatureFrequencyBar(vesselDirectInSideFontOutCombineData,0.5,{'0.5倍频','1.5倍频','2.5倍频'});
 end
-%%
+%% 体积变化对脉动的影响
 if 1
     Vmin = pi* param.Dpipe^2 / 4 * param.Lv *1.5;
     Vmid = pi* param.Dv^2 / 4 * param.Lv;
@@ -129,7 +129,50 @@ if 1
         ,'fixAxis',1 ...
         ,'newFigure',0 ...
         );
+    sectionXDatas = fh.sectionXHandle.data;
     view(-143,12);
     h = colorbar();
-    
+    %绘制sectionX对应截面的图形
+
+    figure
+    paperFigureSet_normal();
+    hold on;
+    for i=1:length(sectionX)
+        x = sectionXDatas(i).y;
+        y = sectionXDatas(i).z;
+        h(i) = plot(x,y,'color',getPlotColor(i),'marker',getMarkStyle(i));
+    end
+    box on;
+    hm = plotXMarkerLine(Vmid,':k');
+    hm = plotXMarkerLine(VApi618,'--r');
+    xlabel('缓冲罐体积(m^3)','FontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
+
+
 end
+
+%% 长径比对直进直出的影响
+if 1
+    chartType = 'contourf';
+    Lv = 0.3:0.05:3;
+    theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType','straightInBiasOut'...
+        ,'massflowdata',[freRaw;massFlowERaw]...
+        ,'param',param...
+        ,'Lv',Lv);
+    %x
+    xCells = theoryDataCellsChangLengthDiameterRatio(2:end,3);
+    %y
+    zCells = theoryDataCellsChangLengthDiameterRatio(2:end,2);
+    yValue = cellfun(@(x) x,theoryDataCellsChangLengthDiameterRatio(2:end,6));%长径比值
+    expLengthDiameterRatio = param.Lv / param.Dv;%实验的值
+    fh = figureTheoryPressurePlus(zCells,xCells,'Y',yValue...
+            ,'yLabelText','长径比'...
+            ,'chartType',chartType...
+            ,'fixAxis',1 ...
+            ,'edgeColor','none'...
+            ,'sectionY',expLengthDiameterRatio...
+            ,'markSectionY','all'...
+            ,'markSectionYLabel',{'a'}...
+            );
+end
+

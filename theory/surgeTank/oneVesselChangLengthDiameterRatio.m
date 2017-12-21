@@ -1,4 +1,4 @@
-%% 单一缓冲罐迭代长径比研究
+%% 单一缓冲罐迭代长径比研究 -- 根据Lv或者Dv计算
 function theoryDataCells = oneVesselChangLengthDiameterRatio(varargin)
 vType = 'StraightInStraightOut';
 % StraightInStraightOut：直进直出

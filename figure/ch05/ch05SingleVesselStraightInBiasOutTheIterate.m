@@ -159,8 +159,8 @@ if 1
 end
 
 %% 迭代缓冲罐lv1的偏置入口管长
-if 0
-    chartType = 'surf';
+if 1
+    chartType = 'contourf';
     Lv1 = 0:0.05:1;
     
     theoryDataCellsChangLv1 = oneVesselChangLv1(Lv1...
