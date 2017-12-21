@@ -106,7 +106,7 @@ if 1
     Vmid = pi* param.Dv^2 / 4 * param.Lv;
     Vmax = Vmid*2;
     VApi618 = 0.1;
-    V = Vmin:0.02:Vmax;
+    V = (Vmin*0.7):0.01:Vmax;
     chartTypeChangVolume = 'surf';
     theoryDataCellsStraightInStraightOut = oneVesselChangVolume(V,'massflowdata',[freRaw;massFlowERaw]...
                                                         ,'vType','StraightInStraightOut'...
@@ -135,8 +135,9 @@ if 1
     %绘制sectionX对应截面的图形
 
     figure
-    paperFigureSet_normal();
+    paperFigureSet_normal(6);
     hold on;
+    h = [];
     for i=1:length(sectionX)
         x = sectionXDatas(i).y;
         y = sectionXDatas(i).z;
@@ -145,16 +146,19 @@ if 1
     box on;
     hm = plotXMarkerLine(Vmid,':k');
     hm = plotXMarkerLine(VApi618,'--r');
+    ax = axis();
+    text(Vmid,ax(4)-3,'实验体积');
+    text(VApi618-0.03,ax(4)-3,'API 618');
     xlabel('缓冲罐体积(m^3)','FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
-
+    legend(h,markSectionXLabel);
 
 end
 
 %% 长径比对直进直出的影响
 if 1
     chartType = 'contourf';
-    Lv = 0.3:0.05:3;
+    Lv = 0.3:0.01:3;
     theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType','straightInBiasOut'...
         ,'massflowdata',[freRaw;massFlowERaw]...
         ,'param',param...
