@@ -179,10 +179,17 @@ for plotCount = 1:length(expDataCombineStruct)
     if 1 == plotCount
         hold on;
     end
-    fh.plotHandleSim(plotCount) = plot(xSimVal,ySimVal,'color',getPlotColor(plotCount)...
+    if 1 == length(expDataCombineStruct)
+        fh.plotHandleSim(plotCount) = plot(xSimVal,ySimVal,'color',getPlotColor(plotCount+1)...
+        ,'Marker',getMarkStyle(plotCount+1),'LineStyle','--');
+        fh.plotHandleThe(plotCount) = plot(xTheVal,yTheVal,'color',getPlotColor(plotCount+2)...
+            ,'LineStyle','-.');
+    else
+        fh.plotHandleSim(plotCount) = plot(xSimVal,ySimVal,'color',getPlotColor(plotCount)...
         ,'Marker',getMarkStyle(plotCount),'LineStyle','--');
-    fh.plotHandleThe(plotCount) = plot(xTheVal,yTheVal,'color',getPlotColor(plotCount)...
-        ,'LineStyle','-.');
+        fh.plotHandleThe(plotCount) = plot(xTheVal,yTheVal,'color',getPlotColor(plotCount)...
+            ,'LineStyle','-.');
+    end
 end
 if ~isempty(xLimVal)
     xlim(xLimVal);

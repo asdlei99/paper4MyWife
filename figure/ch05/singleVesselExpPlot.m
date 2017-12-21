@@ -21,6 +21,8 @@ while length(pp)>=2
         	errorTypeInExp = val;
         case 'plusvaluesubplot'% 此值为1时，脉动压力和脉动抑制率使用一张图subplot(1,2,1)的形式
             plusValueSubplot = val;
+        case 'datacells'
+            dataCells = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -45,7 +47,7 @@ if 0
     for i = 1:length(STFT.measurePoint)
         stftLabels{i} = sprintf('测点%d',STFT.measurePoint(i));
     end
-    fh = figureExpPressureSTFT(getExpDataStruct(DataCells,dataNumIndex,baseField),STFT.measurePoint,Fs...
+    fh = figureExpPressureSTFT(getExpDataStruct(dataCells,dataNumIndex,baseField),STFT.measurePoint,Fs...
         ,stftLabels,'STFT',STFT,'chartType',STFTChartType...
         ,'subplotRow',2,'figureHeight',10);
 end
@@ -149,7 +151,7 @@ end
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
 %绘制1倍频的对比
 %% 绘制倍频
-if 1
+if 0
     fh = figureExpNatureFrequencyBar(CombineDataCells,1,legendLabels(1:end-1));
     fh = figureExpNatureFrequencyBar(CombineDataCells,2,legendLabels(1:end-1));
     fh = figureExpNatureFrequencyBar(CombineDataCells,3,legendLabels(1:end-1));
