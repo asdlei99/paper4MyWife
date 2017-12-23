@@ -136,15 +136,15 @@ else
             );
         box on;
         grid on;
-    elseif strcmp(chartType,'contourf')
+    else
         fh =  figurePlotContourf(dataCells,X,Y,edgeColor...
             ,sectionY,markSectionY,markSectionYLabel...
             ,sectionX,markSectionX,markSectionXLabel...
-            ,fixAxis...
+            ,fixAxis,chartType...
             );
         box on;
     end
-    xlabel(xLabelText);
+    xlabel(xLabelText,'FontSize',paperFontSize());
     ylabel(yLabelText,'FontSize',paperFontSize());
     zlabel(zLabelText,'FontSize',paperFontSize());
     fh.gca = gca;
@@ -225,7 +225,7 @@ end
 function fh = figurePlotContourf(dataCells,X,Y,edgeColor...
     ,sectionY,markSectionY,markSectionYLabel...
     ,sectionX,markSectionX,markSectionXLabel...
-    ,fixAxis...
+    ,fixAxis,chartType...
     )
     hold on;
     maxLengthX = max(cellfun(@(x) size(x.pulsationValue,2),dataCells));
@@ -250,7 +250,13 @@ function fh = figurePlotContourf(dataCells,X,Y,edgeColor...
     x = x(:,1:end-1);
     y = y(:,1:end-1);
     z = z(:,1:end-1);
-    [~,fh.plotHandle] = contourf(x,y,z);
+    if strcmpi(chartType,'contourf')
+        [~,fh.plotHandle] = contourf(x,y,z);
+    elseif strcmpi(chartType,'contourc')
+        [~,fh.plotHandle] = contour(x,y,z);
+    elseif strcmpi(chartType,'contour3')
+        [~,fh.plotHandle] = contour3(x,y,z);
+    end
     if fixAxis
         xlim([x(1,1),x(1,end)]);
         ylim([y(1,1),y(end,1)]);

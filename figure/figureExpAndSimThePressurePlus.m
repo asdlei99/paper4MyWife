@@ -253,8 +253,8 @@ if showMeasurePoint
         end
     end
 end
-xlabel(xlabelText);
-ylabel(ylabelText);
+xlabel(xlabelText,'FontSize',paperFontSize(),'FontName',paperFontName());
+ylabel(ylabelText,'FontSize',paperFontSize(),'FontName',paperFontName());
 fh.gca = gca;
 end
 

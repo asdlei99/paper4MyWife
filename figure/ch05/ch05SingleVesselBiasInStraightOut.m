@@ -11,10 +11,10 @@ vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼
 vesselDirectPipeCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\´¿Ö±¹Ü\RPM420-0.1Mpa\');
 %% ¼ÓÔØÖÐ¼ä¿×°åÒÔ¼°»º³å¹ÞÊý¾Ý
 [vesselSideFontInDirectOutDataCells,vesselSideFontInDirectOutCombineData,vesselSideFontInDirectOutSimData] ...
-    = loadExpAndSimDataFromFolder(vesselDirectPipeCombineDataPath);
+    = loadExpAndSimDataFromFolder(vesselSideFontInDirectOutCombineDataPath);
 
-[vesselDirectPipeDataCells,vesselDirectPipeCombineData] ...
-    = loadExpDataFromFolder(vesselDirectPipeCombineDataPath);
+[vesselDirectPipeDataCells,vesselDirectPipeCombineData,vesselDirectPipeSimData] ...
+    = loadExpAndSimDataFromFolder(vesselDirectPipeCombineDataPath);
 
 %% ÊµÑéÊý¾Ý»æÍ¼
 if 0
@@ -53,7 +53,7 @@ param.meanFlowVelocity = meanFlowVelocity;
 freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 vType = 'BiasFontInStraightOut';
-if 0
+if 1
     theDataCells = oneVesselPulsation('param',param,'vType',vType,'massflowdata',[freRaw;massFlowERaw]);
 
 
@@ -63,7 +63,7 @@ if 0
     xSim = [[0.5,1,1.5,2,2.5,2.85,3],[5.1,5.6,6.1,6.6,7.1,7.6,8.1,8.6,9.1,9.6,10.1,10.6]];
     xThe = theDataCells{2, 3};
     expVesselRang = [3.75,4.5];
-    simVal = vesselDirectInDirectOutSimData.rawData.pulsationValue;
+    simVal = vesselSideFontInDirectOutSimData.rawData.pulsationValue;
     simVal(xSim < 2.5) = nan;
     theCells = theDataCells{2, 2};
     theVal = theCells.pulsationValue;
@@ -73,7 +73,7 @@ if 0
     simVal(8) = simVal(8) -2.3;
     simVal(xSim>=5.1 & xSim < 6) = simVal(xSim>=5.1 & xSim < 6) + 5.97;
     simVal(xSim>=6) = simVal(xSim>=6) + 10.97;
-    vesselDirectInDirectOutSimData.rawData.pulsationValue = simVal;
+    vesselSideFontInDirectOutSimData.rawData.pulsationValue = simVal;
     % 
     tmp = theVal(xThe>=2.5 & xThe < 5);
     theVal(xThe>=2.5 & xThe < 5) = tmp+4.9*1e3;
@@ -81,8 +81,8 @@ if 0
     % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
     theCells.pulsationValue = theVal;
     legnedText = {'ÊµÑé','Ä£Äâ','ÀíÂÛ'};
-    fh = figureExpAndSimThePressurePlus(vesselDirectInDirectOutCombineData...
-                                ,vesselDirectInDirectOutSimData...
+    fh = figureExpAndSimThePressurePlus(vesselSideFontInDirectOutCombineData...
+                                ,vesselSideFontInDirectOutSimData...
                                 ,theCells...
                                 ,{''}...
                                 ,'legendPrefixLegend',legnedText...
@@ -99,7 +99,7 @@ if 0
     %figureExpMultNatureFrequencyBar(vesselDirectInSideFontOutCombineData,0.5,{'0.5±¶Æµ','1.5±¶Æµ','2.5±¶Æµ'});
 end
 %% Ìå»ý±ä»¯¶ÔÂö¶¯µÄÓ°Ïì
-if 1
+if 0
     Vmin = pi* param.Dpipe^2 / 4 * param.Lv *1.5;
     Vmid = pi* param.Dv^2 / 4 * param.Lv;
     Vmax = Vmid*2;
@@ -154,7 +154,7 @@ if 1
 end
 
 %% ³¤¾¶±È¶ÔÖ±½øÖ±³öµÄÓ°Ïì
-if 1
+if 0
     chartType = 'contourf';
     Lv = 0.3:0.01:3;
     theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType',vType...
@@ -168,13 +168,10 @@ if 1
     yValue = cellfun(@(x) x,theoryDataCellsChangLengthDiameterRatio(2:end,6));%³¤¾¶±ÈÖµ
     expLengthDiameterRatio = param.Lv / param.Dv;%ÊµÑéµÄÖµ
     fh = figureTheoryPressurePlus(zCells,xCells,'Y',yValue...
-            ,'yLabelText','³¤¾¶±È'...
+            ,'yLabelText','L1(m)'...
             ,'chartType',chartType...
             ,'fixAxis',1 ...
             ,'edgeColor','none'...
-            ,'sectionY',expLengthDiameterRatio...
-            ,'markSectionY','all'...
-            ,'markSectionYLabel',{'a'}...
             );
 end
 

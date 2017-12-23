@@ -154,8 +154,8 @@ theoryDataCells{1,1} = '√Ë ˆ';
 theoryDataCells{1,2} = 'dataCells';
 theoryDataCells{1,3} = 'X';
 theoryDataCells{1,4} = 'L1';
-theoryDataCells{1,4} = 'L2';
-theoryDataCells{1,5} = 'input';
+theoryDataCells{1,5} = 'L2';
+theoryDataCells{1,6} = 'input';
 
 for i = 1:length(L1)
     

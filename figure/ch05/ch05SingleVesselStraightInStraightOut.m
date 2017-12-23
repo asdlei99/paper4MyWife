@@ -54,9 +54,9 @@ param.coeffFriction = coeffFriction;
 param.meanFlowVelocity = meanFlowVelocity;
 freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
-
+vType = 'StraightInStraightOut';
 if 0
-    theDataCells = oneVesselPulsation('param',param,'vType','StraightInStraightOut','massflowdata',[freRaw;massFlowERaw]);
+    theDataCells = oneVesselPulsation('param',param,'vType',vType,'massflowdata',[freRaw;massFlowERaw]);
 
 
     x = constExpMeasurementPointDistance();%测点对应的距离
@@ -101,7 +101,7 @@ if 0
     %figureExpMultNatureFrequencyBar(vesselDirectInSideFontOutCombineData,0.5,{'0.5倍频','1.5倍频','2.5倍频'});
 end
 %% 体积变化对脉动的影响
-if 1
+if 0
     Vmin = pi* param.Dpipe^2 / 4 * param.Lv *1.5;
     Vmid = pi* param.Dv^2 / 4 * param.Lv;
     Vmax = Vmid*2;
@@ -109,7 +109,7 @@ if 1
     V = (Vmin*0.7):0.01:Vmax;
     chartTypeChangVolume = 'surf';
     theoryDataCellsStraightInStraightOut = oneVesselChangVolume(V,'massflowdata',[freRaw;massFlowERaw]...
-                                                        ,'vType','StraightInStraightOut'...
+                                                        ,'vType',vType...
                                                         ,'param',param);
     XCells = theoryDataCellsStraightInStraightOut(2:end,3);
     ZCells = theoryDataCellsStraightInStraightOut(2:end,2);
@@ -156,10 +156,10 @@ if 1
 end
 
 %% 长径比对直进直出的影响
-if 1
+if 0
     chartType = 'contourf';
     Lv = 0.3:0.01:3;
-    theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType','straightInBiasOut'...
+    theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType',vType...
         ,'massflowdata',[freRaw;massFlowERaw]...
         ,'param',param...
         ,'Lv',Lv);
@@ -180,3 +180,141 @@ if 1
             );
 end
 
+%% L1调整
+if 0
+    chartType = 'contourf';
+%     chartType = 'surf';
+    L1 = 0:0.1:5;
+    L = param.L1 + param.L2;
+    theoryDataCells = oneVesselChangL1FixL(L1,L...
+        ,'vType',vType...
+        ,'massflowdata',[freRaw;massFlowERaw]...
+        ,'param',param);
+    %x
+    xCells = theoryDataCells(2:end,3);
+    %找出长度小的
+    maxSize = 0;
+    for i=1:length(xCells)
+        if length(xCells{i}) > maxSize
+            maxSize = length(xCells{i});
+        end
+    end
+    %长度不足，补nan
+    for i=1:length(xCells)
+        while length(xCells{i}) < maxSize
+            xCells{i}(length(xCells{i})+1) = nan;
+        end
+    end
+    %y
+    zCells = theoryDataCells(2:end,2);
+    for i=1:length(zCells)
+        while length(zCells{i}.pulsationValue) < maxSize
+            zCells{i}.pulsationValue(length(zCells{i}.pulsationValue)+1) = nan;
+        end
+    end
+    
+    fh = figureTheoryPressurePlus(zCells,xCells,'Y',L1...
+            ,'yLabelText','L1(m)'...
+            ,'chartType',chartType...
+            ,'fixAxis',1 ...
+            ,'edgeColor','none'...
+            ,'figureHeight',8 ...
+            );
+    xlabel('管线距离(m)','FontSize',paperFontSize());
+    ylabel('L1(m)','FontSize',paperFontSize());
+    set(fh.plotHandle,'LineStyle','none','LevelStep',1);
+    ax = axis();
+    hold on;
+    plot([ax(1),ax(2)],[2.5,2.5],'--w');
+    text(ax(1),2.5-0.05,'a','Color','w','FontSize',paperFontSize(),'FontName','Times New Roman');
+    text(ax(2)-0.3,2.5-0.05,'a','Color','w','FontSize',paperFontSize(),'FontName','Times New Roman');
+    plot([ax(1),ax(2)],[3.3,3.3],'--w');
+    text(ax(1),3.3+0.1,'b','Color','w','FontSize',paperFontSize(),'FontName','Times New Roman');
+    text(ax(2)-0.3,3.3+0.1,'b','Color','w','FontSize',paperFontSize(),'FontName','Times New Roman');
+    h = colorbar();
+    h.Label.String = '气流脉动峰峰值(kPa)';
+    h.Label.FontSize = paperFontSize();
+    box on;
+end
+
+%% 超长距离迭代L1调整
+if 1
+    chartType = 'contourf';
+    L1 = 0:0.25:40;
+    L = L1(end)+2;
+    theoryDataCells = oneVesselChangL1FixL(L1,L...
+        ,'vType',vType...
+        ,'massflowdata',[freRaw;massFlowERaw]...
+        ,'param',param);
+    %x
+    xCells = theoryDataCells(2:end,3);
+    %找出长度小的
+    maxSize = 0;
+    for i=1:length(xCells)
+        if length(xCells{i}) > maxSize
+            maxSize = length(xCells{i});
+        end
+    end
+    %长度不足，补nan
+    for i=1:length(xCells)
+        while length(xCells{i}) < maxSize
+            xCells{i}(length(xCells{i})+1) = nan;
+        end
+    end
+    %y
+    zCells = theoryDataCells(2:end,2);
+    for i=1:length(zCells)
+        while length(zCells{i}.pulsationValue) < maxSize
+            zCells{i}.pulsationValue(length(zCells{i}.pulsationValue)+1) = nan;
+        end
+    end
+    
+    len = length(zCells{1}.pulsationValue);
+    index = linspace(18,len-10,3);
+    index = arrayfun(@(x) ceil(x),index);
+    markerLengthValue = arrayfun(@(x) xCells{1}(x),index);
+    
+    labelText = {};
+    for i=1:length(index)
+        labelText{i} = sprintf('%g m',xCells{1}(index(i)));
+    end
+    
+    figure
+    paperFigureSet('full',7);
+    subplot(1,2,1)
+    fh = figureTheoryPressurePlus(zCells,xCells,'Y',L1...
+            ,'yLabelText','L1(m)'...
+            ,'chartType',chartType...
+            ,'fixAxis',1 ...
+            ,'edgeColor','none'...
+            ,'newFigure',0 ...
+            );
+    xlabel('管线距离(m)','FontSize',paperFontSize());
+    ylabel('L1(m)','FontSize',paperFontSize());
+    set(fh.plotHandle,'LineStyle','none','LevelStep',1);
+    set(fh.gca,'Position',[0.0851005747126437 0.1648 0.379558516196447 0.719]);
+    ax =axis();
+    hold on;
+    for val = markerLengthValue
+        plot([val,val],[ax(3),ax(4)],'--w');
+        text(val,ax(4)+2,sprintf('%g',val));
+    end
+    
+    box on;
+    
+	subplot(1,2,2)
+    count = 1;
+    hold on;
+    for i=index
+        a = cellfun(@(x) x.pulsationValue(i),zCells);
+        a = a./1000;
+        h(count) = plot(L1,a,'color',getPlotColor(count+2),'lineStyle',getLineStyle(count));
+        count = count + 1;
+    end
+    xlabel('L1(m)','fontSize',paperFontSize());
+    ylabel('压力脉动峰峰值(kPa)','fontSize',paperFontSize());
+    set(gca,'Position',[0.586896551724138 0.1648 0.36676724137931 0.719]);
+    box on;
+    lh = legend(h,labelText);
+    set(lh,'Position',[0.669061305074742 0.650119053026041 0.182471261975067 0.206626978719991]);
+end
