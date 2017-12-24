@@ -91,12 +91,13 @@ for plotCount = 1:length(dataCombineStruct)
         fh.plotHandle(plotCount) = plot(x,y,'color',getPlotColor(plotCount)...
             ,'Marker',getMarkStyle(plotCount));
     else
-        [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
+        [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] ...
+            = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
             ,'Marker',getMarkStyle(plotCount)...
             ,'type',errorPlotType);
     end
 end
-
+box on;
 xlim([2,11]);
 if ~isempty(legendLabels)
     if isempty(pureVesselLegend)
@@ -136,8 +137,8 @@ for i = 1:length(x)
         text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
     end
 end
-xlabel('管线距离(m)');
-ylabel('压力脉动峰峰值(kPa)');
+xlabel('管线距离(m)','FontSize',paperFontSize());
+ylabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
 fh.gca = gca;
 end
 

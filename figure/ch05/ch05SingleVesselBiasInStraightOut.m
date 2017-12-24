@@ -8,11 +8,13 @@ errorType = 'ci';
 dataPath = getDataPath();
 %% 数据路径
 vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');%侧前进直后出
+vesselDirectInSideBackOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐直进侧后出420转0.05mpa');%单罐直进侧后出420转0.05mpa
 vesselDirectPipeCombineDataPath = fullfile(dataPath,'实验原始数据\纯直管\RPM420-0.1Mpa\');
 %% 加载中间孔板以及缓冲罐数据
 [vesselSideFontInDirectOutDataCells,vesselSideFontInDirectOutCombineData,vesselSideFontInDirectOutSimData] ...
     = loadExpAndSimDataFromFolder(vesselSideFontInDirectOutCombineDataPath);
-
+[vesselDirectInSideBackOutDataCells,vesselDirectInSideBackOutCombineData,vesselDirectInSideBackOutSimData] ...
+    = loadExpAndSimDataFromFolder(vesselDirectInSideBackOutCombineDataPath);
 [vesselDirectPipeDataCells,vesselDirectPipeCombineData,vesselDirectPipeSimData] ...
     = loadExpAndSimDataFromFolder(vesselDirectPipeCombineDataPath);
 
@@ -25,7 +27,16 @@ if 0
         ,'plusValueSubplot',0);
 end
 
+%% 对比直进侧后出和侧前进直出的区别
+if 1
+    fh = figureExpPressurePlus({vesselSideFontInDirectOutCombineData,vesselDirectInSideBackOutCombineData}...
+        ,{'侧进直出','直进侧出'});
+    for i = 1:length(fh.plotHandle)
+        h = fh.plotHandle(i);
+        set(h,'LineStyle',getLineStyle(i),'Marker','.');
+    end
 
+end
 %% 绘制理论模拟实验
 %% 缓冲罐计算的参数设置
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??

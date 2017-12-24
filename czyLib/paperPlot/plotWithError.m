@@ -47,9 +47,9 @@ if strcmp(type,'area')
     hold on;
     curHandle = plot(x,y,pp{:});
 else
-    plot(x,y,pp{:});
+    %curHandle = plot(x,y,pp{:});
     hold on;
-    curHandle = errorbar(x,y,y-down,up-y,pp{:});
+    curHandle = errorbar(x,y,y-down,up-y,pp{:},'LineWidth',1);
 end
 
 end
