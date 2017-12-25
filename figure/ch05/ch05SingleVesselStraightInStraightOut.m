@@ -26,7 +26,47 @@ if 0
         ,'errorTypeInExp','ci'...
         ,'plusValueSubplot',0);
 end
-
+%% 和直管对比的压力脉动抑制率
+if 1
+    paperFigureSet('large',7);
+    subplot(1,2,1)
+    vesselCombineDataCells = {vesselDirectInDirectOutCombineData,vesselDirectPipeCombineData};
+    leg = {'直进直出','直管'};
+    fh = figureExpPressurePlus(vesselCombineDataCells,leg...
+        ,'errorType',errorType...
+        ,'isFigure',0 ...
+        ,'showMeasurePoint',0 ...
+        ,'showPureVessel',0);
+    set(fh.legend,...
+        'Position',[0.1153739912604 0.76217277447996 0.256448925406267 0.143630948776291]);
+    set(fh.textarrowVessel,'X',[0.209092261904762 0.171879960317461],'Y',[0.645654761904762 0.579482886904763]);
+    title('(a)','fontSize',paperFontSize());
+    set(fh.gca,'Position',[0.0900297619047619 0.164779870052758 0.368526785714286 0.758490572110661]);
+    set(gca,'color','none');
+    
+    subplot(1,2,2)
+    ddMean = mean(vesselDirectPipeCombineData.readPlus);
+    ddMean = ddMean(1:13);
+    suppressionRateBase = {ddMean};
+    xlabelText = '管线距离(m)';
+    ylabelText = '压力脉动抑制率(%)';
+    fh = figureExpPressurePlusSuppressionRate(vesselDirectInDirectOutCombineData...
+            ,'errorDrawType','bar'...
+            ,'showVesselRigon',0 ...
+            ,'suppressionRateBase',suppressionRateBase...
+            ,'isFigure',0 ...
+            ,'showMeasurePoint',0 ...
+            ,'xIsMeasurePoint',0 ...
+            ,'xlabelText',xlabelText...
+            ,'ylabelText',ylabelText...
+            );
+    box on;
+    set(fh.gca...
+        ,'Position',[0.588958333333333 0.164779870052758 0.368526785714287 0.758490572110663]);
+    title('(b)','fontSize',paperFontSize());
+    set(gca,'color','none');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-和直管脉动对比+抑制率');
+end
 
 %% 绘制理论模拟实验
 %% 缓冲罐计算的参数设置
@@ -95,6 +135,9 @@ if 0
                                 ,'figureHeight',7 ...
                                 ,'expVesselRang',expVesselRang);
     set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
+    box on;
+    set(gca,'color','none');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-理论模拟实验对比');
     %绘制1,2,3倍频
     %figureExpMultNatureFrequencyBar(vesselDirectInSideFontOutCombineData,1,{'1倍频','2倍频','3倍频'});
     %绘制0.5,1.5,2.5倍频
@@ -132,8 +175,11 @@ if 0
     sectionXDatas = fh.sectionXHandle.data;
     view(-143,12);
     h = colorbar();
+    set(gca,'color','none');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响');
     %绘制sectionX对应截面的图形
-
+    %saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响');
+    
     figure
     paperFigureSet_normal(6);
     hold on;
@@ -152,7 +198,8 @@ if 0
     xlabel('缓冲罐体积(m^3)','FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
     legend(h,markSectionXLabel);
-
+    set(gca,'color','none');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响-截面');
 end
 
 %% 长径比对直进直出的影响
@@ -177,7 +224,18 @@ if 0
             ,'sectionY',expLengthDiameterRatio...
             ,'markSectionY','all'...
             ,'markSectionYLabel',{'a'}...
+            ,'figureHeight',7 ...
             );
+     set(fh.plotHandle,'LevelStep',0.5);
+     set(fh.plotHandle,'LineStyle','none');
+     caxis([2,40]);
+     box on;
+     h = colorbar();
+     colormap jet;
+    
+     h.Label.String = '压力脉动峰峰值(kPa)';
+     set(gca, 'Color', 'none');
+     saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-变长径比');
 end
 
 %% L1调整
@@ -235,10 +293,11 @@ if 0
     h.Label.String = '气流脉动峰峰值(kPa)';
     h.Label.FontSize = paperFontSize();
     box on;
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-L1变化');
 end
 
 %% 超长距离迭代L1调整
-if 1
+if 0
     chartType = 'contourf';
     L1 = 0:0.25:40;
     L = L1(end)+2;
@@ -317,4 +376,6 @@ if 1
     box on;
     lh = legend(h,labelText);
     set(lh,'Position',[0.669061305074742 0.650119053026041 0.182471261975067 0.206626978719991]);
+    set(gca,'color','none');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-缓冲罐位置导致变化导致的气流脉动波动');
 end

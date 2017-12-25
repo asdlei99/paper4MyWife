@@ -37,6 +37,7 @@ xTopText = '测点';
 ylabelText = '脉动抑制率(%)';
 vesselText = '缓冲罐';
 isFigure = 1;
+showMeasurePoint = 1;
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -65,6 +66,8 @@ while length(pp)>=2
             errorDrawType = val;
         case 'showvesselrigon'
             showVesselRigon = val;
+        case 'showmeasurepoint'
+            showMeasurePoint = val;
         case 'xismeasurepoint'
             xIsMeasurePoint = val;%此属性设置为1，则绘图时x轴时测点
         case 'figureheight'
@@ -169,31 +172,33 @@ if ~isempty(legendLabels)
     end
 end
 if ~xIsMeasurePoint
-    fh.textboxMeasurePoint = annotation('textbox',...
-            [0.48 0.885 0.0998 0.0912],...
-            'String',xTopText,...
-            'FaceAlpha',0,...
-            'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
     if isFigure
         set(gca,'Position',[0.13 0.18 0.79 0.65]);
     end
     ax = axis;
     yLabel2Detal = (ax(4) - ax(3))/12;
     % 绘制测点线
-    for i = 1:length(x)
-        plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
-        if 0 == mod(i,2)
-            continue;
+    if showMeasurePoint
+        for i = 1:length(x)
+            plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
+            if 0 == mod(i,2)
+                continue;
+            end
+            if x(i) < 10
+                text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
+            else
+                text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
+            end
         end
-        if x(i) < 10
-            text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
-        else
-            text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
-        end
+        fh.textboxMeasurePoint = annotation('textbox',...
+            [0.48 0.885 0.0998 0.0912],...
+            'String',xTopText,...
+            'FaceAlpha',0,...
+            'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
     end
 end
 
-xlabel(xlabelText);
+
 if showVesselRigon
     if isFigure
         fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
@@ -201,7 +206,9 @@ if showVesselRigon
     end
     fh.vesselFillHandle = plotVesselRegion(gca,constExpVesselRangDistance());
 end
-ylabel(ylabelText);
+xlabel(xlabelText,'fontsize',paperFontSize());
+ylabel(ylabelText,'fontsize',paperFontSize());
+xlim([2,11]);
 fh.gca = gca;
 end
 

@@ -84,8 +84,8 @@ else
     end
 end
 set(gca,'XTick',x,'XTickLabel',legendLabels);
-xlabel('类型');
-ylabel('压力降(kPa)');
+xlabel('类型','fontsize',paperFontSize());
+ylabel('压力降(kPa)','fontsize',paperFontSize());
 fh.gca = gca;
 end
 

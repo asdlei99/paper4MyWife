@@ -12,6 +12,7 @@ rang = 1:13;
 showPureVessel = 0;
 showVesselRegion = 1;
 pureVesselLegend = {};
+showMeasurePoint = 1;
 legendLabels = {};
 rpm = 420;
 isFigure = 1;
@@ -44,6 +45,8 @@ while length(pp)>=2
             isFigure = val;
         case 'showvesselregion'
             showVesselRegion = val;
+        case 'showmeasurepoint'
+            showMeasurePoint = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -108,17 +111,13 @@ if ~isempty(legendLabels)
         fh.legend = legend([fh.vesselHandle,fh.plotHandle],legendLabels,0);
     end
 end
-fh.textboxMeasurePoint = annotation('textbox',...
-        [0.48 0.885 0.0998 0.0912],...
-        'String','测点',...
-        'FaceAlpha',0,...
-        'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
+
 if  isFigure
     set(gca,'Position',[0.13 0.18 0.79 0.65]);
-    if showVesselRegion
-        fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
-            [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
-    end
+end
+if showVesselRegion
+    fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
+        [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
 end
 if showVesselRegion
     fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
@@ -126,16 +125,23 @@ end
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;
 % 绘制测点线
-for i = 1:length(x)
-    plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
-    if 0 == mod(i,2)
-        continue;
+if showMeasurePoint
+    for i = 1:length(x)
+        plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
+        if 0 == mod(i,2)
+            continue;
+        end
+        if x(i) < 10
+            text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
+        else
+            text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
+        end
     end
-    if x(i) < 10
-        text(x(i)-0.15,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
-    else
-        text(x(i)-0.3,ax(4)+yLabel2Detal,sprintf('%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());           
-    end
+    fh.textboxMeasurePoint = annotation('textbox',...
+        [0.48 0.885 0.0998 0.0912],...
+        'String','测点',...
+        'FaceAlpha',0,...
+        'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
 end
 xlabel('管线距离(m)','FontSize',paperFontSize());
 ylabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
