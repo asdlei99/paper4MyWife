@@ -2,31 +2,60 @@ clear all;
 close all;
 %单一缓冲罐理论迭
 %% 缓冲罐计算的参数设置
-param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??
-param.rpm = 420;
-param.outDensity = 1.5608;
-param.Fs = 4096;
-param.acousticVelocity = 335;%声速（m/s）
-param.isDamping = 1;
-param.L1 = 3.5;%(m)
-param.L2 = 6;
-param.L = 10;
-param.Lv = 1.1;
-param.l = 0.01;%(m)缓冲罐的连接管长
-param.Dv = 0.372;
-param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
-param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
-param.Dpipe = 0.098;%管道直径（m
-param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
-param.lv1 = 0.318;
-param.lv2 = 0.318;
-coeffFriction = 0.02;
-meanFlowVelocity = 12;
-param.coeffFriction = coeffFriction;
-param.meanFlowVelocity = meanFlowVelocity;
-freRaw = [14,21,28,42,56,70];
-massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
+vType = 'straightInBiasOut';
+if 1
+    param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??
+    param.rpm = 420;
+    param.outDensity = 1.5608;
+    param.Fs = 4096;
+    param.acousticVelocity = 335;%声速（m/s）
+    param.isDamping = 1;
+    param.L1 = 3.5;%(m)
+    param.L2 = 6;
+    param.L = 10;
+    param.Lv = 1.1;
+    param.l = 0.01;%(m)缓冲罐的连接管长
+    param.Dv = 0.372;
+    param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
+    param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+    param.Dpipe = 0.098;%管道直径（m
+    param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
+    param.lv1 = 0.318;
+    param.lv2 = 0.318;
+    coeffFriction = 0.02;
+    meanFlowVelocity = 12;
+    param.coeffFriction = coeffFriction;
+    param.meanFlowVelocity = meanFlowVelocity;
+    freRaw = [14,21,28,42,56,70];
+    massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
+else
+    
+    param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??
+    param.rpm = 420;
+    param.outDensity = 1.5608;
+    param.Fs = 4096;
+    param.isDamping = 1;
+    param.L1 = 3.5;%(m)
+    param.L2 = 6;
+    param.L = 10;
+    param.Lv = 1.1;
+    param.l = 0.01;%(m)缓冲罐的连接管长
+    param.Dv = 0.372;
+    param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
+    param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+    param.Dpipe = 0.098;%管道直径（m
+    param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
+    param.lv1 = 0.318;
+    param.lv2 = 0.318;
 
+    param.acousticVelocity = 320;%声速（m/s）
+    param.coeffFriction = 0.03;
+    param.meanFlowVelocity = 13;
+
+    freRaw = [14,21,28,42,56,70];
+    massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
+
+end
 %% 1迭代长径比
 if 0
     chartType = 'surf';
@@ -54,7 +83,7 @@ if 0
 end
 
 %% 迭代缓冲罐位置
-if 1
+if 0
     %chartType = 'surf';
     chartType = 'contourf';
     L1 = 0:0.1:8;
@@ -82,7 +111,7 @@ if 1
 end
 
 %% 迭代偏置距离和长径比
-if 1
+if 0
      %chartType = 'surf';
      chartType = 'contourf';
      
@@ -100,7 +129,6 @@ if 1
         ,'param',param);
     for i = 1:length(Zc)
         Z = Zc{i}./1000;
-    %     paper
         figure
         paperFigureSet_normal(9);
         if strcmpi(chartType,'surf')
@@ -109,50 +137,16 @@ if 1
         else
             [C,h] = contourf(X,Y,Z,'ShowText','on','LevelStep',0.2);
         end
-    %     annotation('textbox',...
-    %     [0.794313266242073 0.953667953667954 0.12216715542522 0.0540540540540539],...
-    %     'String',{'kPa'},...
-    %     'FitBoxToText','off',...
-    %     'EdgeColor','none');
-    %     annotation('line',[0.111649305555556 0.764288194444445],...
-    %     [0.36300462962963 0.599189814814815],'Color',[1 1 1],'LineWidth',1,...
-    %     'LineStyle','--');
-    %     annotation('line',[0.109444444444445 0.764288194444445],...
-    %     [0.233652777777778 0.472777777777778],'Color',[1 1 1],'LineWidth',1,...
-    %     'LineStyle','--');
-    %     annotation('textbox',...
-    %     [0.0682819383259912 0.370310110916367 0.0225779962877335 0.0591016537895158],...
-    %     'String','A',...
-    %     'FontSize',10,...
-    %     'FontName','Times New Roman',...
-    %     'EdgeColor','none');
-    %     annotation('textbox',...
-    %     [0.757673611111111 0.558032407407408 0.0507118055555559 0.0911342592592593],...
-    %     'String',{'B'},...
-    %     'FontSize',10,...
-    %     'FontName','Times New Roman',...
-    %     'EdgeColor','none');
-    %     annotation('textbox',...
-    %     [0.101625 0.172916666666667 0.0497118055555554 0.064675925925926],...
-    %     'String',{'C'},...
-    %     'FontSize',10,...
-    %     'FontName','Times New Roman',...
-    %     'EdgeColor','none');
-    %     annotation('textbox',...
-    %     [0.757673611111111 0.440439814814815 0.0440972222222222 0.0793750000000001],...
-    %     'String',{'D'},...
-    %     'FontSize',10,...
-    %     'FontName','Times New Roman',...
-    %     'EdgeColor','none');
         colorbar();
         colormap jet;
-        xlabel('偏置距离l1(m)');%l1就是lv1
-        ylabel('长径比');
-        zlabel('压力脉动峰峰值(kPa)');
-%         title(sprintf('管系位置:%g m',param.X(indexs(i))));
+        xlabel('偏置距离l1(m)','FontSize',paperFontSize());%l1就是lv1
+        ylabel('长径比','FontSize',paperFontSize());
+        zlabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
         ch = colorbar();
         set(get(ch,'Label'),'String','压力脉动峰峰值(kPa)','FontSize',paperFontSize(),'FontName',paperFontName());
         box on;
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('直进侧出缓冲罐-长径比和偏置距离迭代云图(%g)',X(1,indexs(i))));
     end
     
     
@@ -180,25 +174,30 @@ if 1
 %         ,'markSectionY','all'...
 %         ,'markSectionYLabel',{'a'}...
 %         );
-    meaPoint = [1,length(zCells{1, 1}.pulsationValue)];
+    index = find(xCells{1} > 2);
+    index = index(1);
+    meaPoint = [index,length(zCells{1, 1}.pulsationValue)];
     y = zeros(length(meaPoint),length(Lv1));
     for i=1:length(Lv1)
         y(:,i) = zCells{i}.pulsationValue(meaPoint)';
     end
     y = y ./ 1000;
     figure
-    paperFigureSet('small',6);
+    paperFigureSet('full',6);
+    subplot(1,2,1)
     h = plot(Lv1,y(1,:),'color',getPlotColor(1),'marker',getMarkStyle(1));
     set(gca,'XTick',0:0.2:1);
-    xlabel('偏置距离(m)');
-    ylabel('压力脉动(kPa)');
-    title('(a)');
-    figure
-    paperFigureSet('small',6);
+    xlabel('偏置距离(m)','FontSize',paperFontSize());
+    ylabel('压力脉动(kPa)','FontSize',paperFontSize());
+    title('(a)','FontSize',paperFontSize());
+    set(gca,'color','none');
+    subplot(1,2,2)
     h = plot(Lv1,y(2,:),'color',getPlotColor(2),'marker',getMarkStyle(2));
     set(gca,'XTick',0:0.2:1);
-    xlabel('偏置距离(m)');
-    ylabel('压力脉动(kPa)');
-    title('(b)');
+    xlabel('偏置距离(m)','FontSize',paperFontSize());
+    ylabel('压力脉动(kPa)','FontSize',paperFontSize());
+    title('(b)','FontSize',paperFontSize());
+    set(gca,'color','none');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响');
 end
 

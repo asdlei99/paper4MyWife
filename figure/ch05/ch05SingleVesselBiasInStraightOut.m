@@ -35,7 +35,10 @@ if 1
         h = fh.plotHandle(i);
         set(h,'LineStyle',getLineStyle(i),'Marker','.');
     end
-
+    set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
+    box on;
+    set(gca,'color','none');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'侧进直出和直进侧出结构形式实验结果对比');
 end
 %% 绘制理论模拟实验
 %% 缓冲罐计算的参数设置
@@ -104,6 +107,9 @@ if 1
                                 ,'figureHeight',7 ...
                                 ,'expVesselRang',expVesselRang);
     set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
+    box on;
+    set(gca,'color','none');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'侧进直出缓冲罐压力脉动峰峰值理论模拟实验对比');
     %绘制1,2,3倍频
     %figureExpMultNatureFrequencyBar(vesselDirectInSideFontOutCombineData,1,{'1倍频','2倍频','3倍频'});
     %绘制0.5,1.5,2.5倍频

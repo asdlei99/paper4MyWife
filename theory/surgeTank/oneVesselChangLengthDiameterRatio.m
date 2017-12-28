@@ -101,6 +101,7 @@ param.Dpipe = 0.098;%¹ÜµÀÖ±¾¶£¨m£©
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.lv1 = 0.318;
 param.lv2 = 0.318;
+
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -200,7 +201,11 @@ for i = 1:length(Dv)
                                 ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
                                 ,'calcpeakpeakvaluesection',nan...
                                 );
-    theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + Lv(i) + param.sectionL2];  
+    if strcmpi(vType,'StraightInStraightOut')
+        theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + Lv(i)+2*param.l + param.sectionL2]; 
+    else
+        theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.sectionL2]; 
+    end
     theoryDataCells{i+1,4} = Lv(i);
     theoryDataCells{i+1,5} = Dv(i);
     theoryDataCells{i+1,6} = Lv(i)/Dv(i);
