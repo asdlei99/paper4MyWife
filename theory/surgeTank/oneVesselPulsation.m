@@ -101,6 +101,10 @@ param.Dpipe = 0.098;%管道直径（m）
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.lv1 = 0.318;
 param.lv2 = 0.318;
+baseFrequency = 14;
+multFreTimes = 3;
+semiFreTimes = 3;
+allowDeviation = 0.5;
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -112,6 +116,12 @@ while length(pp)>=2
             param = val;
         case 'vtype'
             vType = val;
+		case 'basefrequency'
+			baseFrequency = val;
+		case 'multfretimes'
+			multFreTimes = val;
+		case 'semifretimes'
+			semiFreTimes = val;	
         otherwise
             error('错误属性%s',prop);
 	end
@@ -122,7 +132,8 @@ end
 
 
 if isnan(massflowData)
-    [massFlowRaw,time,~,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
+	
+    [massFlowRaw,time,tmp,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
         ,0.14,1.075,param.outDensity,'rcv',0.15,'k',1.4,'pr',0.15,'fs',param.Fs,'oneSecond',6);
     [freRaw,AmpRaw,PhRaw,massFlowERaw] = frequencySpectrum(detrend(massFlowRaw,'constant'),param.Fs);
     freRaw = [7,14,21,28,14*3];
@@ -137,10 +148,7 @@ else
 end
 
 
-baseFrequency = 14;
-multFreTimes = 3;
-semiFreTimes = 3;
-allowDeviation = 0.5;
+
 
 dcpss = getDefaultCalcPulsSetStruct();
 dcpss.calcSection = [0.2,0.8];
