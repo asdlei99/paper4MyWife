@@ -231,7 +231,7 @@ end
 
 %% ³¤¾¶±È
 if 1
-    chartType = 'contourf';
+    chartType = 'plot3';
     Lv = 0.3:0.01:3;
     theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType',vType...
         ,'massflowdata',[freRaw;massFlowERaw]...
