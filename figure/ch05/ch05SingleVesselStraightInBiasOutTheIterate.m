@@ -153,7 +153,7 @@ if 0
 end
 
 %% 迭代缓冲罐lv1的偏置入口管长
-if 1
+if 0
     chartType = 'contourf';
     Lv1 = 0:0.05:1;
     
@@ -199,5 +199,25 @@ if 1
     title('(b)','FontSize',paperFontSize());
     set(gca,'color','none');
     saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响');
+end
+
+%等幅值扫频
+if 1
+	addtion = -10:1:70;
+	
+	for i = 1:length(addtion)
+		fre = freRaw+addtion(i);
+		baseFrequency = 14 + addtion(i);
+		res{i} = oneVesselPulsation('massflowdata',[fre;massFlowERaw]...
+							, 'param', param ...
+							, 'vType', vType ...
+							, 'baseFrequency', baseFrequency...
+							, 'multFreTimes', 1 ...
+							, 'semiFreTimes', 1 ...
+								);
+		%脉动抑制率，还需直管
+	end
+	
+	
 end
 
