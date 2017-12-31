@@ -114,11 +114,15 @@ if 0
 			h(i) = plot(VIte,y1(i,:),'marker',getMarkStyle(i),'color',getPlotColor(i));
 			%text(VIte(end),y1(i,end),textLabel{i});
 		end
+		ax = axis();
+		plot([VExp,VExp],[ax(3),ax(4)],'--r');
 		box on;
 		title('(a)','FontSize',paperFontSize());
 		xlabel('体积','FontSize',paperFontSize());
 		ylabel('抑制率(%)','FontSize',paperFontSize());
-		legend(h,textLabel,0,'FontSize',paperFontSize());
+		legend(h,textLabel,0,'FontSize',paperFontSize()...
+				,'Position',[0.248834328325613 0.191087962962963 0.204107139928355 0.332199065137517]);
+        set(gca,'color','none');
 		%绘制最后一个测点的
 		%绘制测点0的
 		subplot(1,2,2)
@@ -128,11 +132,16 @@ if 0
 			h(i) = plot(VIte,yend(i,:),'marker',getMarkStyle(i),'color',getPlotColor(i));
 			%text(VIte(end),yend(i,end),textLabel{i});
 		end
+		ax = axis();
+		plot([VExp,VExp],[ax(3),ax(4)],'--r');
 		box on;
 		xlabel('体积','FontSize',paperFontSize());
 		ylabel('抑制率(%)','FontSize',paperFontSize());
 		title('(b)','FontSize',paperFontSize());
-		legend(h,textLabel,0,'FontSize',paperFontSize());
+		legend(h,textLabel,0,'FontSize',paperFontSize()...
+				,'Position',[0.689151244790112 0.191259483598051 0.204158787240604 0.331864895624562]);
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'变缓冲罐体积对照各种缓冲罐接法影响');
 	end
 end
 
@@ -215,31 +224,41 @@ if 1
 		figure
 		paperFigureSet('large',6);
 		%绘制测点0的
-		subplot(1,2,1)
+		ax1 = subplot(1,2,1);
 		hold on;
 		h = [];
 		for i = 1:size(y1,1)
 			h(i) = plot(L1Ite,y1(i,:),'marker',getMarkStyle(i),'color',getPlotColor(i));
 			%text(VIte(end),y1(i,end),textLabel{i});
 		end
+		ax = axis(ax1);
+		plot([param.L1,param.L1],[ax(3),ax(4)],'--r');
 		box on;
+
 		title('(a)','FontSize',paperFontSize());
 		xlabel('L1(m)','FontSize',paperFontSize());
 		ylabel('抑制率(%)','FontSize',paperFontSize());
-		legend(h,textLabel,0,'FontSize',paperFontSize());
+		legend(h,textLabel(2:end),0,'FontSize',paperFontSize()...
+            ,'Position',[0.279072423563708 0.199907407407408 0.204107139928355 0.254293974779064]);
+        set(gca,'color','none');
 		%绘制最后一个测点的
 		%绘制测点0的
-		subplot(1,2,2)
+		ax2 = subplot(1,2,2);
 		hold on;
 		h = [];
 		for i = 1:size(y1,1)
 			h(i) = plot(L1Ite,yend(i,:),'marker',getMarkStyle(i),'color',getPlotColor(i));
 			%text(VIte(end),yend(i,end),textLabel{i});
 		end
+		ax = axis(ax2);
+		plot([param.L1,param.L1],[ax(3),ax(4)],'--r');
 		box on;
 		xlabel('L1(m)','FontSize',paperFontSize());
 		ylabel('抑制率(%)','FontSize',paperFontSize());
 		title('(b)','FontSize',paperFontSize());
-		legend(h,textLabel,0,'FontSize',paperFontSize());
+		legend(h,textLabel(2:end),0,'FontSize',paperFontSize()...
+            ,'Position',[0.751542661658948 0.194027784480196 0.204107139928356 0.254293974779064]);
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'变缓冲罐进口长度对照各种缓冲罐接法影响');
 	end
 end

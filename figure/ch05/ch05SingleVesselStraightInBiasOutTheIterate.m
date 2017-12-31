@@ -202,7 +202,7 @@ if 0
 end
 
 %�ȷ�ֵɨƵ
-if 1
+if 0
 	addtion = -10:1:70;
 	
 	for i = 1:length(addtion)

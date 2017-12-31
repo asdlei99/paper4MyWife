@@ -11,6 +11,8 @@ vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼
 vesselDirectInSideBackOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\µ¥¹ÞÖ±½ø²àºó³ö420×ª0.05mpa');%µ¥¹ÞÖ±½ø²àºó³ö420×ª0.05mpa
 vesselDirectPipeCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\´¿Ö±¹Ü\RPM420-0.1Mpa\');
 %% ¼ÓÔØÖÐ¼ä¿×°åÒÔ¼°»º³å¹ÞÊý¾Ý
+%É¨ÆµÊý¾Ý
+
 [vesselSideFontInDirectOutDataCells,vesselSideFontInDirectOutCombineData,vesselSideFontInDirectOutSimData] ...
     = loadExpAndSimDataFromFolder(vesselSideFontInDirectOutCombineDataPath);
 [vesselDirectInSideBackOutDataCells,vesselDirectInSideBackOutCombineData,vesselDirectInSideBackOutSimData] ...
@@ -20,15 +22,122 @@ vesselDirectPipeCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\´¿Ö±¹Ü\RPM420-
 
 %% ÊµÑéÊý¾Ý»æÍ¼
 if 0
-        singleVesselExpPlot({vesselSideFontInDirectOutCombineData}...
-        ,vesselDirectPipeCombineData,{'²à½øÖ±³ö','Ö±¹Ü'}...
-        ,'dataCells',vesselSideFontInDirectOutDataCells ...
-        ,'errorTypeInExp','ci'...
-        ,'plusValueSubplot',0);
+    singleVesselExpPlot({vesselSideFontInDirectOutCombineData}...
+    ,vesselDirectPipeCombineData,{'²à½øÖ±³ö','Ö±¹Ü'}...
+    ,'dataCells',vesselSideFontInDirectOutDataCells ...
+    ,'errorTypeInExp','ci'...
+    ,'plusValueSubplot',0);
+end
+
+%É¨Æµ½á¹û·ÖÎö
+if 1
+    useSubplot = 0;
+    sweepResult = loadExperimentPressureData(fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\ÎÞÄÚ¼þ»º³å¹Þ¿ª»ú450½µ300×ª0.05mpa.CSV'));
+    STFT.windowSectionPointNums = 512;
+    STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
+    STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
+    Fs = 100;
+    indexs = [1,13];
+    if useSubplot
+        labelText = {'(a)','(b)'};
+    else
+        labelText = {'²âµã1','²âµã13'};
+    end
+    index = [];
+    if useSubplot
+        figHandle = figure;
+        paperFigureSet('full',8);
+    end
+    for i = 1:length(indexs)
+        index = indexs(i);
+        pressure = sweepResult(:,index);
+        [S,F,T,P] = ...
+                    spectrogram(...
+                    detrend(pressure)...
+                    ,STFT.windowSectionPointNums...
+                    ,STFT.noverlap...
+                    ,STFT.nfft...
+                    ,Fs);%¶ÌÊ±¸µÀïÒ¶±ä»»
+        
+        if 1
+            if useSubplot
+                subplot(1,2,i);
+            else
+                figHandle = figure;
+                paperFigureSet('normal',7);
+            end
+            hold on;
+            [~,tl] = size(P);
+            mag=abs(P);
+            n = size(P,1);
+            
+            x = zeros(1,length(T));
+            y = T;
+            z = zeros(1,length(T));
+            for j=1:length(y)
+                [z(j),index] = max(mag(:,j));
+                x(j) = F(index);
+            end
+            for j=1:tl
+                fre = F;
+                Amp = mag(:,j);
+                Y = T(j);
+                h(j) = plotSpectrum3(fre,Amp,Y,'isFill',0,'color',[229,44,77]./255);
+            end
+            %»æÖÆ×î¸ßÏß
+            plot3(x,y,z,'.b');
+            %»æÖÆÍ¶Ó°
+            sx = ones(1,length(x));
+            sx = sx .* F(end);
+            plot3(sx,y,z,'-b');
+            axis tight;
+            if useSubplot
+                view(-22,55);
+            else
+                view(-14,46);
+            end
+            xlabel('ÆµÂÊ(Hz)','FontSize',paperFontSize());
+            ylabel('Ê±¼ä(s)','FontSize',paperFontSize());
+            zlabel('·ùÖµ','FontSize',paperFontSize());
+            set(gca,'color','none');
+            title(labelText{i},'FontSize',paperFontSize());
+            box on;
+            if ~useSubplot
+                saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('µ¥¹ÞÉ¨Æµ·ÖÎö-²âµã%d',indexs(i)));
+            end
+        end
+    end
+    if useSubplot
+       saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('µ¥¹ÞÉ¨Æµ·ÖÎö-²âµã1ºÍ13'));
+    end
+    
+    %ÌáÈ¡×î´óÆµÂÊ
+    for i = 1:13
+        pressure = sweepResult(:,i);
+        [S,F,T,P] = ...
+                    spectrogram(...
+                    detrend(pressure)...
+                    ,STFT.windowSectionPointNums...
+                    ,STFT.noverlap...
+                    ,STFT.nfft...
+                    ,Fs);%¶ÌÊ±¸µÀïÒ¶±ä»»
+        [~,tl] = size(P);
+        mag=abs(P);
+        n = size(P,1);
+        if 1
+            x = zeros(1,length(T));
+            y = T;
+            z = zeros(1,length(T));
+            for j=1:length(y)
+                [z(j),index] = max(mag(:,j));
+                x(j) = F(index);
+            end
+        end
+    end
 end
 
 %% ¶Ô±ÈÖ±½ø²àºó³öºÍ²àÇ°½øÖ±³öµÄÇø±ð
-if 1
+if 0
     fh = figureExpPressurePlus({vesselSideFontInDirectOutCombineData,vesselDirectInSideBackOutCombineData}...
         ,{'²à½øÖ±³ö','Ö±½ø²à³ö'});
     for i = 1:length(fh.plotHandle)
@@ -67,7 +176,7 @@ param.meanFlowVelocity = meanFlowVelocity;
 freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 vType = 'BiasFontInStraightOut';
-if 1
+if 0
     theDataCells = oneVesselPulsation('param',param,'vType',vType,'massflowdata',[freRaw;massFlowERaw]);
 
 
