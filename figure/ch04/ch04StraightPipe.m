@@ -37,7 +37,7 @@ if 1
 	for i=rang
 		figure
 		paperFigureSet('small',6);
-		pressure = straightPipeDataCells.pressure(:,i);
+		pressure = straightPipeDataCells{:,i}.rawData.pressure;
 		hold on;
 		[fh,sd,mag] = plotSTFT(pressure,STFT,Fs,'isShowColorbar',0,'chartType',chartType);
 		%≤È’“1±∂∆µ∫Õ2±∂∆µ
