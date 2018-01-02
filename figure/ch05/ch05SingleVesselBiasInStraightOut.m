@@ -48,53 +48,66 @@ if 1
         figHandle = figure;
         paperFigureSet('full',8);
     end
+    %频率投影
+    figure;
+    paperFigureSet('full',6);
+    subplot(1,2,1)
+    [fh,X,Y,Z] = plotSweepFrequencyDistributionFre(sweepResult,Fs,'STFT',STFT...
+        ,'charttype','contourf','LevelStep',100,'ShowText','off','TextStep',60,'LineStyle','-');
+    title('(a)','FontSize',paperFontSize());
+    set(gca,'color','none');
+    gcaA = gca;
+    %幅值投影
+    subplot(1,2,2)
+    plotSweepFrequencyDistributionAmp(sweepResult,Fs,'STFT',STFT...
+        ,'charttype','contourf','LevelStep',80,'ShowText','off','TextStep',60,'LineStyle','-');
+    title('(b)','FontSize',paperFontSize());
+    set(gca,'color','none');
+    h = colorbar('Position',...
+    [0.919112096709723 0.147410714285715 0.031183034764756 0.771071428571429]);
+    set(h,'Ticks',{});
+    gcaB = gca;
+    %把图（a）的频率区域标定出来
+    clrAxis = [15,250,252]./255;
+    annotation('rectangle',...
+        [0.203706896551724 0.415089285714286 0.0364942528735632 0.529166666666667]...
+        ,'LineStyle','--','Color',clrAxis);
+    %绘制箭头
+    clrAxis = 'w';
+    annotation('arrow',[0.242025862068966 0.294942528735632],...
+        [0.72025 0.604077380952381],...
+        'Color',clrAxis);
+    %绘制局部视图
+    x = X(1,:);
+    indexX = find(x>11.5 & x<15.5);
+    indexY = 5:13;
+    partX = x(indexX);
+    partY = indexY;
+    partZ = Z(indexY,indexX);
+    gcaPart = axes('position',[0.286237188872621 0.275238095238095 0.174231332357247 0.325059523809524],...
+			'visible','on');
+    h = contourf(partX,partY,partZ);
+    set(gcaPart,'XTick',12:15);
+    set(gcaPart,'YTick',6:2:12);
+    set(gcaPart,'XColor',clrAxis,'YColor',clrAxis);
+    title('局部放大','FontSize',paperFontSize(),'Color','w');
+    saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('单罐扫频分析-幅值投影和时间投影'));
+    
     for i = 1:length(indexs)
         index = indexs(i);
         pressure = sweepResult(:,index);
-        [S,F,T,P] = ...
-                    spectrogram(...
-                    detrend(pressure)...
-                    ,STFT.windowSectionPointNums...
-                    ,STFT.noverlap...
-                    ,STFT.nfft...
-                    ,Fs);%短时傅里叶变换
-        
-        if 1
+        if 0
             if useSubplot
                 subplot(1,2,i);
             else
                 figHandle = figure;
                 paperFigureSet('normal',7);
             end
-            hold on;
-            [~,tl] = size(P);
-            mag=abs(P);
-            n = size(P,1);
-            
-            x = zeros(1,length(T));
-            y = T;
-            z = zeros(1,length(T));
-            for j=1:length(y)
-                [z(j),index] = max(mag(:,j));
-                x(j) = F(index);
-            end
-            for j=1:tl
-                fre = F;
-                Amp = mag(:,j);
-                Y = T(j);
-                h(j) = plotSpectrum3(fre,Amp,Y,'isFill',0,'color',[229,44,77]./255);
-            end
-            %绘制最高线
-            plot3(x,y,z,'.b');
-            %绘制投影
-            sx = ones(1,length(x));
-            sx = sx .* F(end);
-            plot3(sx,y,z,'-b');
-            axis tight;
+            fh = plotSweepFrequency(pressure,Fs,'STFT',STFT);
             if useSubplot
                 view(-22,55);
             else
-                view(-14,46);
+                view(-45,48);
             end
             xlabel('频率(Hz)','FontSize',paperFontSize());
             ylabel('时间(s)','FontSize',paperFontSize());
@@ -103,37 +116,14 @@ if 1
             title(labelText{i},'FontSize',paperFontSize());
             box on;
             if ~useSubplot
-                saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('单罐扫频分析-测点%d',indexs(i)));
+                 saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('单罐扫频分析-测点%d',indexs(i)));
             end
         end
     end
     if useSubplot
-       saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('单罐扫频分析-测点1和13'));
+%        saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('单罐扫频分析-测点1和13'));
     end
-    
-    %提取最大频率
-    for i = 1:13
-        pressure = sweepResult(:,i);
-        [S,F,T,P] = ...
-                    spectrogram(...
-                    detrend(pressure)...
-                    ,STFT.windowSectionPointNums...
-                    ,STFT.noverlap...
-                    ,STFT.nfft...
-                    ,Fs);%短时傅里叶变换
-        [~,tl] = size(P);
-        mag=abs(P);
-        n = size(P,1);
-        if 1
-            x = zeros(1,length(T));
-            y = T;
-            z = zeros(1,length(T));
-            for j=1:length(y)
-                [z(j),index] = max(mag(:,j));
-                x(j) = F(index);
-            end
-        end
-    end
+
 end
 
 %% 对比直进侧后出和侧前进直出的区别

@@ -12,7 +12,7 @@ while length(pp)>=2
     val=pp{2};
     pp=pp(3:end);
     switch lower(prop)
-        case 'casesen' %ÆµÂÊµÄÎó²î·¶Î§
+        case 'casesen'
             if ~isempty(val)
                 caseSen = val;
             end

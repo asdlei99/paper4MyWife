@@ -1,4 +1,4 @@
-function [fh,spectrogramData] = plotSTFT( wave,STFT,Fs,varargin )
+function [fh,spectrogramData,mag] = plotSTFT( wave,STFT,Fs,varargin )
 %绘制一个波形的短时傅立叶变换
 %   wave 波
 %   SIFT 短时傅立叶变化的参数
@@ -38,8 +38,8 @@ function [fh,spectrogramData] = plotSTFT( wave,STFT,Fs,varargin )
                         ,Fs);%短时傅里叶变换
     tl = size(spectrogramData.P,2);
     mag=abs(spectrogramData.P);
-    n = size(spectrogramData.P,1);
-    mag = mag ./ n;
+    % n = length(wave);
+    % mag = mag ./ (n/2);
     if strcmp(chartType,'contour')
         [X,Y] = meshgrid(spectrogramData.F,spectrogramData.T);
         [~,fh.contourfHandle] = contourf(X,Y,mag');

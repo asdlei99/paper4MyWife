@@ -12,18 +12,16 @@ function fh  = plotSweepFrequency( pressure,Fs,varargin )
         switch lower(prop)
             case 'stft' %误差带的类型
                 STFT = val;
-            case 'legendtitle'
-                legendTitle = val;
-            case 'figureheight'
-                figureHeight = val;
             otherwise
                 varargin{length(varargin)+1} = prop;
                 varargin{length(varargin)+1} = val;
         end
     end
-    [fh,sd] = plotSTFT(pressure, STFT, Fs...
+    [fh,sd,mag] = plotSTFT(pressure, STFT, Fs...
                             , 'chartType', 'plot3'...
                             );
+    hold on;
+    
     x = zeros(1,length(sd.T));
     y = sd.T;
     z = zeros(1,length(sd.T));
@@ -32,12 +30,34 @@ function fh  = plotSweepFrequency( pressure,Fs,varargin )
         x(j) = sd.F(index);
     end
     %绘制最高线
-    fh.maxAmpPlot = plot3(x,y,z,'.b');
-    %绘制投影
+    fh.maxAmpPlot = plot3(x,y,z,'.b',varargin{:});
+    %绘制投影YZ
     sx = ones(1,length(x));
     sx = sx .* sd.F(end);
-    fh.shadowYZ = plot3(sx,y,z,'-b');
-    
+    colorYZ = [75,144,252]./255;
+    fh.shadowYZ = plot3(sx,y,z,'-','color',colorYZ,varargin{:});
+    %绘制投影填充
+    xf = [sx,sx(end),sx(1),sx(1)];
+    yf = [y,y(end),y(1),y(1)];
+    zf = [z,0,0,z(1)];
+    fh.shadowFillYZ = fill3(xf,yf,zf,colorYZ,'edgealpha',0,'FaceAlpha',0.4);
+    %绘制投影XZ
+    z = zeros(1,length(sd.F));
+    x = sd.F;
+    y = zeros(1,length(sd.F));
+    for j=1:length(x)
+        [z(j),index] = max(mag(j,:));
+        y(j) = sd.T(index);
+    end
+    sy = ones(1,length(y));
+    sy = sy .* sd.T(end);
+    x = x';
+    colorXZ = [255,147,85]./255;
+    fh.shadowXZ = plot3(x,sy,z,'-','color',colorXZ,varargin{:});
+    xf = [x,x(end),x(1),x(1)];
+    yf = [sy,sy(end),sy(1),sy(1)];
+    zf = [z,0,0,z(1)];
+    fh.shadowFillXZ = fill3(xf,yf,zf,colorXZ,'edgealpha',0,'FaceAlpha',0.4);
     axis tight;
 end
 
