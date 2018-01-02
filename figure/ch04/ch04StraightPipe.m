@@ -16,138 +16,16 @@ straightPipeDataPath = fullfile(dataPath,' µ—È‘≠ º ˝æ›\¥ø÷±π‹\RPM420-0.1MPa');%÷
 
 legendLabels = {'÷±π‹'};
 
-%% ∑÷Œˆ≤Œ ˝…Ë÷√
-% ±∆µ∑÷Œˆ≤Œ ˝…Ë÷√
-Fs = 100;% µ—È≤…—˘¬ 
-STFT.windowSectionPointNums = 512;
-STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
-STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
-STFTChartType = 'contour';%contour|plot3
 %% ªÊÕº 
 %% ªÊ÷∆À˘”–≤‚µ„µƒ ±∆µ∑÷Œˆ
+isSavePlot = 0;
 if 1
-    chartType = 'plot3';
-	rang = 1:13;
-	titleLabel = {'a','b','c','d','e','f','g','h','i','j','k','l','m'};
-	baseFre = 14;
-	baseFre1Amp = [];
-	baseFre1Time = [];
-	baseFre2Amp = [];
-	baseFre2Time = [];
-	for i=rang
-		figure
-		paperFigureSet('small',6);
-		pressure = straightPipeDataCells{:,i}.rawData.pressure;
-		hold on;
-		[fh,sd,mag] = plotSTFT(pressure,STFT,Fs,'isShowColorbar',0,'chartType',chartType);
-		%≤È’“1±∂∆µ∫Õ2±∂∆µ
-		x1f = zeros(1,size(mag,1));
-		y1f = x1f;
-		z1f = x1f;
-		x2f = x1f;
-		y2f = x1f;
-		z2f = x1f;
-		for j = size(mag,1)
-			[z1f(j),x1f(j),index] = closeLargeValue(sd.F,mag(:,j),baseFre,0.5);
-			[z2f(j),x2f(j),index] = closeLargeValue(sd.F,mag(:,j),baseFre*2,0.5);
-			y1f(j) = rang(j);
-		end
-		y2f = y1f;
-		%±Í∂®1,2±∂∆µ
-		h = plot3(x1f,y1f,z1f,'-.b');
-		h = plot3(x2f,y2f,z2f,'-.b');
-		baseFre1Amp(i,:) = z1f;
-		baseFre2Amp(i,:) = z2f;
-		baseFre1Time = sd.T;
-		baseFre2Time = baseFre1Time;
-		title(titleLabel{i},'FontName',paperFontName(),'FontSize',paperFontSize());
-		xlabel('∆µ¬ (Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
-		ylabel(' ±º‰(s)','FontName',paperFontName(),'FontSize',paperFontSize());
-		zlabel('∑˘÷µ','FontName',paperFontName(),'FontSize',paperFontSize());
-		axis tight;
-		box on;
-		view(45,45);
-	end
-	%ªÊ÷∆±∂∆µ
-	chartType = '2d';
-	%ªÊ÷∆À˘”–1±∂∆µ
-	figure
-	paperFigureSet('normal',6);
-	if strcmpi(chartType,'2d')
-		hold on;
-		for i = 1:length(rang)
-			h = plot(baseFre1Time,baseFre1Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
-		end
-		box on;
-		xlabel(' ±º‰');
-		ylabel('∑˘÷µ');
-	else
-		hold on;
-		for i = 1:length(rang)
-			h = plotSpectrum3(baseFre1Time,baseFre1Amp(i,:),rang(i),'isFill',1,'color',[229,44,77]./255);
-		end
-		xlabel(' ±º‰');
-		ylabel('≤‚µ„');
-		zlabel('∑˘÷µ');
-		axis tight;
-		box on;
-	end
-	%ªÊ÷∆À˘”–2±∂∆µ
-	figure
-	paperFigureSet('normal',6);
-	if strcmpi(chartType,'2d')
-		hold on;
-		for i = 1:size(baseFre2Amp,1)
-			h = plot(baseFre2Time,baseFre2Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
-		end
-		box on;
-		xlabel(' ±º‰');
-		ylabel('∑˘÷µ');
-	else
-		hold on;
-		for i = 1:length(rang)
-			h = plotSpectrum3(baseFre2Time,baseFre2Amp(i,:),rang(i),'isFill',1,'color',[229,44,77]./255);
-		end
-		xlabel(' ±º‰');
-		ylabel('≤‚µ„');
-		zlabel('∑˘÷µ');
-		axis tight;
-		box on;
-	end
-	
-	
-    % dataNumIndex = 2;%∂¡»°µƒ µ—È◊È ˝£¨<5
-    % measurePoint = [1,3,5,7,9,13];% ±∆µ∑÷Œˆ≤®–Œµƒ≤‚µ„
-    % stftLabels = {};
-    % for i = 1:length(measurePoint)
-        % stftLabels{i} = sprintf('≤‚µ„%d',measurePoint(i));
-    % end
-    % fh = figureExpPressureSTFT(getExpDataStruct(straightPipeDataCells,dataNumIndex,baseField),measurePoint,Fs...
-        % ,stftLabels,'STFT',STFT,'chartType',STFTChartType...
-        % ,'subplotRow',2,'figureHeight',10);
+    paperPlot04StraightPipeSTFT(straightPipeDataCells{1,2}.rawData);
 end
 
-if 0
-    dataNumIndex = 2;%∂¡»°µƒ µ—È◊È ˝£¨<5
-    measurePoint = [1,13];% ±∆µ∑÷Œˆ≤®–Œµƒ≤‚µ„
-    stftLabels = {};
-    for i = 1:length(measurePoint)
-        stftLabels{i} = sprintf('≤‚µ„%d',measurePoint(i));
-    end
-    viewVal = [41,23];
-    isShowColorBar = 0;
-    fh = figureExpPressureSTFT(getExpDataStruct(straightPipeDataCells,dataNumIndex,baseField),measurePoint,Fs...
-        ,stftLabels,'STFT',STFT,'chartType',STFTChartType...
-        ,'subplotRow',1,'subplotcol',2,'figureHeight',6 ...
-        ,'chartType','plot3'...
-        ,'view',viewVal...
-        ,'isShowColorBar',isShowColorBar...
-        ,'simpleLabel',0 ...
-    );
-end
-%ªÊ÷∆0.25Dµƒ—π¡¶¬ˆ∂Ø
-%fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
-%% ªÊ÷∆∂‡◊È—π¡¶¬ˆ∂Ø
+
+
+
 if 0
     fh = figureExpPressurePlus(straightPipeCombineData...
         ,'errorType','ci'...
