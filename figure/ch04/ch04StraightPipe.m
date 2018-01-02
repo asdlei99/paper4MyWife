@@ -24,19 +24,55 @@ STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
 %% 绘图 
-%% [1,3,5,7,9,13]测点的时频分析波形
+%% 绘制所有测点的时频分析
 if 1
-    dataNumIndex = 2;%读取的实验组数，<5
-    measurePoint = [1,3,5,7,9,13];%时频分析波形的测点
-    stftLabels = {};
-    for i = 1:length(measurePoint)
-        stftLabels{i} = sprintf('测点%d',measurePoint(i));
-    end
-    fh = figureExpPressureSTFT(getExpDataStruct(straightPipeDataCells,dataNumIndex,baseField),measurePoint,Fs...
-        ,stftLabels,'STFT',STFT,'chartType',STFTChartType...
-        ,'subplotRow',2,'figureHeight',10);
+    chartType = 'plot3';
+	rang = 1:13;
+	titleLabel = {'a','b','c','d','e','f','g','h','i','j','k','l','m'};
+	baseFre = 14;
+	for i=rang
+		figure
+		paperFigureSet('small',6);
+		pressure = dataCells.pressure(:,i);
+		hold on;
+		[fh,sd,mag] = plotSTFT(pressure,STFT,Fs,'isShowColorbar',0,'chartType',chartType);
+		title(titleLabel{i},'FontName',paperFontName(),'FontSize',paperFontSize());
+		xlabel('频率(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
+		ylabel('时间(s)','FontName',paperFontName(),'FontSize',paperFontSize());
+		zlabel('幅值','FontName',paperFontName(),'FontSize',paperFontSize());
+		%查找1倍频和2倍频
+		x1f = zeros(1,size(mag,1));
+		y1f = x1f;
+		z1f = x1f;
+		x2f = x1f;
+		y2f = x1f;
+		z2f = x1f;
+		for j = size(mag,1)
+			[z1f(j),x1f(j),index] = closeLargeValue(sd.F,mag(:,j),baseFre,0.5);
+			[z2f(j),x2f(j),index] = closeLargeValue(sd.F,mag(:,j),baseFre*2,0.5);
+			y1f(j) = rang(j);
+		end
+		y2f = y1f;
+		%标定1,2倍频
+		h = plot3(x1f,y1f,z1f,'-.b');
+		h = plot3(x2f,y2f,z2f,'-.b');
+		
+	end
+	
+	
+	
+    % dataNumIndex = 2;%读取的实验组数，<5
+    % measurePoint = [1,3,5,7,9,13];%时频分析波形的测点
+    % stftLabels = {};
+    % for i = 1:length(measurePoint)
+        % stftLabels{i} = sprintf('测点%d',measurePoint(i));
+    % end
+    % fh = figureExpPressureSTFT(getExpDataStruct(straightPipeDataCells,dataNumIndex,baseField),measurePoint,Fs...
+        % ,stftLabels,'STFT',STFT,'chartType',STFTChartType...
+        % ,'subplotRow',2,'figureHeight',10);
 end
-if 1
+
+if 0
     dataNumIndex = 2;%读取的实验组数，<5
     measurePoint = [1,13];%时频分析波形的测点
     stftLabels = {};
@@ -57,7 +93,7 @@ end
 %绘制0.25D的压力脉动
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% 绘制多组压力脉动
-if 1
+if 0
     fh = figureExpPressurePlus(straightPipeCombineData...
         ,'errorType','ci'...
         ,'showPureVessel',0);
@@ -85,7 +121,7 @@ end
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
 %绘制1倍频的对比
 %% 绘制倍频
-if 1
+if 0
     fh = figureExpNatureFrequencyBar(straightPipeCombineData,1,legendLabels);
     fh = figureExpNatureFrequencyBar(straightPipeCombineData,2,legendLabels);
     fh = figureExpNatureFrequencyBar(straightPipeCombineData,3,legendLabels);
