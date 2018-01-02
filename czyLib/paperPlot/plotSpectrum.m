@@ -21,37 +21,40 @@ markH = [];
 isMarkData = 0;
 MarkDataCount = 3;
 textAlignment = -1;%0 横 1 竖着 -1 自动
+markDataStyle = 'fre';
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
     pp=pp(3:end);
-    switch prop
+    switch lower(prop)
         case 'color'
             lineColor=val;
-        case 'isFill'
+        case 'isfill'
             isFill=val;
-        case 'isMarkPeak'
+        case 'ismarkpeak'
             isMarkPeak=val;
-        case 'markCount'
+        case 'markcount'
             isMarkPeak = 1;
             markCount=val;
-        case 'markColor'
+        case 'markcolor'
             isMarkPeak = 1;
             markColor=val;
-        case 'markerFaceColor'
+        case 'markerfacecolor'
             isMarkPeak = 1;
             markerFaceColor=val;
-        case 'minPeakDistance'
+        case 'minpeakdistance'
             isMarkPeak = 1;
             minPeakDistance=val;
-        case 'isMarkData'
+        case 'ismarkdata'
             isMarkData = val;
-        case 'MarkDataCount'
+        case 'markdatacount'
             MarkDataCount = val;
-        case 'textAlignment'
+        case 'textalignment'
             textAlignment = val;
+        case 'markdatastyle'
+            markDataStyle = val;
         otherwise
-            error('参数输入错误！')
+            error('参数输入错误！%s',prop);
     end
 end
 
@@ -85,22 +88,27 @@ if isMarkPeak
     if isMarkData
         hold on;
         for i=1:MarkDataCount
-            if textAlignment == -1
-                if pks(i)/axisData(4) > 0.7
+            if strcmpi(markDataStyle,'fre')
+                if textAlignment == -1
+                    if pks(i)/axisData(4) > 0.7
+                        text(fre(locs(i)),pks(i),sprintf(' %g Hz',fre(locs(i)))...
+                        ,'VerticalAlignment','middle','HorizontalAlignment','left');
+                    else
+                        text(fre(locs(i)),pks(i),sprintf(' %g Hz',fre(locs(i)))...
+                        ,'VerticalAlignment','middle','HorizontalAlignment','left'...
+                        ,'Rotation',90);
+                    end
+                elseif textAlignment==0
                     text(fre(locs(i)),pks(i),sprintf(' %g Hz',fre(locs(i)))...
-                    ,'VerticalAlignment','middle','HorizontalAlignment','left');
-                else
+                        ,'VerticalAlignment','middle','HorizontalAlignment','left');
+                elseif textAlignment==1
                     text(fre(locs(i)),pks(i),sprintf(' %g Hz',fre(locs(i)))...
-                    ,'VerticalAlignment','middle','HorizontalAlignment','left'...
-                    ,'Rotation',90);
+                        ,'VerticalAlignment','middle','HorizontalAlignment','left'...
+                        ,'Rotation',90);
                 end
-            elseif textAlignment==0
-                text(fre(locs(i)),pks(i),sprintf(' %g Hz',fre(locs(i)))...
-                    ,'VerticalAlignment','middle','HorizontalAlignment','left');
-            elseif textAlignment==1
-                text(fre(locs(i)),pks(i),sprintf(' %g Hz',fre(locs(i)))...
-                    ,'VerticalAlignment','middle','HorizontalAlignment','left'...
-                    ,'Rotation',90);
+            else
+                 text(fre(locs(i)),pks(i),sprintf('%d',i)...
+                        ,'VerticalAlignment','bottom','HorizontalAlignment','Center');
             end
             
         end

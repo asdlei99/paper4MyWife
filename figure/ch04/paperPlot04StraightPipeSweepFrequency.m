@@ -1,6 +1,6 @@
 function paperPlot04StraightPipeSweepFrequency(isSavePlot)
-	%ç›´ç®¡æ‰«é¢‘åˆ†æ
-	sweepResult = loadExperimentPressureData(fullfile(dataPath,'å®éªŒåŸå§‹æ•°æ®\'));
+	%Ö±¹ÜÉ¨Æµ·ÖÎö
+	sweepResult = loadExperimentPressureData(fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\'));
     STFT.windowSectionPointNums = 512;
 	STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
     STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
@@ -8,7 +8,7 @@ function paperPlot04StraightPipeSweepFrequency(isSavePlot)
     indexs = [1,13];
 	
 	
-	%é¢‘ç‡æŠ•å½±å’Œæ—¶é—´æŠ•å½±
+	%ÆµÂÊÍ¶Ó°ºÍÊ±¼äÍ¶Ó°
     figure;
     paperFigureSet('full',6);
     subplot(1,2,1)
@@ -17,7 +17,7 @@ function paperPlot04StraightPipeSweepFrequency(isSavePlot)
     title('(a)','FontSize',paperFontSize());
     set(gca,'color','none');
     gcaA = gca;
-    %å¹…å€¼æŠ•å½±
+    %·ùÖµÍ¶Ó°
     subplot(1,2,2)
     plotSweepFrequencyDistributionAmp(sweepResult,Fs,'STFT',STFT...
         ,'charttype','contourf','LevelStep',80,'ShowText','off','TextStep',60,'LineStyle','-');
@@ -29,7 +29,7 @@ function paperPlot04StraightPipeSweepFrequency(isSavePlot)
     gcaB = gca;
 	
 	
-	%æ‰«é¢‘
+	%É¨Æµ
 	titleLabel = {'a','b','c','d','e','f','g','h','i','j','k','l','m'};
     for i = 1:length(indexs)
         index = indexs(i);
@@ -39,14 +39,14 @@ function paperPlot04StraightPipeSweepFrequency(isSavePlot)
 			paperFigureSet('normal',7);
             fh = plotSweepFrequency(pressure,Fs,'STFT',STFT);
             view(-45,48);
-            xlabel('é¢‘ç‡(Hz)','FontSize',paperFontSize());
-            ylabel('æ—¶é—´(s)','FontSize',paperFontSize());
-            zlabel('å¹…å€¼','FontSize',paperFontSize());
+            xlabel('ÆµÂÊ(Hz)','FontSize',paperFontSize());
+            ylabel('Ê±¼ä(s)','FontSize',paperFontSize());
+            zlabel('·ùÖµ','FontSize',paperFontSize());
             title(labelText{i},'FontSize',paperFontSize());
             box on;
             if isSavePlot
 				set(gca,'color','none');
-                saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('ç›´ç®¡æ‰«é¢‘åˆ†æ-æµ‹ç‚¹%d',indexs(i)));
+                saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('Ö±¹ÜÉ¨Æµ·ÖÎö-²âµã%d',indexs(i)));
             end
         end
     end

@@ -17,22 +17,21 @@ straightPipeDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êı¾İ\´¿Ö±¹Ü\RPM420-0.1MPa');%Ö
 legendLabels = {'Ö±¹Ü'};
 
 %% »æÍ¼ 
-isSavePlot = 0;
+isSavePlot = 1;
 
 %% »æÖÆÑ¹Á¦²¨ºÍÆµÂÊ
-if 1
-	paperPlot04StraightPipePressureAndFrequency(straightPipeDataCells{1,2}.);
+if 0
+ 	paperPlot04StraightPipePressureAndFrequency(straightPipeDataCells{1,2}.subSpectrumData,isSavePlot);
 end
-
 %% »æÖÆËùÓĞ²âµãµÄÊ±Æµ·ÖÎö
 if 1
     paperPlot04StraightPipeSTFT(straightPipeDataCells{1,2}.rawData,isSavePlot);
 end
 
 %% É¨ÆµÊı¾İ·ÖÎö
-if 1
+if 0
 	paperPlot04StraightPipeSweepFrequency(isSavePlot);
-nd
+end
 
 
 if 0

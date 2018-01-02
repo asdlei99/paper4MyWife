@@ -1,54 +1,63 @@
 function paperPlot04StraightPipePressureAndFrequency(dataCells,isSavePlot)
-%ç»˜åˆ¶åŽ‹åŠ›å’Œé¢‘è°±
+%»æÖÆÑ¹Á¦ºÍÆµÆ×
 	if nargin < 2
 		isSavePlot = 0;
 	end
 	rang = 1:13;
 	count = 1;
+    Fs = 100;
 	for i = rang
 		figure
 		paperFigureSet('full',6);
 		fre = dataCells.Fre(:,i);
 		mag = dataCells.Mag(:,i);
-		fh{count} = plotOnePressureAndFrequency(dataCells.pressure(:,i),fre,mag,sprintf('æµ‹ç‚¹%d',i));
+		fh{count} = plotOnePressureAndFrequency(dataCells.pressure(:,i),fre,mag,Fs,sprintf('²âµã%d',i));
 		if isSavePlot
-			saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('ç›´ç®¡æ³¢å½¢é¢‘è°±-æµ‹ç‚¹%d',i));
+			saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('Ö±¹Ü²¨ÐÎÆµÆ×-²âµã%d',i));
 		end
 		count = count + 1;
+        close all;
 	end
 end
 
-function h = plotOnePressureAndFrequency(pressure,fre,mag,label)
-	subplot(1,5,1)
-	%ç»˜åˆ¶é¢‘çŽ‡ç»Ÿè®¡
+function h = plotOnePressureAndFrequency(pressure,fre,mag,Fs,label)
+	ax1 = subplot(2,4,1);
+	%»æÖÆÆµÂÊÍ³¼Æ
 	colorFill = [49,103,185]./255;
-	[n,xout] = hist(pressure);
-	h.barHadnle = barh(xout,n,'color',colorFill);
-	xlabel('é¢‘æ¬¡');
-	ylabel('åŽ‹åŠ›(kPa)');
+	[n,xout] = hist(pressure,50);
+	h.barHadnle = barh(xout,n,'FaceColor',colorFill,'EdgeAlpha',0,'EdgeColor',colorFill);
+	xlabel('Æµ´Î','FontSize',paperFontSize());
+	ylabel('Ñ¹Á¦(kPa)','FontSize',paperFontSize());
 	set(gca,'color','none');
 	box on;
 	title(label,'FontSize',paperFontSize());
 	axis tight;
+    set(ax1,'Position',[0.107664233576642 0.626506024096384 0.166058394160584 0.291833962917022]);
 	
-	%æ³¢å½¢
-	subplot(1,5,[2,3])
+	%²¨ÐÎ
+	ax2 = subplot(2,4,[2,4]);
 	index = sigmaOutlierDetection(pressure,1.8);
 	pressure(index) = [];
 	x = 1:length(pressure);
-    x = x.*(1/fs);
+    x = x.*(1/Fs);
 	h.waveHadnle = plot(x,pressure,'-b');
 	set(gca,'color','none');
-	xlabel('æ—¶é—´(s)');
-	ylabel('åŽ‹åŠ›(kPa)');
+	xlabel('Ê±¼ä(s)','FontSize',paperFontSize());
+	ylabel('Ñ¹Á¦(kPa)','FontSize',paperFontSize());
 	box on;
+    axis tight;
+    set(ax2,'Position',[0.377054597701149 0.626506024096384 0.577324964342646 0.298493975903614]);
 	
-	%é¢‘è°±
+	
+    %ÆµÆ×
 	lineColor = [229,49,75]./255;
-	subplot(1,5,[4,5])
-	h.spectrumHadnle = plotSpectrum(fre,mag,'isMarkPeak',1,'lineColor',lineColor);
+	ax3 = subplot(2,4,[5,8]);
+	h.spectrumHadnle = plotSpectrum(fre,mag,'isMarkPeak',1,'color',lineColor...
+        ,'markCount',3,'isMarkData',1,'markDataStyle','num');
 	set(gca,'color','none');
-	xlabel('é¢‘çŽ‡(Hz)');
-	ylabel('å¹…å€¼(kPa)');
+	xlabel('ÆµÂÊ(Hz)','FontSize',paperFontSize());
+	ylabel('·ùÖµ(kPa)','FontSize',paperFontSize());
 	box on;
+    grid off;
+    set(ax3,'Position',[0.102189781021898 0.172690763052209 0.848540145985401 0.278472027645466]);
 end

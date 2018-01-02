@@ -1,11 +1,11 @@
 function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
-%ç»˜åˆ¶ç›´ç®¡çš„æ—¶é¢‘åˆ†ææ³¢å½¢
-%% åˆ†æå‚æ•°è®¾ç½®
-%æ—¶é¢‘åˆ†æå‚æ•°è®¾ç½®
+%»æÖÆÖ±¹ÜµÄÊ±Æµ·ÖÎö²¨ĞÎ
+%% ·ÖÎö²ÎÊıÉèÖÃ
+%Ê±Æµ·ÖÎö²ÎÊıÉèÖÃ
 	if nargin < 2
 		isSavePlot = 0;
 	end
-	Fs = 100;%å®éªŒé‡‡æ ·ç‡
+	Fs = 100;%ÊµÑé²ÉÑùÂÊ
 	STFT.windowSectionPointNums = 512;
 	STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 	STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
@@ -25,20 +25,18 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 		pressure = straightPipeDataCells.pressure(:,i);
 		hold on;
 		[fh,sd,mag] = plotSTFT(pressure,STFT,Fs,'isShowColorbar',0,'chartType',chartType);
-		%æŸ¥æ‰¾1å€é¢‘å’Œ2å€é¢‘
-		x1f = zeros(1,size(mag,1));
-		y1f = x1f;
+		%²éÕÒ1±¶ÆµºÍ2±¶Æµ
+		x1f = zeros(1,size(mag,2));
+		y1f = sd.T;
 		z1f = x1f;
 		x2f = x1f;
-		y2f = x1f;
+		y2f = sd.T;
 		z2f = x1f;
-		for j = size(mag,1)
+		for j = size(mag,2)
 			[z1f(j),x1f(j),index] = closeLargeValue(sd.F,mag(:,j),baseFre,0.5);
 			[z2f(j),x2f(j),index] = closeLargeValue(sd.F,mag(:,j),baseFre*2,0.5);
-			y1f(j) = rang(j);
-		end
-		y2f = y1f;
-		%æ ‡å®š1,2å€é¢‘
+        end
+		%±ê¶¨1,2±¶Æµ
 		h = plot3(x1f,y1f,z1f,'-.b');
 		h = plot3(x2f,y2f,z2f,'-.b');
 		baseFre1Amp(count,:) = z1f;
@@ -46,9 +44,9 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 		baseFre1Time = sd.T;
 		baseFre2Time = baseFre1Time;
 		title(titleLabel{i},'FontName',paperFontName(),'FontSize',paperFontSize());
-		xlabel('é¢‘ç‡(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
-		ylabel('æ—¶é—´(s)','FontName',paperFontName(),'FontSize',paperFontSize());
-		zlabel('å¹…å€¼','FontName',paperFontName(),'FontSize',paperFontSize());
+		xlabel('ÆµÂÊ(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
+		ylabel('Ê±¼ä(s)','FontName',paperFontName(),'FontSize',paperFontSize());
+		zlabel('·ùÖµ','FontName',paperFontName(),'FontSize',paperFontSize());
 		axis tight;
 		box on;
 		view(45,45);
@@ -56,14 +54,14 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 		count = count + 1;
 		if isSavePlot
 			set(gca,'color','none');
-			saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('ç›´ç®¡æ—¶é¢‘åˆ†æ-æµ‹ç‚¹%d',i));
+			saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('Ö±¹ÜÊ±Æµ·ÖÎö-²âµã%d',i));
 		end
 	end
 	d.baseFre1Amp = baseFre1Amp;
 	d.baseFre2Amp = baseFre2Amp;
-	%ç»˜åˆ¶å€é¢‘
+	%»æÖÆ±¶Æµ
 	chartType = '2d';
-	%ç»˜åˆ¶æ‰€æœ‰1å€é¢‘
+	%»æÖÆËùÓĞ1±¶Æµ
 	figure
 	paperFigureSet('normal',6);
 	if strcmpi(chartType,'2d')
@@ -72,24 +70,25 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 			h = plot(baseFre1Time,baseFre1Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
 		end
 		box on;
-		xlabel('æ—¶é—´');
-		ylabel('å¹…å€¼');
+		xlabel('Ê±¼ä');
+		ylabel('·ùÖµ');
 	else
 		hold on;
 		for i = 1:length(rang)
 			h = plotSpectrum3(baseFre1Time,baseFre1Amp(i,:),rang(i),'isFill',1,'color',[229,44,77]./255);
 		end
-		xlabel('æ—¶é—´');
-		ylabel('æµ‹ç‚¹');
-		zlabel('å¹…å€¼');
+		xlabel('Ê±¼ä');
+		ylabel('²âµã');
+		zlabel('·ùÖµ');
 		axis tight;
 		box on;
 	end
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('ç›´ç®¡æ—¶é¢‘åˆ†æ-æµ‹ç‚¹1å€é¢‘',i));
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('Ö±¹ÜÊ±Æµ·ÖÎö-²âµã1±¶Æµ'));
+        close all;
 	end
-	%ç»˜åˆ¶æ‰€æœ‰2å€é¢‘
+	%»æÖÆËùÓĞ2±¶Æµ
 	figure
 	paperFigureSet('normal',6);
 	if strcmpi(chartType,'2d')
@@ -98,21 +97,21 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 			h = plot(baseFre2Time,baseFre2Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
 		end
 		box on;
-		xlabel('æ—¶é—´');
-		ylabel('å¹…å€¼');
+		xlabel('Ê±¼ä');
+		ylabel('·ùÖµ');
 	else
 		hold on;
 		for i = 1:length(rang)
 			h = plotSpectrum3(baseFre2Time,baseFre2Amp(i,:),rang(i),'isFill',1,'color',[229,44,77]./255);
 		end
-		xlabel('æ—¶é—´');
-		ylabel('æµ‹ç‚¹');
-		zlabel('å¹…å€¼');
+		xlabel('Ê±¼ä');
+		ylabel('²âµã');
+		zlabel('·ùÖµ');
 		axis tight;
 		box on;
 	end
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('ç›´ç®¡æ—¶é¢‘åˆ†æ-æµ‹ç‚¹2å€é¢‘',i));
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('Ö±¹ÜÊ±Æµ·ÖÎö-²âµã2±¶Æµ'));
 	end
 end
