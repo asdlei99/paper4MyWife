@@ -7,16 +7,16 @@ function paperPlot04StraightPipePressureAndFrequency(dataCells,isSavePlot)
 	count = 1;
     Fs = 100;
 	for i = rang
-		figure
+		fighandle = figure;
 		paperFigureSet('full',6);
 		fre = dataCells.Fre(:,i);
 		mag = dataCells.Mag(:,i);
 		fh{count} = plotOnePressureAndFrequency(dataCells.pressure(:,i),fre,mag,Fs,sprintf('测点%d',i));
+		count = count + 1;
 		if isSavePlot
 			saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管波形频谱-测点%d',i));
+			close(fighandle);
 		end
-		count = count + 1;
-        close all;
 	end
 end
 

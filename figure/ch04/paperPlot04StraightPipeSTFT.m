@@ -20,7 +20,7 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	baseFre2Time = [];
 	count = 1;
 	for i=rang
-		figure
+		figHandle = figure;
 		paperFigureSet('small',6);
 		pressure = straightPipeDataCells.pressure(:,i);
 		hold on;
@@ -55,6 +55,7 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 		if isSavePlot
 			set(gca,'color','none');
 			saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点%d',i));
+			close(figHandle);
 		end
 	end
 	d.baseFre1Amp = baseFre1Amp;
@@ -62,7 +63,7 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	%绘制倍频
 	chartType = '2d';
 	%绘制所有1倍频
-	figure
+	figHandle = figure;
 	paperFigureSet('normal',6);
 	if strcmpi(chartType,'2d')
 		hold on;
@@ -86,10 +87,10 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	if isSavePlot
 		set(gca,'color','none');
 		saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点1倍频'));
-        close all;
+        close(figHandle);
 	end
 	%绘制所有2倍频
-	figure
+	figHandle = figure;
 	paperFigureSet('normal',6);
 	if strcmpi(chartType,'2d')
 		hold on;
@@ -113,5 +114,6 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	if isSavePlot
 		set(gca,'color','none');
 		saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点2倍频'));
+		close(figHandle);
 	end
 end

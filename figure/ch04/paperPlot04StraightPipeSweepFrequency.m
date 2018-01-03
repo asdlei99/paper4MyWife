@@ -8,7 +8,7 @@ function paperPlot04StraightPipeSweepFrequency(sweepResult,isSavePlot)
 	
 	
 	%频率投影和时间投影
-    figure;
+    figHandle = figure;
     paperFigureSet('full',6);
     subplot(1,2,1)
     [fh,X,Y,Z] = plotSweepFrequencyDistributionFre(sweepResult,Fs,'STFT',STFT...
@@ -27,6 +27,7 @@ function paperPlot04StraightPipeSweepFrequency(sweepResult,isSavePlot)
     gcaB = gca;
 	f isSavePlot
 		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'直管扫频分析-时间频率投影');
+		close(figHandle);
 	end
 	
 	%扫频
@@ -47,6 +48,7 @@ function paperPlot04StraightPipeSweepFrequency(sweepResult,isSavePlot)
 		if isSavePlot
 			set(gca,'color','none');
 			saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管扫频stft分析-测点%d',indexs(i)));
+			close(figHandle);
 		end
 
     end
