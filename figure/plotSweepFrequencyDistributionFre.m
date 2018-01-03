@@ -27,7 +27,6 @@ function [fh,X,Y,Z]  = plotSweepFrequencyDistributionFre( pressures,Fs,varargin 
         end
     end
     count = 1;
-    
     for i = rang
         [sd.S,sd.F,sd.T,sd.P] = ...
                         spectrogram(...

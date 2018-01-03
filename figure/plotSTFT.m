@@ -42,7 +42,7 @@ function [fh,spectrogramData,mag] = plotSTFT( wave,STFT,Fs,varargin )
     % mag = mag ./ (n/2);
     if strcmp(chartType,'contour')
         [X,Y] = meshgrid(spectrogramData.F,spectrogramData.T);
-        [~,fh.contourfHandle] = contourf(X,Y,mag');
+        [tmp,fh.contourfHandle] = contourf(X,Y,mag');
         set(fh.contourfHandle,'LineStyle',contourfLineStyle);
         ylim([Y(1,1),Y(end,1)]);
         %shading flat%保持光滑效果

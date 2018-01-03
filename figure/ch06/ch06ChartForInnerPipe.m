@@ -41,39 +41,21 @@ STFT.windowSectionPointNums = 512;
 STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
+isSaveFigure = 0;
+
 %% 绘制多组压力脉动
 if 1
-    fh = figureExpPressurePlus(innerPipeDataCells,legendLabels,'errorType',errorType...
-        ,'showPureVessel',1,'purevessellegend','单一缓冲罐'...
-        ,'expVesselRang',expVesselRang);
-    set(fh.vesselHandle,'color','r');
-    set(fh.textarrowVessel,'X',[0.391 0.341],'Y',[0.496 0.417]);
-    set(fh.legend,'Position',[0.140376161350008 0.518142368996306 0.255763884946291 0.291041658781467]);
+	paperPlotInnerPipeExpCmp(innerPipeDataCells,legendLabels,expVesselRang,isSaveFigure)
 end
+
 %% 绘制理论模拟实验
 if 0
-    legendText = {'单一缓冲罐','内插管缓冲罐'};
-    x = constExpMeasurementPointDistance();%测点对应的距离
-    xExp = {x,x};
-    x = constSimMeasurementPointDistance();%模拟测点对应的距离
-    xSim = {x,x};
-    xThe = {param.X,theDataCells{3, 3}};
-    
-    vesselInBiasResultCell.pulsationValue(1:8) = vesselInBiasResultCell.pulsationValue(1:8) + ones(1,8).*6e3;
-    theDataCells{3, 2}.pulsationValue(1:8) = theDataCells{3, 2}.pulsationValue(1:8) + ones(1,8).*6e3;
-    
-    fh = figureExpAndSimThePressurePlus({expVesselCombineData,expOrificD0_5CombineData}...
-                            ,{simVesselDataCell,simOrificD0_5DataCell}...
-                            ,{vesselInBiasResultCell,theDataCells{3, 2}}...
-                            ,legendText...
-                            ,'showMeasurePoint',1 ...
-                            ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
-                            ,'showVesselRigion',1,'ylim',[0,40]...
-                            ,'xlim',[2,12]...
-                            ,'figureHeight',9 ...
-                            ,'expVesselRang',expVesselRang);
-    set(fh.legend,'Position',[0.12935185921137 0.520347230633097 0.37041665930715 0.307700608873072]);
-    set(fh.textarrowVessel,'X',[0.336545138888889 0.30795138888889],'Y',[0.440439814814815 0.391597222222223]);
+	legendText = {'单一缓冲罐','内插管缓冲罐'};
+	paperPlotInnerPipeExpTheSim({expVesselCombineData,expOrificD0_5CombineData}...
+								,{simVesselDataCell,simOrificD0_5DataCell}...
+								,param...
+								,legendText...
+								,isSaveFigure);
 end
 
 

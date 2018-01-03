@@ -32,7 +32,7 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 		x2f = x1f;
 		y2f = sd.T;
 		z2f = x1f;
-		for j = size(mag,2)
+		for j = 1:size(mag,2)
 			[z1f(j),x1f(j),index] = closeLargeValue(sd.F,mag(:,j),baseFre,0.5);
 			[z2f(j),x2f(j),index] = closeLargeValue(sd.F,mag(:,j),baseFre*2,0.5);
         end
@@ -49,12 +49,12 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 		zlabel('幅值','FontName',paperFontName(),'FontSize',paperFontSize());
 		axis tight;
 		box on;
-		view(45,45);
+		view(25,53);
 		d.sd{count} = sd;
 		count = count + 1;
 		if isSavePlot
 			set(gca,'color','none');
-			saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('直管时频分析-测点%d',i));
+			saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点%d',i));
 		end
 	end
 	d.baseFre1Amp = baseFre1Amp;
@@ -85,7 +85,7 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	end
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('直管时频分析-测点1倍频'));
+		saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点1倍频'));
         close all;
 	end
 	%绘制所有2倍频
@@ -112,6 +112,6 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	end
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('直管时频分析-测点2倍频'));
+		saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点2倍频'));
 	end
 end
