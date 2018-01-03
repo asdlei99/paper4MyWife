@@ -1,9 +1,9 @@
-Ôªøfunction res = paperPlot04StraightPipeNatureFrequency(straightPipeCombineData,isSavePlot)
-%?§ÓÒ3€√?
+function res = paperPlot04StraightPipeNatureFrequency(straightPipeCombineData,legendLabels,isSavePlot)
+%ªÊ÷∆±∂∆µ
 	fh = figureExpNatureFrequencyBar(straightPipeCombineData,1,legendLabels);
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'Ú¡Œ∑-1€√??›Ô');
+		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'÷±π‹1±∂∆µ∂‘±»');
 		close(fh.figure);
 	end
 	res.fig1 = fh;
@@ -11,7 +11,7 @@
     fh = figureExpNatureFrequencyBar(straightPipeCombineData,2,legendLabels);
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'Ú¡Œ∑-2€√??›Ô');
+		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'÷±π‹2±∂∆µ∂‘±»');
 		close(fh.figure);
 	end
 	res.fig2 = fh;
@@ -19,7 +19,7 @@
     fh = figureExpNatureFrequencyBar(straightPipeCombineData,3,legendLabels);
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'Ú¡Œ∑-3€√??›Ô');
+		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'÷±π‹3±∂∆µ∂‘±»');
 		close(fh.figure);
 	end
 	res.fig3 = fh;

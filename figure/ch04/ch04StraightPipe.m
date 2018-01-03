@@ -32,7 +32,7 @@ if 1
 end
 
 %% 扫频数据分析
-if 1
+if 0
 	sweepResult = loadExperimentPressureData(fullfile(dataPath,'实验原始数据\纯直管\RPM420-0.1MPa\纯直管开机450降300转0.05mpa.CSV'));
 	paperPlot04StraightPipeSweepFrequency(sweepResult,isSavePlot);
 end
@@ -46,6 +46,6 @@ end
 
 %绘制1倍频的对比
 %% 绘制倍频
-if 1
-	paperPlot04StraightPipeNatureFrequency(straightPipeCombineData,isSavePlot);
+if 0
+	paperPlot04StraightPipeNatureFrequency(straightPipeCombineData,{},isSavePlot);
 end

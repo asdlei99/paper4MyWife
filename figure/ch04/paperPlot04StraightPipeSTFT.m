@@ -9,10 +9,10 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	STFT.windowSectionPointNums = 512;
 	STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 	STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
-	STFTChartType = 'contour';%contour|plot3
+% 	STFTChartType = 'contour';%contour|plot3
 	chartType = 'plot3';
 	rang = 1:13;
-	titleLabel = {'a','b','c','d','e','f','g','h','i','j','k','l','m'};
+% 	titleLabel = {'a','b','c','d','e','f','g','h','i','j','k','l','m'};
 	baseFre = 14;
 	baseFre1Amp = [];
 	baseFre1Time = [];
@@ -43,7 +43,7 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 		baseFre2Amp(count,:) = z2f;
 		baseFre1Time = sd.T;
 		baseFre2Time = baseFre1Time;
-		title(titleLabel{i},'FontName',paperFontName(),'FontSize',paperFontSize());
+		title(sprintf('测点%d',i),'FontName',paperFontName(),'FontSize',paperFontSize());
 		xlabel('频率(Hz)','FontName',paperFontName(),'FontSize',paperFontSize()); 
 		ylabel('时间(s)','FontName',paperFontName(),'FontSize',paperFontSize());
 		zlabel('幅值','FontName',paperFontName(),'FontSize',paperFontSize());
@@ -57,6 +57,7 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 			saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点%d',i));
 			close(figHandle);
 		end
+        
 	end
 	d.baseFre1Amp = baseFre1Amp;
 	d.baseFre2Amp = baseFre2Amp;

@@ -24,7 +24,7 @@ while length(pp)>=2
             baseField = val;
         case 'legendlabels'
             legendLabels = val;
-        case 'figureHeight'
+        case 'figureheight'
             figureHeight = val;
         otherwise
        		error('²ÎÊý´íÎó%s',prop);
@@ -72,7 +72,7 @@ fh.barHandle = barwitherr(err,ys);
 % end
 
 if ~isempty(legendLabels)
-    fh.legend = legend(legendLabels,'FontName',paperFontName(),'FontSize',paperFontSize());
+    fh.legend = legend(fh.barHandle,legendLabels,'FontName',paperFontName(),'FontSize',paperFontSize());
 end
 
 xlabel('²âµã','FontName',paperFontName(),'FontSize',paperFontSize());
