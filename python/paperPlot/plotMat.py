@@ -4,13 +4,13 @@ import numpy as np
 import random
 
 def constExpMeasurementPointDistance():
-	"""获取第二次实验的x测点对应的距离
-	"""
+	'''获取第二次实验的x测点对应的距离
+	'''
 	return [2.5,3,4.78,5.28,5.78,6.28,7.53,8.03,8.53,9.05,9.53,10.03,10.53]
 
 
 def plotCombineMatData(*combineData,**kwargs):
-	"""绘制combineData的图
+	'''绘制combineData的图
 	绘制combineData的曲线图
 	Arguments:
 		combineData : 联合数据的list
@@ -20,7 +20,7 @@ def plotCombineMatData(*combineData,**kwargs):
 		errorPlotType:
 	Returns:
 
-	"""
+	'''
 	ret = list()
 	x = constExpMeasurementPointDistance()
 	lengendTexts = map(lambda x: "line:{0}".format(x),range(1,len(combineData)+1))
@@ -53,12 +53,12 @@ def plotCombineMatData(*combineData,**kwargs):
 	return ret
 
 def plotVesselRang(rangX = [2,3],**kwargs):
-	"""在gca下绘制缓冲罐区域
+	'''在gca下绘制缓冲罐区域
 	=======
 	rangX : [list] 缓冲罐区域的范围
 
 	kwargs: plt.fill函数的属性 建议颜色facecolor='#F3264255'
-	"""
+	'''
 	if not kwargs.han_key("facecolor"):
 		kwargs["facecolor"] = '#F3264255'
 	[xmin, xmax, ymin, ymax] = plt.axis()

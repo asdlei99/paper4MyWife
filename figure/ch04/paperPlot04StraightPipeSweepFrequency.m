@@ -1,12 +1,19 @@
 function paperPlot04StraightPipeSweepFrequency(sweepResult,isSavePlot)
-	%直管扫频分析
-    STFT.windowSectionPointNums = 512;
+	type = 'large';
+	STFT.windowSectionPointNums = 512;
 	STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
     STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
     Fs = 100;
-    indexs = 10:13;
-	
-	
+    indexs = 1:2;
+	if strcmpi(type,'large')
+		plotLargePlot(sweepResult,isSavePlot,STFT,Fs,indexs);
+	else
+		plotSmallPlot(sweepResult,isSavePlot,STFT,Fs,indexs);
+	end
+	plotShadow(sweepResult,isSavePlot,STFT,Fs);
+end
+
+function plotShadow(sweepResult,isSavePlot,STFT,Fs)
 	%频率投影和时间投影
     figHandle = figure;
     paperFigureSet('full',6);
@@ -29,9 +36,10 @@ function paperPlot04StraightPipeSweepFrequency(sweepResult,isSavePlot)
 		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'直管扫频分析-时间频率投影');
 		close(figHandle);
 	end
-	
+end
+
+function plotLargePlot(sweepResult,isSavePlot,STFT,Fs,indexs)
 	%扫频
-	titleLabel = {'a','b','c','d','e','f','g','h','i','j','k','l','m'};
     for index = indexs
         pressure = sweepResult(:,index);
 
@@ -42,13 +50,34 @@ function paperPlot04StraightPipeSweepFrequency(sweepResult,isSavePlot)
 		xlabel('频率(Hz)','FontSize',paperFontSize());
 		ylabel('时间(s)','FontSize',paperFontSize());
 		zlabel('幅值','FontSize',paperFontSize());
-		title(titleLabel{index},'FontSize',paperFontSize());
+		title(sprintf{'测点%d',index},'FontSize',paperFontSize());
 		box on;
 		if isSavePlot
 			set(gca,'color','none');
 			saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管扫频stft分析-测点%d',index));
 			close(figHandle);
 		end
+    end
+end
 
+function plotSmallPlot(sweepResult,isSavePlot,STFT,Fs,indexs)
+%扫频
+    for index = indexs
+        pressure = sweepResult(:,index);
+
+		figHandle = figure;
+		paperFigureSet('small',6);
+		fh = plotSweepFrequency(pressure,Fs,'STFT',STFT);
+		view(-35,36);
+		xlabel('频率(Hz)','FontSize',paperFontSize());
+		ylabel('时间(s)','FontSize',paperFontSize());
+		zlabel('幅值','FontSize',paperFontSize());
+		title(sprintf{'测点%d',index},'FontSize',paperFontSize());
+		box on;
+		if isSavePlot
+			set(gca,'color','none');
+			saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管扫频stft分析-测点%d',index));
+			close(figHandle);
+		end
     end
 end
