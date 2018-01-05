@@ -73,16 +73,24 @@ function plotStraightPipeChangL(param,massFlowDataCell,isSaveFig)
 				,'sectionY',param.L ...
 				,'markSectionY','markLine' ...
 				);
+	set(fh.plotHandle,'LevelStep',1,'LineStyle','none');
+	hold on;
+	ax = axis();
+	plot([ax(1),ax(2)],[12,12],'color','k','LineStyle','--');
+	text(ax(2),12,'12');
+	plot([ax(1),ax(2)],[param.L,param.L],'color','k');
+	text(ax(2),param.L,sprintf('%g',param.L));
+	plot([L(1),L(1)],[L(end),L(end)],'b-');
+	
 	xlabel('管线距离(m)','FontSize',paperFontSize());
     ylabel('管长(m)','FontSize',paperFontSize());
 	zlabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
-	view(114,40);
 	set(fh.gca,'Position',[0.13 0.1405 0.8104 0.8127]);
 	axis tight;
 	box on;
 	if isSaveFig
 		set(fh.gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'直管管径对气流脉动的影响');
+		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'直管长度对气流脉动的影响');
 		close(figHandle);
 	end
 end

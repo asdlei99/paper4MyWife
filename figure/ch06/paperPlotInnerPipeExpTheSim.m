@@ -1,9 +1,9 @@
 function paperPlotInnerPipeExpTheSim(expDataCells,simDataCells,param,legendText,isSaveFigure)
-%?黏??畏钴租?偌???
+%内插管理论模拟实验对比
 	
-	x = constExpMeasurementPointDistance();%?锩??钴隋?
+	x = constExpMeasurementPointDistance();%
     xExp = {x,x};
-    x = constSimMeasurementPointDistance();%偌??锩??钴隋?
+    x = constSimMeasurementPointDistance();%
     xSim = {x,x};
     xThe = {param.X,theDataCells{3, 3}};
 	
@@ -23,6 +23,6 @@ function paperPlotInnerPipeExpTheSim(expDataCells,simDataCells,param,legendText,
     set(fh.textarrowVessel,'X',[0.336545138888889 0.30795138888889],'Y',[0.440439814814815 0.391597222222223]);
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'??畏租?偌????蒿');
+		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内插管理论模拟实验对比');
 	end
 end
