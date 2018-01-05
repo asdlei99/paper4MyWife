@@ -1,4 +1,4 @@
-%% 单一缓冲罐脉动计算
+%% 直管脉动计算
 function theoryDataCells = straightPipePulsation(varargin)
 
 pp = varargin;
@@ -48,8 +48,9 @@ end
 
 
 if isnan(massflowData)
-    [massFlowRaw,time,~,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
+    [massFlowRaw,time,t,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
         ,0.14,1.075,param.outDensity,'rcv',0.15,'k',1.4,'pr',0.15,'fs',param.Fs,'oneSecond',6);
+	clear t;%兼容旧版本的matlab
     [freRaw,AmpRaw,PhRaw,massFlowERaw] = frequencySpectrum(detrend(massFlowRaw,'constant'),param.Fs);
     freRaw = [7,14,21,28,14*3];
     massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
@@ -78,9 +79,9 @@ theoryDataCells{1,2} = 'dataCells';
 theoryDataCells{1,3} = 'X';
 theoryDataCells{1,4} = '脉动值';
 theoryDataCells{1,5} = 'input';
+theoryDataCells{1,6} = '压力不均度';
 
-
-pressure = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
+pressure = straightPipePulsationCalc(param.massFlowE,param.fre,time...
     ,param.L ,param.sectionL ...
 	,'D',param.Dpipe ...
     ,'a',param.acousticVelocity...
@@ -98,12 +99,13 @@ dc = fun_dataProcessing(pressure...
                             ,'semifretimes',semiFreTimes...
                             ,'calcpeakpeakvaluesection',nan...
                             );
-theoryDataCells{i+1,1} = '缓冲罐';
-theoryDataCells{i+1,2} = dc;
-theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv(i) + param.sectionL2];  
-theoryDataCells{i+1,4} = dc.pulsationValue;
-theoryDataCells{i+1,5} = param;
-
+meanPressure = mean(pressure);
+theoryDataCells{2,1} = '直管';
+theoryDataCells{2,2} = dc;
+theoryDataCells{2,3} = param.sectionL;
+theoryDataCells{2,4} = dc.pulsationValue;
+theoryDataCells{2,5} = param;
+theoryDataCells{2,6} = dc.pulsationValue./meanPressure;
 
 
 end

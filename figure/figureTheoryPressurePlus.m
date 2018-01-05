@@ -28,7 +28,7 @@ markSectionYLabel = {};
 sectionX = nan;
 markSectionX = 'none';% 是否对切片的x值进行标记，标记可选'none'-不标记,'markLine'-在图上以线的形式标记,'shadow'-投影到x,z面上
 markSectionXLabel = {};
-newFigure = 1;%是否调用figure，否则不会调用
+newFigure = 0;%是否调用figure，否则不会调用
 % fh = nan;
 fixAxis = 0;
 edgeColor = 'none';
@@ -251,12 +251,13 @@ function fh = figurePlotContourf(dataCells,X,Y,edgeColor...
     y = y(:,1:end-1);
     z = z(:,1:end-1);
     if strcmpi(chartType,'contourf')
-        [~,fh.plotHandle] = contourf(x,y,z);
+        [tmp,fh.plotHandle] = contourf(x,y,z);
     elseif strcmpi(chartType,'contourc')
-        [~,fh.plotHandle] = contour(x,y,z);
+        [tmp,fh.plotHandle] = contour(x,y,z);
     elseif strcmpi(chartType,'contour3')
-        [~,fh.plotHandle] = contour3(x,y,z);
+        [tmp,fh.plotHandle] = contour3(x,y,z);
     end
+	clear tmp;
     if fixAxis
         xlim([x(1,1),x(1,end)]);
         ylim([y(1,1),y(end,1)]);
