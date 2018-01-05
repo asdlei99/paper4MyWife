@@ -33,7 +33,7 @@ end
 
 
 fh.figure = figure;
-paperFigureSet_normal(figureHeight);
+paperFigureSet('normal',figureHeight);
 
 %需要显示单一缓冲罐
 ys = [];
@@ -63,7 +63,8 @@ end
 ys = ys';
 err(:,:,2) = errUp';
 err(:,:,1) = errDown';
-fh.barHandle = barwitherr(err,ys);
+fh.barHandle = barwitherr(err,ys,'FaceColor',getPlotColor(1));
+
 % for i=1:length(fh.barHandle) %h = fh.barHandle
 %     set(fh.barHandle(i),'FaceColor',getPlotColor(i));
 %     set(fh.barHandle(i),'LineWidth',1);

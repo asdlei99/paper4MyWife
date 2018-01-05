@@ -68,9 +68,12 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	paperFigureSet('normal',6);
 	if strcmpi(chartType,'2d')
 		hold on;
+        legendText = {};
 		for i = 1:length(rang)
-			h = plot(baseFre1Time,baseFre1Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
-		end
+			h(i) = plot(baseFre1Time,baseFre1Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
+            legendText{i} = sprintf('测点%d',rang(i));
+        end
+        hl = legend(h,legendText,'FontSize',paperFontSize());
 		box on;
 		xlabel('时间');
 		ylabel('幅值');

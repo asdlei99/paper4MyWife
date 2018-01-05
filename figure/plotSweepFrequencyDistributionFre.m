@@ -71,12 +71,19 @@ function [fh,X,Y,Z]  = plotSweepFrequencyDistributionFre( pressures,Fs,varargin 
         ylabel('测点','FontSize',paperFontSize());
         zlabel('幅值','FontSize',paperFontSize());
         [X,Y] = meshgrid(sd.F,rang);
-    else
+    elseif strcmpi(chartType,'contourf')
         Z = y';
         [X,Y] = meshgrid(sd.F,rang);
         fh.contourfHandle = contourf(X,Y,Z,varargin{:});
         xlabel('频率(Hz)','FontSize',paperFontSize());
         ylabel('测点','FontSize',paperFontSize());
+    else
+        Z = y';
+        [X,Y] = meshgrid(sd.F,rang);
+        fh.contourfHandle = surf(X,Y,Z,varargin{:});
+        xlabel('频率(Hz)','FontSize',paperFontSize());
+        ylabel('测点','FontSize',paperFontSize());
+        zlabel('幅值','FontSize',paperFontSize());
     end
 
     axis tight;

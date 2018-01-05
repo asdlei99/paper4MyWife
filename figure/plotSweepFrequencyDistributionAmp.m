@@ -5,7 +5,7 @@ function fh  = plotSweepFrequencyDistributionAmp( pressures,Fs,varargin )
     STFT.windowSectionPointNums = 512;
     STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
     STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
-    chartType = 'plot3';
+    chartType = 'plot3';%contourf,surf
     rang = 1:13;
     lineColor = [75,144,252]./255;
     while length(pp)>=2
@@ -69,12 +69,19 @@ function fh  = plotSweepFrequencyDistributionAmp( pressures,Fs,varargin )
         xlabel('时间(s)','FontSize',paperFontSize());
         ylabel('测点','FontSize',paperFontSize());
         zlabel('幅值','FontSize',paperFontSize());
-    else
+    elseif strcmpi(chartType,'contourf')
         Z = y';
         [X,Y] = meshgrid(sd.T,rang);
         contourf(X,Y,Z,varargin{:});
         xlabel('时间(s)','FontSize',paperFontSize());
         ylabel('测点','FontSize',paperFontSize());
+    else
+        Z = y';
+        [X,Y] = meshgrid(sd.T,rang);
+        surf(X,Y,Z,varargin{:});
+        xlabel('时间(s)','FontSize',paperFontSize());
+        ylabel('测点','FontSize',paperFontSize());
+        zlabel('幅值','FontSize',paperFontSize());
     end
 
     axis tight;

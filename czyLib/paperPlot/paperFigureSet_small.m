@@ -4,5 +4,5 @@ function paperFigureSet_small(h)
         h = 6;
     end
     set(gcf,'color','w');
-    set(gcf,'unit','centimeter','position',[8,4,7,h]);
+    set(gcf,'unit','centimeter','position',[8,4,7.3,h]);
 end

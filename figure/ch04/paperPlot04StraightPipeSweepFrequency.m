@@ -1,10 +1,10 @@
 function paperPlot04StraightPipeSweepFrequency(sweepResult,isSavePlot)
-	type = 'large';
+	type = 'small';
 	STFT.windowSectionPointNums = 512;
 	STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
     STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
     Fs = 100;
-    indexs = 1:2;
+    indexs = 1:13;
 	if strcmpi(type,'large')
 		plotLargePlot(sweepResult,isSavePlot,STFT,Fs,indexs);
 	else
@@ -19,7 +19,7 @@ function plotShadow(sweepResult,isSavePlot,STFT,Fs)
     paperFigureSet('full',6);
     subplot(1,2,1)
     plotSweepFrequencyDistributionFre(sweepResult,Fs,'STFT',STFT...
-        ,'charttype','contourf');%,'LevelStep',100,'ShowText','off','TextStep',60,'LineStyle','-'
+        ,'charttype','contourf');%,'charttype','contourf'plot3
     title('(a)','FontSize',paperFontSize());
     set(gca,'color','none');
     
@@ -68,11 +68,12 @@ function plotSmallPlot(sweepResult,isSavePlot,STFT,Fs,indexs)
 		figHandle = figure;
 		paperFigureSet('small',6);
 		fh = plotSweepFrequency(pressure,Fs,'STFT',STFT);
+        set(gca,'XTick',0:10:50);
 		view(-35,36);
 		xlabel('频率(Hz)','FontSize',paperFontSize());
 		ylabel('时间(s)','FontSize',paperFontSize());
 		zlabel('幅值','FontSize',paperFontSize());
-		title(sprintf{'测点%d',index},'FontSize',paperFontSize());
+		title(sprintf('测点%d',index),'FontSize',paperFontSize());
 		box on;
 		if isSavePlot
 			set(gca,'color','none');
