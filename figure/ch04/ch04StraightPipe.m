@@ -7,7 +7,7 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 %% 数据路径
-if 0
+if 1
 straightPipeDataPath = fullfile(dataPath,'实验原始数据\纯直管\RPM420-0.1MPa');%直管
 
 %% 加载数据
@@ -31,7 +31,9 @@ param.Dpipe = 0.098;%管道直径（m）
 param.sectionL = 0:0.5:param.L;%linspace(0,param.L1,14);
 
 %% 绘图 
-isSavePlot = 0;
+% 
+% 
+isSavePlot = 1;
 
 %% 实验数据分析
 
