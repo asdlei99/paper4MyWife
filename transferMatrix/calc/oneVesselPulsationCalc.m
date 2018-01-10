@@ -110,7 +110,9 @@ if 1 == size(pp,2)
     vtype = st.vtype;
     if ~(strcmpi(vtype,'StraightInStraightOut') || strcmpi(vtype,'EqualBiasInOut'))
         lv1 = st.lv1;
-        lv2 = st.lv2;
+        if strcmpi(vtype,'biasinbiasout')   
+            lv2 = st.lv2;
+        end
     end
 else
     while length(pp)>=2
