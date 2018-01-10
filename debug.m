@@ -1,2 +1,2 @@
 
-paperPlot04StraightPipeTheory([],0)
+paperPlotInnerPipeTheory([],0)
