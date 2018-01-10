@@ -1,15 +1,15 @@
 function M = vesselHaveInnerPipeInBiasTransferMatrix(Lv1,Lv2,l,Dv,Dpipe ...
-    ,Lin,Lout,Din,lv1,lv3,lv4,Dbias,Dex,varargin)
+    ,Lin,Lout,Dinnerpipe,Lbias,varargin)
 
 %计算管容管容的脉动
 %                 L1
 %                     |
 %                     |
-%           l         |          Lv              l    L2  
+%           l  Lbias  |          Lv              l    L2  
 %              _______|_________________________        
 %             |    dp1(n1)   |    dp2(n2)       |
 %             |        ______|______ lc         |     
-%             |        ______ ______ Din        |----------
+%             |        ______ ______ Dinnerpipe |----------
 %             |              |                  |
 %             |_________Lin__|__Lout____________|       
 %                               
@@ -28,6 +28,7 @@ coeffFriction = nan;
 meanFlowVelocity = nan;
 mach = nan;
 notMach = 0;%强制不使用mach
+DInsert = 0;
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -66,6 +67,8 @@ while length(pp)>=2
             mach = val;
         case 'notmach'
             notMach = val;
+		case 'dinsert'
+			DInsert = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -87,7 +90,7 @@ end
 %流速修正
 S = pi .* Dpipe.^2 ./ 4;
 Sv = pi .* Dv.^2 ./ 4;%缓冲罐截面积
-Sp = pi*Din.^2./4;%孔管管径截面积
+Sp = pi*Dinnerpipe.^2./4;%孔管管径截面积
 Sv_p = Sv-Sp;%去除孔管的缓冲罐截面积
 Dv_inner = (4*Sv_p/pi).^0.5;%计算名义直径
 mfvStraight = nan;
@@ -135,7 +138,7 @@ if isDamping
         if length(meanFlowVelocity) < 4
             error('“meanFlowVelocity”平均流速的长度过小，必须为4');
         end
-        Dtemp = [Dpipe,Dv,Dv_inner,Din];
+        Dtemp = [Dpipe,Dv,Dv_inner,Dinnerpipe];
         coeffDamping = (4.*coeffFriction.*meanFlowVelocity./Dtemp)./(2.*a);       
     end
     if length(coeffDamping)<4
@@ -192,12 +195,12 @@ M2 = straightPipeTransferMatrix(l,'k',k,'d',Dpipe,'a',a...
       ,'isDamping',isDamping,'coeffDamping',coeffDamping(1) ...
         ,'mach',optMach.machStraight,'notmach',optMach.notMach);
 Mv = haveInnerPipeInBiasTransferMatrix(a,k,Lv1,Lv2,Dv,Dpipe ...
-    ,Lin,Lout,Din,lv1,lv3,lv4,Dbias,Dex,optDamping,optMach);
+    ,Lin,Lout,Dinnerpipe,Lbias,DInsert,optDamping,optMach);
 M = M2 * Mv * M1;
 end
 %这里都是用直管等效
 function M = haveInnerPipeInBiasTransferMatrix(a,k,Lv1,Lv2,Dv,Dpipe ...
-    ,Lin,Lout,Din,lv1,lv3,lv4,Dbias,Dex,optDamping,optMach)
+    ,Lin,Lout,Dinnerpipe,Lbias,DInsert,optDamping,optMach)
 
 
     if ~isstruct(optDamping)
@@ -215,7 +218,7 @@ function M = haveInnerPipeInBiasTransferMatrix(a,k,Lv1,Lv2,Dv,Dpipe ...
     if ((Lv1 < 0) || (Lv2 < 0))
         error('长度尺寸有误');
     end
-    Mv1 = IBstraightPipeTransferMatrix(lv3+Lin-Lv1,'k',k,'d',Dex,'dv',Dv,'a',a,...
+    Mv1 = IBstraightPipeTransferMatrix(Lbias+Lin-Lv1,'k',k,'d',Dinnerpipe,'dv',Dv,'a',a,...
             'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDampVessel...
             ,'mach',optMach.machVessel,'notmach',optMach.notMach);
     Mv2 = straightPipeTransferMatrix(Lv2-Lout,'k',k,'d',Dv,'a',a,...
@@ -226,13 +229,15 @@ function M = haveInnerPipeInBiasTransferMatrix(a,k,Lv1,Lv2,Dv,Dpipe ...
     Spipe = pi.* Dpipe.^2 ./ 4;
     LM = sudEnlargeTransferMatrix(Spipe,Sv,a,'coeffdamping',optDamping.coeffDampStraight,'mach',optMach.machStraight,'notMach',optMach.notMach);
     RM = sudReduceTransferMatrix(Sv,Spipe,a,'coeffdamping',optDamping.coeffDampStraight,'mach',optMach.machStraight,'notMach',optMach.notMach);
-    innerLM = innerPipeCavityTransferMatrix(Dv,Dbias,lv4,'a',a,'k',k);
-    innerRM = innerPipeCavityTransferMatrix(Dv,Din,Lout,'a',a,'k',k);
-    innerLMIB = innerPipeCavityTransferMatrix(Dv,Dex,lv1,'a',a,'k',k);
+    lv4 = Lv1 - Lin;
+	innerLM = innerPipeCavityTransferMatrix(Dv,DInsert,lv4,'a',a,'k',k);
+    innerRM = innerPipeCavityTransferMatrix(Dv,Dinnerpipe,Lout,'a',a,'k',k);
+	lv1 = Lv1 - Lbias;
+    innerLMIB = innerPipeCavityTransferMatrix(Dv,Dinnerpipe,lv1,'a',a,'k',k);
    
     %内插管的管道传递矩阵
-    innerPM = straightPipeTransferMatrix(Lin+Lout,'k',k,'d',Din,'a',a,...
+    innerPM = straightPipeTransferMatrix(Lin+Lout,'k',k,'d',Dinnerpipe,'a',a,...
                  'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDampInnerPipe...
                 ,'mach',optMach.machInnerPipe,'notmach',optMach.notMach);   
-    M = RM * Mv2 * innerRM * innerPM * innerLM * Mv1 * innerLMIB * LM;
+    M = RM * Mv2 * innerRM * innerPM * innerLMIB * Mv1* innerLM  * LM;
 end
