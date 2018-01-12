@@ -72,7 +72,7 @@ function fh  = plotSweepFrequencyDistributionAmp( pressures,Fs,varargin )
     elseif strcmpi(chartType,'contourf')
         Z = y';
         [X,Y] = meshgrid(sd.T,rang);
-        contourf(X,Y,Z,varargin{:});
+        [C,fh.contourfHandle] = contourf(X,Y,Z,varargin{:});
         xlabel('Ê±¼ä(s)','FontSize',paperFontSize());
         ylabel('²âµã','FontSize',paperFontSize());
     else

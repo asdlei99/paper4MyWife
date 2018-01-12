@@ -19,14 +19,16 @@ function plotShadow(sweepResult,isSavePlot,STFT,Fs)
     paperFigureSet('full',6);
     subplot(1,2,1)
     plotSweepFrequencyDistributionFre(sweepResult,Fs,'STFT',STFT...
-        ,'charttype','contourf');%,'charttype','contourf'plot3
+        ,'charttype','plot3');%,'charttype','contourf'plot3
+    view(-24,39);
     title('(a)','FontSize',paperFontSize());
     set(gca,'color','none');
     
     %·ùÖµÍ¶Ó°
     subplot(1,2,2)
-    plotSweepFrequencyDistributionAmp(sweepResult,Fs,'STFT',STFT...
+    fh = plotSweepFrequencyDistributionAmp(sweepResult,Fs,'STFT',STFT...
         ,'charttype','contourf');%,'LevelStep',80,'ShowText','off','TextStep',60,'LineStyle','-'
+    set(fh.contourfHandle,'LevelStep',10,'LineStyle','none');
     title('(b)','FontSize',paperFontSize());
     set(gca,'color','none');
     h = colorbar('Position',[0.919112096709723 0.147410714285715 0.031183034764756 0.771071428571429]);

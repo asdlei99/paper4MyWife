@@ -136,181 +136,181 @@ magPipe = magPipe(freRang,:);
 
 %% 全管系脉冲响应云图
 if 0
-rowCount = 1;
-columnCount = 4;
-subplotCount = 1;
-figure('Name','管系脉冲响应-全管系脉冲响应云图')
+    rowCount = 1;
+    columnCount = 4;
+    subplotCount = 1;
+    figure('Name','管系脉冲响应-全管系脉冲响应云图')
 
-maxVal = 0;
-minVal = 10e10;
-%直管
-subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-y = frePipe(:,1);
-x = sectionL;%1:size(mag1,2);
-Z = magPipe;
-Z(Z<=0)=nan;
-[X,Y] = meshgrid(x,y);
-contourf(X,Y,Z);
-fax(1) = gca;
-maxVal=max([maxVal,max(Z)]);
-minVal = min([minVal,min(Z)]);
-set(gca,'XTick',0:2:10);
-xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title(sprintf('直管'),'fontName',paperFontName(),'FontSize',paperFontSize());
+    maxVal = 0;
+    minVal = 10e10;
+    %直管
+    subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+    y = frePipe(:,1);
+    x = sectionL;%1:size(mag1,2);
+    Z = magPipe;
+    Z(Z<=0)=nan;
+    [X,Y] = meshgrid(x,y);
+    contourf(X,Y,Z);
+    fax(1) = gca;
+    maxVal=max([maxVal,max(Z)]);
+    minVal = min([minVal,min(Z)]);
+    set(gca,'XTick',0:2:10);
+    xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+    title(sprintf('直管'),'fontName',paperFontName(),'FontSize',paperFontSize());
 
-%直进侧后出
-subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-y = freVesselOSB(:,1);
-x = sectionL;
-Z = magVesselOSB;
-maxVal=max([maxVal,max(Z)]);
-minVal = min([minVal,min(Z)]);
-[X,Y] = meshgrid(x,y);
-contourf(X,Y,Z);
-set(gca,'XTick',0:2:10);
-hold on;
-ax = axis;
-fax(2) = gca;
-plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
-text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title('直进侧后出','fontName',paperFontName(),'FontSize',paperFontSize());
-%直进侧前出
-subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-y = freVesselOSFB(:,1);
-x = sectionL;%1:size(mag1,2);
-Z = magVesselOSFB;
-maxVal=max([maxVal,max(Z)]);
-minVal = min([minVal,min(Z)]);
-[X,Y] = meshgrid(x,y);
-contourf(X,Y,Z);
-set(gca,'XTick',0:2:10);
-hold on;
-ax = axis;
-fax(3) = gca;
-plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
-text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title('直进侧前出','fontName',paperFontName(),'FontSize',paperFontSize());
-%直进直出
-subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-y = freVesselOV(:,1);
-x = sectionL;%1:size(mag1,2);
-Z = magVesselOV;
-maxVal=max([maxVal,max(Z)]);
-minVal = min([minVal,min(Z)]);
-[X,Y] = meshgrid(x,y);
-contourf(X,Y,Z);
-set(gca,'XTick',0:2:10);
-hold on;
-ax = axis;
-fax(4) = gca;
-plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
-text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title('直进直出','fontName',paperFontName(),'FontSize',paperFontSize());
-% for i = 1:length(fax)
-%     set(fax(i),'Clim',[minVal maxVal]);
-% end
+    %直进侧后出
+    subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+    y = freVesselOSB(:,1);
+    x = sectionL;
+    Z = magVesselOSB;
+    maxVal=max([maxVal,max(Z)]);
+    minVal = min([minVal,min(Z)]);
+    [X,Y] = meshgrid(x,y);
+    contourf(X,Y,Z);
+    set(gca,'XTick',0:2:10);
+    hold on;
+    ax = axis;
+    fax(2) = gca;
+    plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
+    text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+    title('直进侧后出','fontName',paperFontName(),'FontSize',paperFontSize());
+    %直进侧前出
+    subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+    y = freVesselOSFB(:,1);
+    x = sectionL;%1:size(mag1,2);
+    Z = magVesselOSFB;
+    maxVal=max([maxVal,max(Z)]);
+    minVal = min([minVal,min(Z)]);
+    [X,Y] = meshgrid(x,y);
+    contourf(X,Y,Z);
+    set(gca,'XTick',0:2:10);
+    hold on;
+    ax = axis;
+    fax(3) = gca;
+    plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
+    text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+    title('直进侧前出','fontName',paperFontName(),'FontSize',paperFontSize());
+    %直进直出
+    subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+    y = freVesselOV(:,1);
+    x = sectionL;%1:size(mag1,2);
+    Z = magVesselOV;
+    maxVal=max([maxVal,max(Z)]);
+    minVal = min([minVal,min(Z)]);
+    [X,Y] = meshgrid(x,y);
+    contourf(X,Y,Z);
+    set(gca,'XTick',0:2:10);
+    hold on;
+    ax = axis;
+    fax(4) = gca;
+    plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
+    text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+    title('直进直出','fontName',paperFontName(),'FontSize',paperFontSize());
+    % for i = 1:length(fax)
+    %     set(fax(i),'Clim',[minVal maxVal]);
+    % end
 
-set(gcf,'unit','centimeter','position',[8,4,14,5]);
-set(gcf,'color','w');
+    set(gcf,'unit','centimeter','position',[8,4,14,5]);
+    set(gcf,'color','w');
 
 else
     
-rowCount = 1;
-columnCount = 2;
-subplotCount = 1;
-figure('Name','管系脉冲响应-全管系脉冲响应云图')
+    rowCount = 1;
+    columnCount = 2;
+    subplotCount = 1;
+    figure('Name','管系脉冲响应-全管系脉冲响应云图')
 
-maxVal = 0;
-minVal = 10e10;
-% %直管
-% subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-% y = frePipe(:,1);
-% x = sectionL;%1:size(mag1,2);
-% Z = magPipe;
-% Z(Z<=0)=nan;
-% [X,Y] = meshgrid(x,y);
-% contourf(X,Y,Z);
-% fax(1) = gca;
-% maxVal=max([maxVal,max(Z)]);
-% minVal = min([minVal,min(Z)]);
-% set(gca,'XTick',0:2:10);
-% xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-% ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-% title(sprintf('等截面管管系'),'fontName',paperFontName(),'FontSize',paperFontSize());
+    maxVal = 0;
+    minVal = 10e10;
+    % %直管
+    % subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+    % y = frePipe(:,1);
+    % x = sectionL;%1:size(mag1,2);
+    % Z = magPipe;
+    % Z(Z<=0)=nan;
+    % [X,Y] = meshgrid(x,y);
+    % contourf(X,Y,Z);
+    % fax(1) = gca;
+    % maxVal=max([maxVal,max(Z)]);
+    % minVal = min([minVal,min(Z)]);
+    % set(gca,'XTick',0:2:10);
+    % xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+    % ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+    % title(sprintf('等截面管管系'),'fontName',paperFontName(),'FontSize',paperFontSize());
 
-% %直进侧后出
-% subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-% y = freVesselOSB(:,1);
-% x = sectionL;
-% Z = magVesselOSB;
-% maxVal=max([maxVal,max(Z)]);
-% minVal = min([minVal,min(Z)]);
-% [X,Y] = meshgrid(x,y);
-% contourf(X,Y,Z);
-% set(gca,'XTick',0:2:10);
-% hold on;
-% ax = axis;
-% fax(2) = gca;
-% plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
-% text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-% text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-% xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-% ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-% title('直进侧后出','fontName',paperFontName(),'FontSize',paperFontSize());
-%直进侧前出
-subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-y = freVesselOSFB(:,1);
-x = sectionL;%1:size(mag1,2);
-Z = magVesselOSFB;
-maxVal=max([maxVal,max(Z)]);
-minVal = min([minVal,min(Z)]);
-[X,Y] = meshgrid(x,y);
-contourf(X,Y,Z);
-set(gca,'XTick',0:2:10);
-hold on;
-ax = axis;
-fax(1) = gca;
-plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
-text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title('（a）','fontName',paperFontName(),'FontSize',paperFontSize());
-%直进直出
-subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-y = freVesselOV(:,1);
-x = sectionL;%1:size(mag1,2);
-Z = magVesselOV;
-maxVal=max([maxVal,max(Z)]);
-minVal = min([minVal,min(Z)]);
-[X,Y] = meshgrid(x,y);
-contourf(X,Y,Z);
-set(gca,'XTick',0:2:10);
-hold on;
-ax = axis;
-fax(2) = gca;
-plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
-text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-title('（b）','fontName',paperFontName(),'FontSize',paperFontSize());
-% for i = 1:length(fax)
-%     set(fax(i),'Clim',[minVal maxVal]);
-% end
+    % %直进侧后出
+    % subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+    % y = freVesselOSB(:,1);
+    % x = sectionL;
+    % Z = magVesselOSB;
+    % maxVal=max([maxVal,max(Z)]);
+    % minVal = min([minVal,min(Z)]);
+    % [X,Y] = meshgrid(x,y);
+    % contourf(X,Y,Z);
+    % set(gca,'XTick',0:2:10);
+    % hold on;
+    % ax = axis;
+    % fax(2) = gca;
+    % plot([2.5,2.5],[ax(3),ax(4)],'--','color',[1,1,1]);
+    % text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    % text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    % xlabel('Distance(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+    % ylabel('Frequency(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+    % title('直进侧后出','fontName',paperFontName(),'FontSize',paperFontSize());
+    %直进侧前出
+    subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+    y = freVesselOSFB(:,1);
+    x = sectionL;%1:size(mag1,2);
+    Z = magVesselOSFB;
+    maxVal=max([maxVal,max(Z)]);
+    minVal = min([minVal,min(Z)]);
+    [X,Y] = meshgrid(x,y);
+    contourf(X,Y,Z);
+    set(gca,'XTick',0:2:10);
+    hold on;
+    ax = axis;
+    fax(1) = gca;
+    plot([L1,L1],[ax(3),ax(4)],'--','color',[1,1,1]);
+    text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+    title('（a）','fontName',paperFontName(),'FontSize',paperFontSize());
+    %直进直出
+    subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+    y = freVesselOV(:,1);
+    x = sectionL;%1:size(mag1,2);
+    Z = magVesselOV;
+    maxVal=max([maxVal,max(Z)]);
+    minVal = min([minVal,min(Z)]);
+    [X,Y] = meshgrid(x,y);
+    contourf(X,Y,Z);
+    set(gca,'XTick',0:2:10);
+    hold on;
+    ax = axis;
+    fax(2) = gca;
+    plot([L1,L1],[ax(3),ax(4)],'--','color',[1,1,1]);
+    text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+    xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+    ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+    title('（b）','fontName',paperFontName(),'FontSize',paperFontSize());
+    for i = 1:length(fax)
+        set(fax(i),'Clim',[minVal maxVal]);
+    end
 
-set(gcf,'unit','centimeter','position',[8,4,14,5]);
-set(gcf,'color','w');
+    set(gcf,'unit','centimeter','position',[8,4,14,6]);
+    set(gcf,'color','w');
 end
 
 

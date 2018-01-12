@@ -20,8 +20,8 @@ if isempty(param)
 	param.rpm = 420;
 	param.outDensity = 1.5608;
 	param.Fs = 4096;
-	param.Lin = 200;
-	param.Lout = 200;
+	param.Lin = 0.200;
+	param.Lout = 0.200;
 	param.Dinnerpipe = param.Dpipe;
 end
 freRaw = [14,21,28,42,56,70];
