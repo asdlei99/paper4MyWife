@@ -49,16 +49,26 @@ function res = plotInnerPipeChangeD(Dinnerpipe,param,massFlowDataCell,isSaveFig)
 	figure
 	paperFigureSet('small',6);
 	measurePoints = floor(linspace(1,size(res{1,1},2),4));
+    X = res{1,3};
 	hold on;
 	for i = 1:size(res,1)
 		v(i,:) = res{i,2}(measurePoints);
 	end
 	legendText = {};
 	for i = 1:size(v,2)
-		legendText{i} = sprintf('距离%g',measurePoints(i));
-		h(i) = plot(Dinnerpipe,v(:,i),'color',getPlotColor(i),'Marker',getMarkStyle(i));
+		legendText{i} = sprintf('距离%g',X(measurePoints(i)));
+		h(i) = plot(Dinnerpipe.*1000,v(:,i)./1000,'color',getPlotColor(i),'Marker',getMarkStyle(i));
 	end
-	lh = legend(h,legendText);
+	legend(h,legendText,'Position',[0.544532903222646 0.688236222436951 0.340579706041709 0.314243750775264]);
+    box on;
+    ax = axis();
+    plot([param.Dpipe.*1000,param.Dpipe.*1000],[ax(3),ax(4)],'--r');
+    xlabel('内插管径(mm)','FontSize',paperFontSize());
+    ylabel('气流脉动峰峰值(kPa)','FontSize',paperFontSize());
+    if isSaveFig
+		set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内插管管径对脉动的影响');
+	end
 end
 
 

@@ -42,25 +42,46 @@ STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
 isSaveFigure = 0;
-
+%%
+param.acousticVelocity = 345;%声速（m/s）
+param.isDamping = 1;
+param.coeffFriction = 0.03;
+param.meanFlowVelocity = 16;
+param.L1 = 3.5;%(m)
+param.L2 = 6;
+param.Lv1 = 1.1/2;
+param.Lv2 = 1.1/2;
+param.l = 0.01;%(m)缓冲罐的连接管长
+param.Dv = 0.372;
+param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
+param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+param.Dpipe = 0.098;%管道直径（m）
+param.Lbias = 0.168+0.150;
+param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
+param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
+param.rpm = 420;
+param.outDensity = 1.5608;
+param.Fs = 4096;
+param.Lin = 0.200;
+param.Lout = 0.200;
+param.Dinnerpipe = param.Dpipe;
 %% 绘制多组压力脉动
-if 1
+if 0
 	paperPlotInnerPipeExpCmp(innerPipeDataCells,legendLabels,expVesselRang,isSaveFigure)
 end
 
 %% 绘制理论模拟实验
-if 0
-	legendText = {'单一缓冲罐','内插管缓冲罐'};
-	paperPlotInnerPipeExpTheSim({expVesselCombineData,expOrificD0_5CombineData}...
-								,{simVesselDataCell,simOrificD0_5DataCell}...
+if 1
+    param.Dinnerpipe = 0.5 * param.Dpipe;
+	paperPlotInnerPipeExpTheSim({expInnerPipe0_5CombineData,expInnerPipe0_75CombineData,expInnerPipe01CombineData}...
+								,{simInnerPipe0_5DataCell,simInnerPipe0_5DataCell,simInnerPipe0_5DataCell}...
 								,param...
-								,legendText...
 								,isSaveFigure);
 end
 
 
 %% 绘制多组压力脉动抑制率
-if 1
+if 0
     fh = figureExpSuppressionLevel(innerPipeDataCells,legendLabels,'errorType',errorType...
         ,'expVesselRang',expVesselRang...
     );
@@ -70,7 +91,7 @@ if 1
         'X',[0.303472222222222 0.314496527777778],'Y',[0.545104166666667 0.4525]);
 end
 %% 绘制多组压力降
-if 1
+if 0
     fh = figureExpPressureDrop(innerPipeDataCells,legendLabels,[2,3],'chartType','bar');
     %'chartType'== 'bar' 时用于设置bar的颜色
     set(fh.barHandle,'FaceColor',getPlotColor(1));
@@ -79,7 +100,7 @@ end
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
 %绘制1倍频的对比
 %% 绘制倍频
-if 1
+if 0
     fh = figureExpNatureFrequencyBar(innerPipeDataCells,1,legendLabels);
     set(fh.legend,'Location','northwest');
     fh = figureExpNatureFrequencyBar(innerPipeDataCells,2,legendLabels);

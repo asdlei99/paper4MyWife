@@ -209,6 +209,7 @@ end
 xlabel(xlabelText,'fontsize',paperFontSize());
 ylabel(ylabelText,'fontsize',paperFontSize());
 xlim([2,11]);
+box on;
 fh.gca = gca;
 end
 

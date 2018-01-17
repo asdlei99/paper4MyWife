@@ -226,7 +226,7 @@ if 0
 else
     
     rowCount = 1;
-    columnCount = 2;
+    columnCount = 1;
     subplotCount = 1;
     figure('Name','管系脉冲响应-全管系脉冲响应云图')
 
@@ -285,26 +285,26 @@ else
     text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
     xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
     ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-    title('（a）','fontName',paperFontName(),'FontSize',paperFontSize());
-    %直进直出
-    subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
-    y = freVesselOV(:,1);
-    x = sectionL;%1:size(mag1,2);
-    Z = magVesselOV;
-    maxVal=max([maxVal,max(Z)]);
-    minVal = min([minVal,min(Z)]);
-    [X,Y] = meshgrid(x,y);
-    contourf(X,Y,Z);
-    set(gca,'XTick',0:2:10);
-    hold on;
-    ax = axis;
-    fax(2) = gca;
-    plot([L1,L1],[ax(3),ax(4)],'--','color',[1,1,1]);
-    text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-    text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
-    xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
-    ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
-    title('（b）','fontName',paperFontName(),'FontSize',paperFontSize());
+%     title('（a）','fontName',paperFontName(),'FontSize',paperFontSize());
+%     %直进直出
+%     subplot(rowCount,columnCount,subplotCount);subplotCount = subplotCount + 1;
+%     y = freVesselOV(:,1);
+%     x = sectionL;%1:size(mag1,2);
+%     Z = magVesselOV;
+%     maxVal=max([maxVal,max(Z)]);
+%     minVal = min([minVal,min(Z)]);
+%     [X,Y] = meshgrid(x,y);
+%     contourf(X,Y,Z);
+%     set(gca,'XTick',0:2:10);
+%     hold on;
+%     ax = axis;
+%     fax(2) = gca;
+%     plot([L1,L1],[ax(3),ax(4)],'--','color',[1,1,1]);
+%     text(3,10,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+%     text(3,90,'a','color',[1,1,1],'fontName',paperFontName(),'FontSize',paperFontSize());
+%     xlabel('距离(m)','fontName',paperFontName(),'FontSize',paperFontSize());
+%     ylabel('频率(Hz)','fontName',paperFontName(),'FontSize',paperFontSize());
+%     title('（b）','fontName',paperFontName(),'FontSize',paperFontSize());
     for i = 1:length(fax)
         set(fax(i),'Clim',[minVal maxVal]);
     end

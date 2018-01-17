@@ -1,4 +1,4 @@
-function [ h,fillH,markH] = plotSpectrum( fre,mag,varargin )
+function [ h,fillH,markH,pks,locsFre] = plotSpectrum( fre,mag,varargin )
 %»æÖÆÆµÆ×Í¼£¬ÆµÆ×Í¼»áÌî³äÇøÓò
 % By:³¾ÖÐÔ¶
 %   fre ÆµÂÊ
@@ -78,7 +78,9 @@ axisData = axis;
 if isMarkPeak
     [pks,locs]=findpeaks(mag,'SORTSTR','descend','MINPEAKDISTANCE',minPeakDistance,'NPEAKS',markCount);
     hold on;
-    markH = plot(fre(locs),pks);
+    locsFre = fre(locs);
+    markH = plot(locsFre,pks);
+    
     set(markH,'color',markColor);
     set(markH,'LineStyle','none');
     set(markH,'Marker','v');

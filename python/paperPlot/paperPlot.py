@@ -27,6 +27,25 @@ LINE_STYLE_STR = ['-','--','-.',':']
 """
 LINE_MARKER_STR = ['.','o','v','^','<','1','>','2','s','3','p','4','*','8','h','+','x','D','H','d']
 
+def show():
+    plt.show()
+
+def figureSize(sizeType='normal',height=3):
+	"""获取绘图的size
+
+	Keyword Arguments:
+		height {[type]} -- [description] (default: {3})
+	"""
+
+	fs = (3.5433071,height)
+	if sizeType.lower() == 'normal':
+		fs = (3.5433071,height)
+	elif sizeType.lower() == 'large':
+		fs = (5.511811,height)
+	elif sizeType.lower() == 'fullWidth':
+		fs = (7.480315,height)
+	return fs
+
 def paperFigure(sizeType='normal',height=3):
 	"""替代plt.figure的函数，可以根据论文的固定格式生成figure
 	
@@ -36,8 +55,6 @@ def paperFigure(sizeType='normal',height=3):
 		sizeType {[string]} -- 定义图的大小样式可用'normal','large','fullWidth'
 		height {[double]} -- 定义图的高度
 	"""
-	a = 1
-	print(a)
 	fs = (3.5433071,height)
 	if sizeType.lower() == 'normal':
 		fs = (3.5433071,height)

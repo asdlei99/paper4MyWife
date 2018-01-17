@@ -88,6 +88,7 @@ function plotStraightPipeChangD(DRang,param,massFlowDataCell,isSaveFig)
 end
 
 function plotConstMassFlowDd(DRang,param,isSaveFig)
+%等质量流量下管径对体积流量的影响
     figHandle = figure;
 	paperFigureSet('small',6);
     V = ((param.Dpipe .^ 2) ./ (DRang .^ 2)).*param.meanFlowVelocity;
