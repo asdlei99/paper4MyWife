@@ -32,7 +32,6 @@ def spectrum(datas,fs,fftSize = -1,fftType=1,scale='amp',isDetrend = True):
         y = y[0:len(y)/2]
     else:
         y = np.fft.rfft(datas,fftSize)
-
     amp = dealFFTMagnitude(y,scale,fftSize)
     freqs = dealFFTFrequency(fs,fftSize)
     return (freqs,amp)
@@ -55,19 +54,22 @@ def dealFFTMagnitude(mag,scale='amp',fftSize=0):
     endIndex = spectrumSize - 1;
     amp = np.zeros(spectrumSize)
     scale = scale.lower()
+    mag = np.abs(mag)
+    
     if scale == 'amp':
-        amp[0] = np.abs(mag[0])/fftSize
-        amp[endIndex] = np.abs(mag[endIndex])/fftSize
-        amp[1:endIndex] = np.abs(mag[1:endIndex])*temp
+        amp[0] = mag[0]/fftSize
+        amp[endIndex] = mag[endIndex]/fftSize
+        amp[1:endIndex] = mag[1:endIndex]*temp
     elif scale == 'ampdb':
-        amp[0] = np.abs(mag[0])/fftSize
-        amp[endIndex] = np.abs(mag[endIndex])/fftSize
-        amp[1:endIndex] = np.abs(mag[1:endIndex])*temp
-        amp = 20*np.log10(np.clip(np.abs(amp), 1e-20, 1e100))
+        amp[0] = mag[0]/fftSize
+        amp[endIndex] = mag[endIndex]/fftSize
+        amp[1:endIndex] = mag[1:endIndex]*temp
+        amp = 20*np.log10(np.clip(amp), 1e-20, 1e100)
     elif scale == 'mag':
-        amp = np.abs(mag[0:endIndex+1])
+        amp = mag[0:endIndex+1]
     else:
         raise ValueError('scale=\'amp\' or \'ampdb\' or \'mag\' ')
+
     return amp
 
 def dealFFTFrequency(fs,fftSize):

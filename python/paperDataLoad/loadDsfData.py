@@ -3,13 +3,26 @@ import numpy as np
 import struct as st
 import array
 import os
-
+import matplotlib.pyplot as plt
 
 def loadDsfData(filePath):
     """加载目录下的dsf文件
-    
+    Descripe:
+		filePath [string] 文件路径
+	Return:
+		headerDict : dict 文件头的字典 {'KindOfData':int
+										,'RMSValue':float
+										,'PpValue':float
+										,'KurValue':float
+										,'SampleLen':int
+										,'SampleFre':int
+										,'Gain':short
+										,'Filter':short
+										,'OutTrigger':short
+										,'Integral':short}
+		wave : list 波形
     """
-    with open(filePath,mode='br') as fld:
+    with open(filePath,mode='r') as fld:
         fld.seek(0)
         headerDict = dict();
         byteBuffer = fld.read(4)
@@ -35,5 +48,11 @@ def loadDsfData(filePath):
             ar = array.array('f')
             ar.fromfile(fld,headerDict['SampleLen'])
             wave = ar.tolist()
-            return [headerDict,wave]
+            return headerDict,wave
 
+
+	
+
+
+if __name__ == '__main__':
+	print('__main__')

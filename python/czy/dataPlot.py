@@ -78,12 +78,13 @@ def plotFrequencySpectrum(wave,fs,ax=None,fftN = -1,isShowPeaks = True,markPeaks
         [[fre,mag,ppd],[fig,ax]]:list
             [[频率，幅值，峰值索引],[fig,ax]]
     '''
+
     ppd = None
     fig = None
     peaksMarkStyle = 'or'
     if 'peaksMarkStyle' in otherSet:
         markStyle = otherSet['peaksMarkStyle']
-    fre,mag = czySignal.spectrum(wave,fs,fftN,1,scale)
+    fre,mag = czySignal.spectrum(wave,fs,fftSize=fftN,scale=scale)
     if ax is None:
         fig,ax = plt.subplots(1, 1, figsize=(8, 4))
         fig.set_facecolor('w')
