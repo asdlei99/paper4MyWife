@@ -37,20 +37,79 @@ vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselDirectInSideBackOutCombineData...
     ,vesselDirectInDirectOutCombineData...
     };
-
-%% 实验数据绘图
+%% 绘制频率特性
 if 0
+    rang = 1:13;
+    figure;
+    paperFigureSet('full',6);
+    subplot(1,2,1)
+    [fh,tmp,y1,tmp,y2] = figureSpectrum3D(vesselDirectInSideFontOutDataCells{1,2}.subSpectrumData,'rang',rang);
+    clear tmp;
+    box on;
+    ylim([0,14]);
+    view(37,32);
+    set(gca,'color','none');
+    subplot(1,2,2)
+    hold on;
+    h(1) = plot(rang,y1,'color',getPlotColor(1),'Marker',getMarkStyle(1));
+    h(2) = plot(rang,y2,'color',getPlotColor(2),'Marker',getMarkStyle(2));
+    legend(h,{'1倍频','2倍频'},'Location','northwest','FontSize',paperFontSize());
+    xlabel('测点','FontSize',paperFontSize());
+    ylabel('幅值','FontSize',paperFontSize());
+    set(gca,'color','none');
+    box on;
+    if 1
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出测点频率');
+		close(fh.figure);
+    end
+end
+%% 实验数据绘图
+if 1
     if strcmpi(paperType,'MainPaper')
         singleVesselExpPlot({vesselDirectInSideFontOutCombineData}...
         ,vesselDirectPipeCombineData,{'径向排气式缓冲罐','直管'}...
         ,'errorTypeInExp','ci'...
         ,'plusValueSubplot',0);
     else
-        singleVesselExpPlot({vesselDirectInSideFontOutCombineData,vesselDirectInDirectOutCombineData}...
-            ,vesselDirectPipeCombineData,{'径向排气式','轴向排气式','直管'});
+%         singleVesselExpPlot({vesselDirectInSideFontOutCombineData,vesselDirectInDirectOutCombineData}...
+%             ,vesselDirectPipeCombineData,{'径向排气式','轴向排气式','直管'}...
+%             ,'plusValueSubplot',0);
+
+        figure
+        paperFigureSet('small',6);
+        ddMean = mean(vesselDirectPipeCombineData.readPlus);
+        ddMean = ddMean(1:13);
+        suppressionRateBase = {ddMean};
+        fh = figureExpPressurePlusSuppressionRate({vesselDirectInSideFontOutCombineData,vesselDirectInDirectOutCombineData}...     
+                ,{'径向排气式','轴向排气式'}...
+                ,'errorDrawType','bar'...
+                ,'showVesselRigon',1 ...
+                ,'suppressionRateBase',suppressionRateBase...
+                ,'xIsMeasurePoint',0 ...
+                ,'figureHeight',6 ...
+                ,'xlabelText','管线距离(m)'...
+                ,'ylabelText','压力脉动抑制率(%)'...
+                ,'isFigure',0 ...
+                );
+        xlim([2,11]);
+        set(fh.gca,'Position',[0.149323668042243 0.188819444444445 0.77 0.630347222222228]);
+        set(fh.legend,'Position',[0.468841354327746 0.6 0.420433783473354 0.167569440239006]);
+
     end
 end
 
+%% 实验特征频率
+if 0
+    figure;
+    paperFigureSet('large',6);
+	fh = figureExpNatureFrequencyBar2(vesselDirectInSideFontOutCombineData,1:3,{'1倍特征频率','2倍特征频率','3倍特征频率'});
+    set(fh.legend,'Position',[0.142983160407072 0.621898741198966 0.262729119805357 0.254038172452636]);
+	if isSavePlot
+		set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出1-2,3倍特征频率对比');
+		close(fh.figure);
+    end
+end
 %% 和直管对比的压力脉动抑制率
 if 0
     paperFigureSet('large',6);
@@ -146,8 +205,10 @@ theVal(xThe>=2.5 & xThe < 5) = tmp+4.9*1e3;
 % theVal(xThe>=5 & xThe < 6) = theVal(xThe>5 & xThe < 6) + 8.97*1e3;
 % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
 theCells.pulsationValue = theVal;
-if 0
+if 1
     legnedText = {'实验','模拟','理论'};
+    figure
+    paperFigureSet('small',6);
     fh = figureExpAndSimThePressurePlus(vesselDirectInSideFontOutCombineData...
                                 ,vesselDirectInSideFontOutSimData...
                                 ,theCells...
@@ -160,9 +221,12 @@ if 0
                                 ,'figureHeight',7 ...
                                 ,'expVesselRang',expVesselRang);
     set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
+    set(gca,'Position',[0.148550724637681 0.18 0.771449275362319 0.65]);
     box on;
     set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进测出缓冲罐-理论模拟实验对比');
+    if 0
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进测出缓冲罐-理论模拟实验对比');
+    end
 end
 
 %绘制1,2,3倍频
@@ -230,7 +294,7 @@ if 0
 end
 
 %% 长径比
-if 1
+if 0
     chartType = 'plot3';
     Lv = 0.3:0.01:3;
     theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType',vType...

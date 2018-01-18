@@ -65,59 +65,62 @@ function d = paperPlot04StraightPipeSTFT(straightPipeDataCells,isSavePlot)
 	chartType = '2d';
 	%绘制所有1倍频
 	figHandle = figure;
-	paperFigureSet('normal',6);
+	paperFigureSet('full',7);
+    subplot(1,2,1)
 	if strcmpi(chartType,'2d')
 		hold on;
-        legendText = {};
 		for i = 1:length(rang)
-			h(i) = plot(baseFre1Time,baseFre1Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
-            legendText{i} = sprintf('测点%d',rang(i));
+			h(i) = plot(baseFre1Time,baseFre1Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));  
         end
-        hl = legend(h,legendText,'FontSize',paperFontSize());
 		box on;
-		xlabel('时间');
-		ylabel('幅值');
+        title('(a)','FontName',paperFontName(),'FontSize',paperFontSize());
+		xlabel('时间','FontName',paperFontName(),'FontSize',paperFontSize());
+		ylabel('幅值','FontName',paperFontName(),'FontSize',paperFontSize());
+        set(gca,'Position',[0.079375 0.153459115673161 0.316107456140351 0.769811326490258]);
+        set(gca,'color','none');
 	else
 		hold on;
 		for i = 1:length(rang)
 			h = plotSpectrum3(baseFre1Time,baseFre1Amp(i,:),rang(i),'isFill',1,'color',[229,44,77]./255);
 		end
-		xlabel('时间');
-		ylabel('测点');
-		zlabel('幅值');
+		xlabel('时间','FontName',paperFontName(),'FontSize',paperFontSize());
+		ylabel('测点','FontName',paperFontName(),'FontSize',paperFontSize());
+		zlabel('幅值','FontName',paperFontName(),'FontSize',paperFontSize());
 		axis tight;
 		box on;
 	end
-	if isSavePlot
-		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点1倍频'));
-        close(figHandle);
-	end
+
 	%绘制所有2倍频
-	figHandle = figure;
-	paperFigureSet('normal',6);
+    subplot(1,2,2)
 	if strcmpi(chartType,'2d')
 		hold on;
+        h = [];
+        legendText = {};
 		for i = 1:size(baseFre2Amp,1)
-			h = plot(baseFre2Time,baseFre2Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
+			h(i) = plot(baseFre2Time,baseFre2Amp(i,:),'color',getPlotColor(i),'marker',getMarkStyle(i));
+            legendText{i} = sprintf('测点%d',rang(i));
 		end
 		box on;
-		xlabel('时间');
-		ylabel('幅值');
+        hl = legend(h,legendText,'FontSize',paperFontSize());
+        title('(b)','FontName',paperFontName(),'FontSize',paperFontSize());
+		xlabel('时间','FontName',paperFontName(),'FontSize',paperFontSize());
+		ylabel('幅值','FontName',paperFontName(),'FontSize',paperFontSize());
+        set(gca,'color','none');
+        set(gca,'Position',[0.472072368421053 0.153459115673161 0.336995614035087 0.769811326490258]);
+        set(hl,'Position',[0.842024855502713 0.0617361360058065 0.135076752684422 0.885724181454512]);
 	else
 		hold on;
 		for i = 1:length(rang)
 			h = plotSpectrum3(baseFre2Time,baseFre2Amp(i,:),rang(i),'isFill',1,'color',[229,44,77]./255);
 		end
-		xlabel('时间');
-		ylabel('测点');
-		zlabel('幅值');
+		xlabel('时间','FontName',paperFontName(),'FontSize',paperFontSize());
+		ylabel('测点','FontName',paperFontName(),'FontSize',paperFontSize());
+		zlabel('幅值','FontName',paperFontName(),'FontSize',paperFontSize());
 		axis tight;
 		box on;
 	end
 	if isSavePlot
-		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),sprintf('直管时频分析-测点2倍频'));
+		saveFigure(fullfile(getPlotOutPutPath(),'ch04'),sprintf('直管时频分析-测点1-2倍频'));
 		close(figHandle);
 	end
 end

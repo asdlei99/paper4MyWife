@@ -132,8 +132,11 @@ function h = plotTwoPressureAndFrequency(pressure1,pressure2,fre1,mag1,fre2,mag2
     %ÆµÆ×1
 	lineColor = [229,49,75]./255;
 	ax3 = subplot(2,8,[9,12]);
-	h.spectrumHadnle = plotSpectrum(fre1,mag1,'isMarkPeak',1,'color',lineColor...
+    peaks = [];
+	[h.spectrumHadnle,tmp,tmp,tmp,peaks] = plotSpectrum(fre1,mag1,'isMarkPeak',1,'color',lineColor...
         ,'markCount',3,'isMarkData',1,'markDataStyle','num');
+    clear tmp;
+    fprintf('%g,%g,%g\n',peaks(1),peaks(2),peaks(3));
 	set(ax3,'color','none');
 	xlabel('ÆµÂÊ(Hz)','FontSize',paperFontSize());
 	ylabel('·ùÖµ(kPa)','FontSize',paperFontSize());
@@ -175,8 +178,10 @@ function h = plotTwoPressureAndFrequency(pressure1,pressure2,fre1,mag1,fre2,mag2
     %ÆµÆ×2
 	lineColor = [229,49,75]./255;
 	ax6 = subplot(2,8,[13,16]);
-	h.spectrumHadnle = plotSpectrum(fre2,mag2,'isMarkPeak',1,'color',lineColor...
+	[h.spectrumHadnle,tmp,tmp,tmp,peaks] = plotSpectrum(fre2,mag2,'isMarkPeak',1,'color',lineColor...
         ,'markCount',3,'isMarkData',1,'markDataStyle','num');
+    clear tmp;
+    fprintf('%g,%g,%g\n',peaks(1),peaks(2),peaks(3));
 	set(ax6,'color','none');
 	xlabel('ÆµÂÊ(Hz)','FontSize',paperFontSize());
 	ylabel('·ùÖµ(kPa)','FontSize',paperFontSize());

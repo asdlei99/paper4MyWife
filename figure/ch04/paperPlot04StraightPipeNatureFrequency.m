@@ -1,26 +1,12 @@
-function res = paperPlot04StraightPipeNatureFrequency(straightPipeCombineData,legendLabels,isSavePlot)
+function res = paperPlot04StraightPipeNatureFrequency(straightPipeCombineData,isSavePlot)
 %绘制倍频
-	fh = figureExpNatureFrequencyBar(straightPipeCombineData,1,legendLabels);
+    figure;
+    paperFigureSet('large',6);
+	fh = figureExpNatureFrequencyBar2(straightPipeCombineData,1:3,{'1倍特征频率','2倍特征频率','3倍特征频率'});
+    set(fh.legend,'Position',[0.142983160407072 0.621898741198966 0.262729119805357 0.254038172452636]);
 	if isSavePlot
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'直管1倍频对比');
+		saveFigure(fullfile(getPlotOutPutPath(),'ch04'),'直管1-2倍特征频率对比');
 		close(fh.figure);
-	end
-	res.fig1 = fh;
-	
-    fh = figureExpNatureFrequencyBar(straightPipeCombineData,2,legendLabels);
-	if isSavePlot
-		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'直管2倍频对比');
-		close(fh.figure);
-	end
-	res.fig2 = fh;
-	
-    fh = figureExpNatureFrequencyBar(straightPipeCombineData,3,legendLabels);
-	if isSavePlot
-		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch04'),'直管3倍频对比');
-		close(fh.figure);
-	end
-	res.fig3 = fh;
+    end
 end

@@ -21,8 +21,8 @@ param.isOpening = 0;%¹ÜµÀ±Õ¿Ú%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%
 param.rpm = 420;
 param.outDensity = 1.5608;
 param.Fs = 4096;
-param.Lin = 200;
-param.Lout = 200;
+param.Lin = 0.200;
+param.Lout = 0.200;
 param.Dinnerpipe = param.Dpipe;
 isOpening = false;
 baseFrequency = 14;

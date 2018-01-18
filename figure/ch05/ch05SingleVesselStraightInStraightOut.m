@@ -27,7 +27,7 @@ if 0
         ,'plusValueSubplot',0);
 end
 %% 和直管对比的压力脉动抑制率
-if 1
+if 0
     paperFigureSet('large',7);
     subplot(1,2,1)
     vesselCombineDataCells = {vesselDirectInDirectOutCombineData,vesselDirectPipeCombineData};
@@ -95,7 +95,7 @@ param.meanFlowVelocity = meanFlowVelocity;
 freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 vType = 'StraightInStraightOut';
-if 0
+if 1
     theDataCells = oneVesselPulsation('param',param,'vType',vType,'massflowdata',[freRaw;massFlowERaw]);
 
 
@@ -123,6 +123,8 @@ if 0
     % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
     theCells.pulsationValue = theVal;
     legnedText = {'实验','模拟','理论'};
+    figure
+    paperFigureSet('small',6);
     fh = figureExpAndSimThePressurePlus(vesselDirectInDirectOutCombineData...
                                 ,vesselDirectInDirectOutSimData...
                                 ,theCells...
@@ -133,11 +135,14 @@ if 0
                                 ,'showVesselRigion',1,'ylim',[0,40]...
                                 ,'xlim',[2,12]...
                                 ,'figureHeight',7 ...
-                                ,'expVesselRang',expVesselRang);
+                                ,'expVesselRang',expVesselRang...
+                                ,'isFigure',0);
     set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
     box on;
-    set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-理论模拟实验对比');
+    if 0
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-理论模拟实验对比');
+    end
     %绘制1,2,3倍频
     %figureExpMultNatureFrequencyBar(vesselDirectInSideFontOutCombineData,1,{'1倍频','2倍频','3倍频'});
     %绘制0.5,1.5,2.5倍频

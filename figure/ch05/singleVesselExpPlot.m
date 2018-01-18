@@ -9,9 +9,9 @@ errorType = 'ci';
 legendLabelsAbb = {'A','B'};
 pressureDropMeasureRang = [2,3];
 pp = varargin;
-leg = legendLabels;
 errorTypeInExp = 'none';
 plusValueSubplot = 0;
+isPlotCmpData = 0;
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -21,8 +21,8 @@ while length(pp)>=2
         	errorTypeInExp = val;
         case 'plusvaluesubplot'% 此值为1时，脉动压力和脉动抑制率使用一张图subplot(1,2,1)的形式
             plusValueSubplot = val;
-        case 'datacells'
-            dataCells = val;
+        case 'isplotcmpdata'
+            isPlotCmpData = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -59,15 +59,22 @@ if plusValueSubplot
         figure
         paperFigureSet_large(6);
         subplot(1,2,1)
-        vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
+        if isPlotCmpData
+            vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
+            leg = legendLabels;
+        else
+            vesselCombineDataCells = CombineDataCells;
+            leg = legendLabels(1:end-1);
+        end
         fh = figureExpPressurePlus(vesselCombineDataCells,leg...
             ,'errorType',errorTypeInExp...
             ,'showPureVessel',0 ...
             ,'isFigure',0);
         set(fh.gca,'Position',[0.108928571428571 0.192 0.355730519480519 0.623]);
-        set(fh.legend,'Position',[0.113451186148007 0.645228146480018 0.256513817294571 0.15637859689846]);
+        set(fh.legend,'Position',[0.113480624443399 0.635311720157614 0.219281660135843 0.167400876856061]);
         set(fh.textboxMeasurePoint,'Position',[0.247544642857143 0.898 0.0997999999999998 0.0912000000000004]);
-%         set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
+        set(fh.textarrowVessel,'X',[0.215500945179584 0.196597353497165]...
+            ,'Y',[0.537444933920705 0.449339207048458]);
 %         
         subplot(1,2,2)
         ddMean = mean(cmpCombineData.readPlus);
@@ -93,7 +100,13 @@ if plusValueSubplot
     end
 else
     if 1
-        vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
+        if isPlotCmpData
+            vesselCombineDataCells = {CombineDataCells{:},cmpCombineData};
+            leg = legendLabels;
+        else
+            vesselCombineDataCells = CombineDataCells{:};
+            leg = legendLabels(1:end-1);
+        end
 
         fh = figureExpPressurePlus(vesselCombineDataCells,leg...
             ,'errorType',errorTypeInExp...
