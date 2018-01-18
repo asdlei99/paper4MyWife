@@ -29,12 +29,22 @@ massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 massFlowDataCell = [freRaw;massFlowERaw];
 
 %innerPipePulsation('param',param,'massflowData',massFlowDataCell);
+count = 0;
 
-count = 1;
-if true
+if false
+	count = count + 1;
 	Dinnerpipe = (param.Dpipe/1.5) : 0.01: (param.Dpipe*2);
 	res{count,1} = '内插管管径大小变化对脉动的影响';
 	res{count,2} = plotInnerPipeChangeD(Dinnerpipe,param,massFlowDataCell,isSaveFig);
+end
+
+
+
+if true
+	count = count + 1;
+	Lv1 = param.Lbias : 0.05: (param.Lv1+param.Lv2-param.Lbias);
+	res{count,1} = '内插管管径大小变化对脉动的影响';
+	res{count,2} = plotInnerPipeChangeLv1(Lv1,param,massFlowDataCell,isSaveFig);
 end
 
 end
@@ -54,13 +64,36 @@ function res = plotInnerPipeChangeD(Dinnerpipe,param,massFlowDataCell,isSaveFig)
 		v(i,:) = res{i,2}(measurePoints);
 	end
 	legendText = {};
+	xx = res{2,3};
 	for i = 1:size(v,2)
-		legendText{i} = sprintf('距离%g',measurePoints(i));
+		legendText{i} = sprintf('距离%g',xx(measurePoints(i)));
 		h(i) = plot(Dinnerpipe,v(:,i),'color',getPlotColor(i),'Marker',getMarkStyle(i));
 	end
 	lh = legend(h,legendText);
 end
 
+%绘制内插管管径大小改变对脉动的影响
+function res = plotInnerPipeChangeLv1(Lv1,param,massFlowDataCell,isSaveFig)
+	res = innerPipePulsationChangInnerInnerLocation(Lv1,'param'...
+										,param,'massflowData'...
+										,massFlowDataCell...
+										,'fast',true...
+										);
+	figure
+	paperFigureSet('small',6);
+	measurePoints = floor(linspace(1,size(res{1,1},2),4));
+	hold on;
+	for i = 1:size(res,1)
+		v(i,:) = res{i,2}(measurePoints);
+	end
+	legendText = {};
+	xx = res{2,3};
+	for i = 1:size(v,2)
+		legendText{i} = sprintf('距离%g',xx(measurePoints(i)));
+		h(i) = plot(Lv1,v(:,i),'color',getPlotColor(i),'Marker',getMarkStyle(i));
+	end
+	lh = legend(h,legendText);
+end
 
 
 
