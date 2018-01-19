@@ -22,7 +22,7 @@ def loadDsfData(filePath):
 										,'Integral':short}
 		wave : list 波形
     """
-    with open(filePath,mode='r') as fld:
+    with open(filePath,mode='rb') as fld:
         fld.seek(0)
         headerDict = dict();
         byteBuffer = fld.read(4)

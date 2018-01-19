@@ -81,7 +81,7 @@ def plotFrequencySpectrum(wave,fs,ax=None,fftN = -1,isShowPeaks = True,markPeaks
 
     ppd = None
     fig = None
-    peaksMarkStyle = 'or'
+    peaksMarkStyle = 'vr'
     if 'peaksMarkStyle' in otherSet:
         markStyle = otherSet['peaksMarkStyle']
     fre,mag = czySignal.spectrum(wave,fs,fftSize=fftN,scale=scale)
@@ -95,8 +95,8 @@ def plotFrequencySpectrum(wave,fs,ax=None,fftN = -1,isShowPeaks = True,markPeaks
             ppd = detectPeaks(mag,markPeaksNum)
             #ppd = dp.detectPeaks(mag,sorting = True,edge='falling')
             #ppdShow = ppd[0:markPeaksNum if len(ppd)>markPeaksNum else len(ppd)]
-        ppLineHandle = ax.plot(fre[ppd],mag[ppd],peaksMarkStyle)
-    return lineHandle,[fre,mag,ppd],[fig,ax],ppLineHandle
+        ppLineHandle = ax.plot(fre[ppd],mag[ppd],peaksMarkStyle,markerfacecolor='none')
+    return lineHandle,(fre,mag,ppd),(fig,ax),ppLineHandle
 
 def plotSpectrum(x,ax = None,fig = None, NFFT=None, Fs=None, Fc=None, detrend=None,plotType = None
                  , window=None, noverlap=None, cmap=None, xextent=None
