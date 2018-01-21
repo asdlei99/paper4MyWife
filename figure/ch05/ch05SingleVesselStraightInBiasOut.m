@@ -7,6 +7,7 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 paperType = 'paper';%mainpaper指大论文，paper指小论文
+isSaveFigure = 1;
 %% 数据路径
 vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');%侧前进直后出
 vesselSideFontInSideFontOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐侧前进侧前出420转0.05mpa');
@@ -38,18 +39,24 @@ vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselDirectInDirectOutCombineData...
     };
 %% 绘制频率特性
-if 0
+if 1
     rang = 1:13;
     figure;
-    paperFigureSet('full',6);
-    subplot(1,2,1)
+    paperFigureSet('small',6);
+    %subplot(1,2,1)
     [fh,tmp,y1,tmp,y2] = figureSpectrum3D(vesselDirectInSideFontOutDataCells{1,2}.subSpectrumData,'rang',rang);
     clear tmp;
     box on;
     ylim([0,14]);
     view(37,32);
     set(gca,'color','none');
-    subplot(1,2,2)
+    if isSaveFigure
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出测点频谱瀑布图');
+    end
+    
+    figure;
+    paperFigureSet('small',6);
+    %subplot(1,2,2)
     hold on;
     h(1) = plot(rang,y1,'color',getPlotColor(1),'Marker',getMarkStyle(1));
     h(2) = plot(rang,y2,'color',getPlotColor(2),'Marker',getMarkStyle(2));
@@ -58,13 +65,12 @@ if 0
     ylabel('幅值','FontSize',paperFontSize());
     set(gca,'color','none');
     box on;
-    if 1
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出测点频率');
-		close(fh.figure);
+    if isSaveFigure
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出测点1倍频2倍频频率分布');
     end
 end
 %% 实验数据绘图
-if 1
+if 0
     if strcmpi(paperType,'MainPaper')
         singleVesselExpPlot({vesselDirectInSideFontOutCombineData}...
         ,vesselDirectPipeCombineData,{'径向排气式缓冲罐','直管'}...
@@ -104,7 +110,7 @@ if 0
     paperFigureSet('large',6);
 	fh = figureExpNatureFrequencyBar2(vesselDirectInSideFontOutCombineData,1:3,{'1倍特征频率','2倍特征频率','3倍特征频率'});
     set(fh.legend,'Position',[0.142983160407072 0.621898741198966 0.262729119805357 0.254038172452636]);
-	if isSavePlot
+	if isSaveFigure
 		set(gca,'color','none');
 		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出1-2,3倍特征频率对比');
 		close(fh.figure);
@@ -148,8 +154,10 @@ if 0
     set(fh.gca...
         ,'Position',[0.588958333333333 0.164779870052758 0.368526785714287 0.758490572110663]);
     title('(b)','fontSize',paperFontSize());
-    set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-和直管脉动对比+抑制率');
+    if isSaveFigure
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-和直管脉动对比+抑制率');
+    end
 end
 %% 绘制理论模拟实验
 %% 缓冲罐计算的参数设置
@@ -187,7 +195,7 @@ xExp = x;
 x = constSimMeasurementPointDistance();%模拟测点对应的距离
 xSim = [[0.5,1,1.5,2,2.5,2.85,3],[5.1,5.6,6.1,6.6,7.1,7.6,8.1,8.6,9.1,9.6,10.1,10.6]];
 xThe = theDataCells{2, 3};
-expVesselRang = [3.75,4.5];
+% expVesselRang = [3.75,4.5];
 simVal = vesselDirectInSideFontOutSimData.rawData.pulsationValue;
 simVal(xSim < 2.5) = nan;
 theCells = theDataCells{2, 2};
@@ -205,7 +213,7 @@ theVal(xThe>=2.5 & xThe < 5) = tmp+4.9*1e3;
 % theVal(xThe>=5 & xThe < 6) = theVal(xThe>5 & xThe < 6) + 8.97*1e3;
 % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
 theCells.pulsationValue = theVal;
-if 1
+if 0
     legnedText = {'实验','模拟','理论'};
     figure
     paperFigureSet('small',6);
@@ -217,14 +225,14 @@ if 1
                                 ,'showMeasurePoint',1 ...
                                 ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
                                 ,'showVesselRigion',1,'ylim',[0,40]...
-                                ,'xlim',[2,12]...
+                                ,'xlim',[2,11]...
                                 ,'figureHeight',7 ...
-                                ,'expVesselRang',expVesselRang);
-    set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
+                                ,'expVesselRang',constExpVesselRangDistance);
+    set(fh.legend,'Position',[0.613847431340527 0.211176702787661 0.28995433530715 0.241064808506657]);
     set(gca,'Position',[0.148550724637681 0.18 0.771449275362319 0.65]);
     box on;
     set(gca,'color','none');
-    if 0
+    if isSaveFigure
         saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进测出缓冲罐-理论模拟实验对比');
     end
 end
@@ -289,8 +297,10 @@ if 0
     xlabel('缓冲罐体积(m^3)','FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
     legend(h,markSectionXLabel);
-    set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-体积变化影响-截面');
+    if isSaveFigure
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-体积变化影响-截面');
+    end
 end
 
 %% 长径比
@@ -330,8 +340,10 @@ if 0
      colormap jet;
     
      h.Label.String = '压力脉动峰峰值(kPa)';
-     set(gca, 'Color', 'none');
-%      saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-变长径比');
+     if isSaveFigure
+         set(gca, 'Color', 'none');
+         saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-变长径比');
+     end
 end
 
 %% L1调整
@@ -389,7 +401,9 @@ if 0
     h.Label.String = '气流脉动峰峰值(kPa)';
     h.Label.FontSize = paperFontSize();
     box on;
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-L1变化');
+    if isSaveFigure
+         saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-L1变化');
+    end
 end
 
 %% 超长距离迭代L1调整
@@ -472,6 +486,8 @@ if 0
     box on;
     lh = legend(h,labelText);
     set(lh,'Position',[0.669061305074742 0.650119053026041 0.182471261975067 0.206626978719991]);
-    set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-缓冲罐位置导致变化导致的气流脉动波动');
+    if isSaveFigure
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-缓冲罐位置导致变化导致的气流脉动波动');
+    end
 end

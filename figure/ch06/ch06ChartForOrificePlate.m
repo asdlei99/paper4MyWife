@@ -7,6 +7,7 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 expVesselRang = [3.75,4.5];
+isSaveFigure = 1;
 %% 数据路径
 orificD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
 orificD0_25CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.25RPM420罐中间');
@@ -132,10 +133,7 @@ end
 % );
 %% 绘制多组压力脉动抑制率
 if 1
-    fh = figureExpSuppressionLevel(orificDataCells,legendLabels,'errorType',errorType...
-        ,'yfilterfunptr',@fixInnerOrificY ...
-        ,'expVesselRang',expVesselRang ...
-    );
+    paperPlotOrificeExpCmp(orificDataCells,legendLabels,isSaveFigure);
 end
 %% 绘制多组压力降
 if 0

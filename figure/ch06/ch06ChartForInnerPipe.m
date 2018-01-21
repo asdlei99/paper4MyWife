@@ -6,7 +6,6 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
-expVesselRang = [3.75,4.5];
 %% 数据路径
 innerPipeD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.5D中间420转0.05mpa');
 innerPipeD0_75CombineDataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.75D中间420转0.06mpa');
@@ -65,13 +64,15 @@ param.Fs = 4096;
 param.Lin = 0.200;
 param.Lout = 0.200;
 param.Dinnerpipe = param.Dpipe;
+
+
 %% 绘制多组压力脉动
 if 0
-	paperPlotInnerPipeExpCmp(innerPipeDataCells,legendLabels,expVesselRang,isSaveFigure)
+	paperPlotInnerPipeExpCmp(innerPipeDataCells,legendLabels,isSaveFigure)
 end
 
 %% 绘制理论模拟实验
-if 1
+if 0
     param.Dinnerpipe = 0.5 * param.Dpipe;
 	paperPlotInnerPipeExpTheSim({expInnerPipe0_5CombineData,expInnerPipe0_75CombineData,expInnerPipe01CombineData}...
 								,{simInnerPipe0_5DataCell,simInnerPipe0_5DataCell,simInnerPipe0_5DataCell}...
@@ -79,23 +80,11 @@ if 1
 								,isSaveFigure);
 end
 
+%% 绘制多组压力降低
+if 1
+    paperPlotInnerPipeExpPressureDrop(innerPipeDataCells,legendLabels,isSaveFigure);
+end
 
-%% 绘制多组压力脉动抑制率
-if 0
-    fh = figureExpSuppressionLevel(innerPipeDataCells,legendLabels,'errorType',errorType...
-        ,'expVesselRang',expVesselRang...
-    );
-    set(fh.legend,...
-        'Position',[0.140376159707257 0.618463546693475 0.200642358811262 0.190720481084297]);
-    set(fh.textarrow,...
-        'X',[0.303472222222222 0.314496527777778],'Y',[0.545104166666667 0.4525]);
-end
-%% 绘制多组压力降
-if 0
-    fh = figureExpPressureDrop(innerPipeDataCells,legendLabels,[2,3],'chartType','bar');
-    %'chartType'== 'bar' 时用于设置bar的颜色
-    set(fh.barHandle,'FaceColor',getPlotColor(1));
-end
 %对测点1进行时频分析波形
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
 %绘制1倍频的对比
@@ -110,15 +99,6 @@ if 0
 end
 
 %% 理论扩展分析
-%无明显变化
 if 0
-    resCell = innerOrificTankChangLv1(0.5);
-    figure
-    for i = 2:size(resCell,1)
-        if 2 == i
-            hold on;
-        end
-        plot(resCell{i,3},resCell{i, 2}.pulsationValue);
-        
-    end
+    paperPlotInnerPipeTheory(param,isSaveFigure);
 end

@@ -10,6 +10,7 @@ pp = varargin;
 errorType = 'ci';
 chartType = 'line';
 baseField = 'rawData';
+isFigure = true;
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -21,14 +22,16 @@ while length(pp)>=2
             chartType = val;
         case 'basefield'
             baseField = val;
+        case 'isfigure'
+            isFigure = val;
         otherwise
        		error('²ÎÊı´íÎó%s',prop);
     end
 end
-
-fh.figure = figure;
-paperFigureSet_normal();
-
+if isFigure
+    fh.figure = figure;
+    paperFigureSet_normal();
+end
 x = 1:length(dataCombineStructCells);
 if iscell(measureRang)
     for i=1:length(dataCombineStructCells)

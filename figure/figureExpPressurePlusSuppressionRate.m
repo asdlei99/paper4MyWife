@@ -20,7 +20,7 @@ function fh = figureExpPressurePlusSuppressionRate(dataCombineStruct,varargin)
 %         );
 pp = varargin;
 errorType = 'ci';
-errorDrawType = 'area';
+errorPlotType = 'area';
 rangs = {};
 pureVesselLegend = {};
 legendLabels = {};
@@ -62,8 +62,8 @@ while length(pp)>=2
             xlimRang = val;
         case 'ylim'
             ylimRang = val;
-        case 'errordrawtype'
-            errorDrawType = val;
+        case 'errorplottype'
+            errorPlotType = val;
         case 'showvesselrigon'
             showVesselRigon = val;
         case 'showmeasurepoint'
@@ -153,7 +153,7 @@ for plotCount = 1:length(dataCombineStruct)
             ,'Marker',getMarkStyle(plotCount));
     else
         [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount),'type',errorDrawType);
+            ,'Marker',getMarkStyle(plotCount),'type',errorPlotType);
     end
 end
 if ~isempty(xlimRang)

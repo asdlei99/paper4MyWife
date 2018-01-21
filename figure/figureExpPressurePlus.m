@@ -59,7 +59,7 @@ x = constExpMeasurementPointDistance();%测点对应的距离
 %需要显示单一缓冲罐
 if showPureVessel
     meanVessel = constExpVesselPressrePlus(rpm);
-    fh.vesselHandle =  plot(x,meanVessel(rang),'LineStyle',':','color',[160,162,162]./255);
+    fh.vesselHandle =  plot(x,meanVessel(rang),'LineStyle','-','color',[160,162,162]./255);
     hold on;
 end
 
@@ -118,10 +118,9 @@ end
 if showVesselRegion
     fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
         [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
-end
-if showVesselRegion
     fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 end
+
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;
 % 绘制测点线

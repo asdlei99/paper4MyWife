@@ -37,6 +37,6 @@ function [fh,clX1,clY1,clX2,clY2] = figureSpectrum3D(dataCell,varargin)
     ylabel('²âµã','FontSize',paperFontSize());
     zlabel('·ùÖµ','FontSize',paperFontSize());
     fh.mark1 = plot3(clX1,rang,clY1,'-b','Marker','.');
-    fh.mark1 = plot3(clX2,rang,clY2,'-b','Marker','.');
+    fh.mark2 = plot3(clX2,rang,clY2,'-b','Marker','.');
 end
 
