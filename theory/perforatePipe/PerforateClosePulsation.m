@@ -7,17 +7,17 @@ pp = varargin;
 %                 L1
 %                     |
 %                     |
-%           l         |                      Lv2        l    L2  
+%           l   LBias |                                    L2  
 %              _______|_________________________________        
 %             |    dp(n1)            |    dp(n2)        |
 %             |           ___ _ _ ___|___ _ _ ___ lc    |     
 %             |          |___ _ _ ___ ___ _ _ ___|Din   |----------
 %             |           la1 lp1 la2|lb1 lp2 lb2       |
 %             |______________________|__________________|       
-%                             Lin         Lout
-%                       Lv1
-%    Dpipe                       Dv                     Dpipe  
-%              
+%                             Lin         Lout          l
+%                       Lv1                  Lv2
+%    Dpipe                       Dv                     Dpipe             
+%           
 %
 % Lin 内插孔管入口段长度 
 % Lout内插孔管出口段长度
@@ -69,8 +69,7 @@ param.Lout = param.lb1 + param.lp2+ param.lb2;%内插管入口段长度
 param.bp1 = calcPerforatingRatios(param.n1,param.dp1,param.Din,param.lp1);
 param.bp2 = calcPerforatingRatios(param.n2,param.dp2,param.Din,param.lp2);
 param.Lin  = param.la1 + param.lp1+ param.la2;%内插管入口段长度
-param.lv1 = param.lv1;%232
-param.lv2 = 0;
+param.LBias = (0.150+0.168);
 param.Dbias = 0;%无内插管
 param.sectionNum1 = [1];%对应孔1的组数
 param.sectionNum2 = [1];%对应孔2的组数
@@ -146,7 +145,7 @@ end
 	,param.Lv1,param.Lv2,param.lc,param.dp1,param.dp2,param.lp1,param.lp2...
 	,param.n1,param.n2,param.la1,param.la2,param.lb1...
 	,param.lb2,param.Din,param.Dex,param.Dbias...
-	,param.lv1,param.lv4,param.xSection1,param.xSection2...
+	,param.LBias,param.xSection1,param.xSection2...
 	,param.sectionL1,param.sectionL2...
 	,'a',param.acousticVelocity...
 	,'isDamping',param.isDamping...

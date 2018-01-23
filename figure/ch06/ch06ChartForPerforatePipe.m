@@ -7,22 +7,35 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 isSaveFigure = 0;
+dataPath = getDataPath();
+%% 数据路径
+perforateD0_5DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.5D中间420转0.05mpa');
+perforateD0_75DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.75D中间420转0.06mpa');
+perforateD1DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管1D罐中间420转0.05mpa');
+vesselDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
+[expPerforate0_5DataCells,expPerforate0_5CombineData,simPerforate0_5DataCell] ...
+    = loadExpAndSimDataFromFolder(perforateD0_5DataPath);
+[expPerforate0_75DataCells,expPerforate0_75CombineData,simPerforate0_75DataCell] ...
+    = loadExpAndSimDataFromFolder(perforateD0_75DataPath);
+[expPerforate01DataCells,expPerforate01CombineData,simPerforate01DataCell] ...
+    = loadExpAndSimDataFromFolder(perforateD1DataPath);
 %% 数据路径
 %缓冲罐中间插入孔管,两端堵死，开孔个数不足以等效为亥姆霍兹共鸣器,缓冲罐入口偏置
 %                 L1
 %                     |
 %                     |
-%           l         |                      Lv2        l    L2  
+%           l   LBias |                                    L2  
 %              _______|_________________________________        
 %             |    dp(n1)            |    dp(n2)        |
 %             |           ___ _ _ ___|___ _ _ ___ lc    |     
 %             |          |___ _ _ ___ ___ _ _ ___|Din   |----------
 %             |           la1 lp1 la2|lb1 lp2 lb2       |
 %             |______________________|__________________|       
-%                             Lin         Lout
-%                       Lv1
+%                             Lin         Lout          l
+%                       Lv1                  Lv2
 %    Dpipe                       Dv                     Dpipe  
 %              
+%           
 %
 % Lin 内插孔管入口段长度 
 % Lout内插孔管出口段长度
@@ -43,6 +56,10 @@ param.coeffFriction = 0.03;
 param.meanFlowVelocity = 16;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
+param.l  =  0.01;%(m)缓冲罐的连接管长
+param.Dv = 0.372;%缓冲罐的直径（m）
+param.Lv1 = 1.1/2;%缓冲罐腔1总长
+param.Lv2 =  1.1/2;
 
 param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
@@ -53,10 +70,6 @@ param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%
 param.rpm = 420;
 param.outDensity = 1.5608;
 param.Fs = 4096;
-param.l  =  0.01;%(m)缓冲罐的连接管长
-param.Dv = 0.372;%缓冲罐的直径（m）
-param.Lv1 = 1.1/2;%缓冲罐腔1总长
-param.Lv2 =  1.1/2;
 %
 param.lc   = 0.005;%内插管壁厚
 param.dp1  = 0.013;%开孔径
@@ -74,8 +87,7 @@ param.Lout = param.lb1 + param.lp2+ param.lb2;%内插管入口段长度
 param.bp1 = calcPerforatingRatios(param.n1,param.dp1,param.Din,param.lp1);
 param.bp2 = calcPerforatingRatios(param.n2,param.dp2,param.Din,param.lp2);
 param.Lin  = param.la1 + param.lp1+ param.la2;%内插管入口段长度
-param.lv1 = param.lv1;%232
-param.lv2 = 0;
+param.LBias = (0.150+0.168);%缓冲罐偏置距离
 param.Dbias = 0;%无内插管
 param.sectionNum1 = [1];%对应孔1的组数
 param.sectionNum2 = [1];%对应孔2的组数

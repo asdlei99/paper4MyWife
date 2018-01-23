@@ -15,14 +15,14 @@ function X = getXs(res)
 	maxLen = -1;
 	for i=1:size(res,1)
 		x = res{i,3};
-		len = length(x)
+		len = length(x);
 		if len > maxLen
 			maxLen = len;
 		end
 	end
-	X = zeros(size(res,1),maxLen);
+	X = NaN(size(res,1),maxLen);
 	
-	for i=1:size(res{},1)
+	for i=1:size(res,1)
 		X(i,:) = res{i,3};
 	end
 end
@@ -31,12 +31,12 @@ function Z = getZs(res)
 	maxLen = -1;
 	for i=1:size(res,1)
 		z = res{i,3};
-		len = length(z)
+		len = length(z);
 		if len > maxLen
 			maxLen = len;
 		end
 	end
-	Z = zeros(size(res,1),maxLen);
+	Z = NaN(size(res,1),maxLen);
 	
 	for i=1:size(res{},1)
 		Z(i,:) = res{i,2};
