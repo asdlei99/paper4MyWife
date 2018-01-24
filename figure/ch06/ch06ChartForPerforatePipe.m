@@ -6,22 +6,40 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
-isSaveFigure = 0;
+isSaveFigure = 1;
 dataPath = getDataPath();
-theoryOnly = true;
+theoryOnly = 0;
 %% 数据路径
 if ~theoryOnly
-	perforateD0_5DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.5D中间420转0.05mpa');
-	perforateD0_75DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.75D中间420转0.06mpa');
-	perforateD1DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管1D罐中间420转0.05mpa');
+	perforateN20DataPath = fullfile(dataPath,'实验原始数据\内插孔管\D0.5N20RPM420两头堵');
+	perforateN36DataPath = fullfile(dataPath,'实验原始数据\内插孔管\D0.5N36RPM420两头堵');
+	perforateN68DataPath = fullfile(dataPath,'实验原始数据\内插孔管\D0.5N68RPM420两头堵');
 	vesselDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
-	[expPerforate0_5DataCells,expPerforate0_5CombineData,simPerforate0_5DataCell] ...
-		= loadExpAndSimDataFromFolder(perforateD0_5DataPath);
-	[expPerforate0_75DataCells,expPerforate0_75CombineData,simPerforate0_75DataCell] ...
-		= loadExpAndSimDataFromFolder(perforateD0_75DataPath);
-	[expPerforate01DataCells,expPerforate01CombineData,simPerforate01DataCell] ...
-		= loadExpAndSimDataFromFolder(perforateD1DataPath);
+	[expPerforateN20DataCells,expPerforateN20CombineData,simPerforateN20DataCell] ...
+		= loadExpAndSimDataFromFolder(perforateN20DataPath);
+	[expPerforateN36DataCells,expPerforateN36CombineData,simPerforateN36DataCell] ...
+		= loadExpAndSimDataFromFolder(perforateN36DataPath);
+	[expPerforateN68DataCells,expPerforateN68CombineData,simPerforateN68DataCell] ...
+		= loadExpAndSimDataFromFolder(perforateN68DataPath);
+    %单一缓冲罐数据
+    [expVesselDataCells,expVesselCombineData,simVesselDataCell] ...
+        = loadExpAndSimDataFromFolder(vesselDataPath);
+	perforatePipeCombineDataCells = {expPerforateN20CombineData,expPerforateN36CombineData,expPerforateN68CombineData};
+	legendLabels = {'N24','N40','N72'};
 end
+%% 绘制多组压力脉动
+if 0
+	paperPlotPerforatePipeExpCmp(perforatePipeCombineDataCells,legendLabels,isSaveFigure)
+end
+
+%% 绘制频率分布图
+if 1
+	rawDataCells = {expPerforateN20DataCells{2,2}.rawData,expPerforateN36DataCells{2,2}.rawData,expPerforateN68DataCells{2,2}.rawData};
+	paperPlotPerforateSpectrum3D(rawDataCells,legendLabels,isSaveFigure);
+end
+
+
+
 %% 数据路径
 %缓冲罐中间插入孔管,两端堵死，开孔个数不足以等效为亥姆霍兹共鸣器,缓冲罐入口偏置
 %                 L1
@@ -97,7 +115,7 @@ param.sectionNum2 = [1];%对应孔2的组数
 param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))];
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
 
-if 1
+if 0
 	paperPlotPerforatePipeTheory(param,isSaveFigure)
 end
 

@@ -50,6 +50,7 @@ function [c,h]=plotResultCell(res,rang)
 		Y(:,i) = rang;
 	end
 	Z = getZs(res);
+    Z = Z./1000;
 	[c,h]=contourf(X,Y,Z);
 end
 
@@ -57,16 +58,23 @@ function theoryChangedp(rang,massFlowDataCell,param,isSaveFigure)
 % 迭代开孔孔径
 	res = PerforateClosePulsationChangedp(param,rang...
 							,'massflowdata',massFlowDataCell,'fast',true);
+                        
 	figure('Name','内插管开孔孔径对气流脉动的影响')
 	paperFigureSet('small',6);
 	[c,h]=plotResultCell(res,rang.*1000);
 	set(h,'LineStyle','none'...
-		,'LevelStep',200 ...
+		,'LevelStep',0.2 ...
 		);
+    set(gca,'Position',[0.149323667948511 0.18 0.644154592921054 0.75]);
+    colormap jet;
+    hbar = colorbar;
+    set(get(hbar,'label'),'String','压力脉动峰峰值(kPa)','FontSize',paperFontSize());
+    set(hbar,'Position',[0.804347826086957 0.18 0.0424309618852597 0.75]);
+    
 	xlabel('管线距离(m)','FontSize',paperFontSize);
 	ylabel('开孔孔径(mm)','FontSize',paperFontSize)
 	if isSaveFigure
 		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置孔管-开孔孔径对气流脉动的影响');
+		saveFigure(fullfile(getPlotOutputPath(),'ch06'),sprintf('内置孔管D%g-开孔孔径对气流脉动的影响',param.Din));
 	end						
 end
