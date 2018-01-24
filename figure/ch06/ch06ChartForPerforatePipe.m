@@ -8,17 +8,20 @@ errorType = 'ci';
 dataPath = getDataPath();
 isSaveFigure = 0;
 dataPath = getDataPath();
+theoryOnly = true;
 %% 数据路径
-perforateD0_5DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.5D中间420转0.05mpa');
-perforateD0_75DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.75D中间420转0.06mpa');
-perforateD1DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管1D罐中间420转0.05mpa');
-vesselDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
-[expPerforate0_5DataCells,expPerforate0_5CombineData,simPerforate0_5DataCell] ...
-    = loadExpAndSimDataFromFolder(perforateD0_5DataPath);
-[expPerforate0_75DataCells,expPerforate0_75CombineData,simPerforate0_75DataCell] ...
-    = loadExpAndSimDataFromFolder(perforateD0_75DataPath);
-[expPerforate01DataCells,expPerforate01CombineData,simPerforate01DataCell] ...
-    = loadExpAndSimDataFromFolder(perforateD1DataPath);
+if ~theoryOnly
+	perforateD0_5DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.5D中间420转0.05mpa');
+	perforateD0_75DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.75D中间420转0.06mpa');
+	perforateD1DataPath = fullfile(dataPath,'实验原始数据\内插管\内插管1D罐中间420转0.05mpa');
+	vesselDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
+	[expPerforate0_5DataCells,expPerforate0_5CombineData,simPerforate0_5DataCell] ...
+		= loadExpAndSimDataFromFolder(perforateD0_5DataPath);
+	[expPerforate0_75DataCells,expPerforate0_75CombineData,simPerforate0_75DataCell] ...
+		= loadExpAndSimDataFromFolder(perforateD0_75DataPath);
+	[expPerforate01DataCells,expPerforate01CombineData,simPerforate01DataCell] ...
+		= loadExpAndSimDataFromFolder(perforateD1DataPath);
+end
 %% 数据路径
 %缓冲罐中间插入孔管,两端堵死，开孔个数不足以等效为亥姆霍兹共鸣器,缓冲罐入口偏置
 %                 L1

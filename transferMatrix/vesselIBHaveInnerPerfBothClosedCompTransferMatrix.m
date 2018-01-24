@@ -1,5 +1,5 @@
 function M = vesselIBHaveInnerPerfBothClosedCompTransferMatrix(Dpipe,Dv,l,Lv1,Lv2,...
-    lc,dp1,dp2,lp1,lp2,n1,n2,la1,la2,lb1,lb2,Din,Dex,Dbias,LBias,xSection1,xSection2,varargin)
+    lc,dp1,dp2,lp1,lp2,n1,n2,la1,la2,lb1,lb2,Din,Dbias,LBias,xSection1,xSection2,varargin)
 %缓冲罐中间插入孔管,两端堵死，开孔个数不足以等效为亥姆霍兹共鸣器,缓冲罐入口偏置
 %                 L1
 %                     |
@@ -77,6 +77,7 @@ while length(pp)>=2
        		error('参数错误%s',prop);
     end
 end
+Lin = la1 + lp1 + la2;
 lv1 = Lv1 - LBias;
 lv4 = Lv1 - Lin;
 if isnan(a)
@@ -196,12 +197,12 @@ M2 = straightPipeTransferMatrix(l,'k',k,'d',Dpipe,'a',a...
         ,'mach',optMach.machStraight,'notmach',optMach.notMach);
     
 Mv = haveInnerPerforatedPipeBCCompTransferMatrix(a,k,Dv,Dv_inner,Lv1,Lv2,...
-    lc,dp1,dp2,lp1,lp2,n1,n2,la1,la2,lb1,lb2,Din,Dex,Dbias,lv1,lv4,xSection1,xSection2,optDamping,optMach);
+    lc,dp1,dp2,lp1,lp2,n1,n2,la1,la2,lb1,lb2,Din,Dbias,lv1,lv4,xSection1,xSection2,optDamping,optMach);
 M = M2 * Mv * M1 ;
 
 end
 function M = haveInnerPerforatedPipeBCCompTransferMatrix(a,k,Dv,Dv_inner,Lv1,Lv2 ...
-    ,lc,dp1,dp2,lp1,lp2,n1,n2,la1,la2,lb1,lb2,Din,Dex,Dbias,lv1,lv4,xSection1,xSection2,optDamping,optMach)
+    ,lc,dp1,dp2,lp1,lp2,n1,n2,la1,la2,lb1,lb2,Din,Dbias,lv1,lv4,xSection1,xSection2,optDamping,optMach)
 %缓冲罐中间插入孔管,两端堵死，开孔个数不足以等效为亥姆霍兹共鸣器
 %                 L1
 %                     |
@@ -279,11 +280,11 @@ function M = haveInnerPerforatedPipeBCCompTransferMatrix(a,k,Dv,Dv_inner,Lv1,Lv2
 %     Mv1 = straightPipeTransferMatrix(Cav1-lv1,'k',k,'d',Dv,'a',a,...
 %             'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDampVessel...
 %             ,'mach',optMach.machVessel,'notmach',optMach.notMach);
-    Mv1 = IBstraightPipeTransferMatrix((0.15+0.168)+0.25-Lv1,'k',k,'d',Dex,'dv',Dv,'a',a,...
+    Mv1 = IBstraightPipeTransferMatrix((0.15+0.168)+0.25-Lv1,'k',k,'d',Din,'dv',Dv,'a',a,...
             'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDampVessel...
             ,'mach',optMach.machVessel,'notmach',optMach.notMach);
     innerRM = innerPipeCavityTransferMatrix(Dv,Dbias,lv4,'a',a,'k',k);
-    innerLM = innerPipeCavityTransferMatrix(Dv,Dex,lv1,'a',a,'k',k);
+    innerLM = innerPipeCavityTransferMatrix(Dv,Din,lv1,'a',a,'k',k);
 %     %入口孔管前端开放空腔对应
 %     Mv1 = straightPipeTransferMatrix(Lv1,'k',k,'d',Dv,'a',a,...
 %                 'isDamping',optDamping.isDamping,'coeffDamping',optDamping.coeffDampVessel...

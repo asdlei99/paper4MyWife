@@ -38,28 +38,35 @@ function Z = getZs(res)
 	end
 	Z = NaN(size(res,1),maxLen);
 	
-	for i=1:size(res{},1)
+	for i=1:size(res,1)
 		Z(i,:) = res{i,2};
 	end
 end
 
-function plotResultCell(res,y)
+function [c,h]=plotResultCell(res,rang)
 	X = getXs(res);
-	Y = zeros(size(x));
-	for i=1:size(y,2)
-		Y(:,i) = y;
+	Y = zeros(size(X));
+	for i=1:size(Y,2)
+		Y(:,i) = rang;
 	end
-	
+	Z = getZs(res);
+	[c,h]=contourf(X,Y,Z);
 end
 
 function theoryChangedp(rang,massFlowDataCell,param,isSaveFigure)
 % 迭代开孔孔径
 	res = PerforateClosePulsationChangedp(param,rang...
 							,'massflowdata',massFlowDataCell,'fast',true);
-	figure
+	figure('Name','内插管开孔孔径对气流脉动的影响')
 	paperFigureSet('small',6);
-	
-	contourf
-							
-							
+	[c,h]=plotResultCell(res,rang.*1000);
+	set(h,'LineStyle','none'...
+		,'LevelStep',200 ...
+		);
+	xlabel('管线距离(m)','FontSize',paperFontSize);
+	ylabel('开孔孔径(mm)','FontSize',paperFontSize)
+	if isSaveFigure
+		set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置孔管-开孔孔径对气流脉动的影响');
+	end						
 end
