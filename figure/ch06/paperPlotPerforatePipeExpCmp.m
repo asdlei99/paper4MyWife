@@ -1,5 +1,5 @@
 function  paperPlotPerforatePipeExpCmp( perforatePipeCombineDataCells,legendLabels,isSaveFigure )
-%ÄÚ²å¿×¹ÜÊµÑé¶Ô±È·ÖÎö
+%å†…æ’å­”ç®¡å®éªŒå¯¹æ¯”åˆ†æ
     errorType = 'ci';
     figureExpPressurePlusAndSuppressionRate(perforatePipeCombineDataCells,legendLabels...
         ,'showPureVessel',true...
@@ -7,9 +7,9 @@ function  paperPlotPerforatePipeExpCmp( perforatePipeCombineDataCells,legendLabe
         ,'errorType',errorType...
         ,'y2lim',[-20,120]...
         );
-
+        
     if isSaveFigure
-		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'ÄÚÖÃ¿×¹Ü-ÊµÑéÑ¹Á¦Âö¶¯-ÒÖÖÆÂÊ¶Ô±È');
+		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'å†…ç½®å­”ç®¡-å®éªŒå‹åŠ›è„‰åŠ¨-æŠ‘åˆ¶ç‡å¯¹æ¯”');
 	end
 
 end
