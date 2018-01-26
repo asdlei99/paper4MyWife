@@ -1,0 +1,16 @@
+function  paperPlotPerforatePipeExpCmp( perforatePipeCombineDataCells,legendLabels,isSaveFigure )
+%内插孔管实验对比分析
+    errorType = 'ci';
+    figureExpPressurePlusAndSuppressionRate(perforatePipeCombineDataCells,legendLabels...
+        ,'showPureVessel',true...
+        ,'showVesselRegion',true...
+        ,'errorType',errorType...
+        ,'y2lim',[-20,120]...
+        );
+
+    if isSaveFigure
+		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置孔管-实验压力脉动-抑制率对比');
+	end
+
+end
+
