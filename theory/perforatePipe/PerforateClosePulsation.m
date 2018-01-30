@@ -84,6 +84,7 @@ semiFreTimes = 3;
 massflowData = nan;
 isFast = false;
 allowDeviation = 0.5;
+fixFunPtr = [];
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -101,6 +102,8 @@ while length(pp)>=2
 			semiFreTimes = val;
 		case 'fast'%快速计算，此计算返回的cell只有3个，第一个是所有压力数据，第二个是压力脉动峰峰值，第三个是峰峰值对应x值
 			isFast = val;
+        case 'fixfunptr'
+            fixFunPtr = val;
         otherwise
             error('错误属性%s',prop);
 	end
@@ -159,20 +162,29 @@ if ~isFast
 	beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
 	%[plus,filterData] = calcPuls(pressure,dcpss);
 	theoryDataCells{2,1} = sprintf('内插管直径:%g,Lin:%g,Lout:%g',param.Dinnerpipe,param.Lin,param.Lout);
-	theoryDataCells{2,2} = fun_dataProcessing(pressure...
-								,'fs',param.Fs...
-								,'basefrequency',baseFrequency...
-								,'allowdeviation',allowDeviation...
-								,'multfretimes',multFreTimes...
-								,'semifretimes',semiFreTimes...
-								,'beforeAfterMeaPoint',beforeAfterMeaPoint...
-								,'calcpeakpeakvaluesection',nan...
-								);
+	st = fun_dataProcessing(pressure...
+                                    ,'fs',param.Fs...
+                                    ,'basefrequency',baseFrequency...
+                                    ,'allowdeviation',allowDeviation...
+                                    ,'multfretimes',multFreTimes...
+                                    ,'semifretimes',semiFreTimes...
+                                    ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
+                                    ,'calcpeakpeakvaluesection',nan...
+                                    );
+    if ~isempty(fixFunPtr)
+        st.pulsationValue = fixFunPtr(param,st.pulsationValue);
+    end
+    theoryDataCells{2,2} = st;
 	theoryDataCells{2,3} = X;
 	theoryDataCells{2,4} = param;
+    
 else
 	theoryDataCells{1} = pressure;
-	theoryDataCells{2} = calcPuls(pressure,dcpss);
+    pulsV = calcPuls(pressure,dcpss);
+    if ~isempty(fixFunPtr)
+        pulsV = fixFunPtr(param,pulsV);
+    end
+	theoryDataCells{2} = pulsV;
 	theoryDataCells{3} = X;
 end
 

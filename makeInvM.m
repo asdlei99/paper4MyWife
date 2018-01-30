@@ -5,12 +5,14 @@ function [T,Y] = makeInvM( fs,timeLast,varargin )
     isShowFig = true;
     isXcorr = true;
     savePath = '';
+    midVal = 0.5;
+    pp = 1;
     while length(varargin)>=2
         prop =varargin{1};
         val=varargin{2};
         varargin=varargin(3:end);
         switch lower(prop)
-            case 'isshowfig' %是否允许补0
+            case 'isshowfig' %是否显示图
                 isShowFig = val;
             case 'n' %阶次
                 n = val;
@@ -18,8 +20,12 @@ function [T,Y] = makeInvM( fs,timeLast,varargin )
                 n = val;
             case 'savepath'
                 savePath = val;
-            case 'isxcorr'
+            case 'isxcorr'%是否显示相关图
                 isXcorr = val;
+            case 'midval'%生成序列的中值
+                midVal = val;
+            case 'pp'%生成序列的波动范围
+                pp = val;
         end
     end
     T = 0:1/fs:timeLast;
@@ -42,7 +48,8 @@ function [T,Y] = makeInvM( fs,timeLast,varargin )
         index = index + length(ims);
     end
     Y(index:end) = ims(1:(length(Y)-index+1));
-    
+    Y = Y .* pp;
+    Y = (pp/2 + midVal)+Y;
     if isShowFig
         col = 2;
         if isXcorr
@@ -75,6 +82,8 @@ function [T,Y] = makeInvM( fs,timeLast,varargin )
     end
     
     fprintf('均值:%g',mean(Y));
-    
+    sy = trapz(T,Y);
+    syd = sy / T(end);
+    fprintf('累积值:%g,单位时间累加值:%g',sy,syd);
 end
 

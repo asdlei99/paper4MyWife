@@ -83,6 +83,7 @@ semiFreTimes = 3;
 massflowData = nan;
 isFast = true;
 allowDeviation = 0.5;
+fixFunPtr = [];
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -100,6 +101,8 @@ while length(pp)>=2
 			semiFreTimes = val;
 		case 'fast'%快速计算，此计算返回的cell只有3个，第一个是所有压力数据，第二个是压力脉动峰峰值，第三个是峰峰值对应x值
 			isFast = val;
+		case 'fixfunptr'
+            fixFunPtr = val;
         otherwise
             error('错误属性%s',prop);
 	end
@@ -161,7 +164,7 @@ for i=1:length(rang)
 		beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
 		%[plus,filterData] = calcPuls(pressure,dcpss);
 		theoryDataCells{1+i,1} = sprintf('内插管直径:%g,Lin:%g,Lout:%g',param.Dinnerpipe,param.Lin,param.Lout);
-		theoryDataCells{1+i,2} = fun_dataProcessing(pressure...
+		st = fun_dataProcessing(pressure...
 									,'fs',param.Fs...
 									,'basefrequency',baseFrequency...
 									,'allowdeviation',allowDeviation...
@@ -170,11 +173,19 @@ for i=1:length(rang)
 									,'beforeAfterMeaPoint',beforeAfterMeaPoint...
 									,'calcpeakpeakvaluesection',nan...
 									);
+		if ~isempty(fixFunPtr)
+			st.pulsationValue = fixFunPtr(param,st.pulsationValue);
+		end
+		theoryDataCells{1+i,2} = st;
 		theoryDataCells{1+i,3} = X;
 		theoryDataCells{1+i,4} = param;
 	else
 		theoryDataCells{i,1} = pressure;
-		theoryDataCells{i,2} = calcPuls(pressure,dcpss);
+		pulsV = calcPuls(pressure,dcpss);
+		if ~isempty(fixFunPtr)
+			pulsV = fixFunPtr(param,pulsV);
+		end
+		theoryDataCells{i,2} = pulsV;
 		theoryDataCells{i,3} = X;
 		theoryDataCells{i,4} = param;
 	end

@@ -57,7 +57,8 @@ end
 function theoryChangedp(rang,massFlowDataCell,param,isSaveFigure)
 % 迭代开孔孔径
 	res = PerforateClosePulsationChangedp(param,rang...
-							,'massflowdata',massFlowDataCell,'fast',true);
+							,'massflowdata',massFlowDataCell,'fast',true...
+                            ,'fixFunPtr',@fixTheoryPerforate);
                         
 	figure('Name','内插管开孔孔径对气流脉动的影响')
 	paperFigureSet('small',6);

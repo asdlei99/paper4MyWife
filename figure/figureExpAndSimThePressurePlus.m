@@ -229,10 +229,10 @@ if ~isempty(legendLabels)
         plotHandle(length(plotHandle)+1) = fh.plotHandleThe(i);
     end
         
-    fh.legend = legend(plotHandle,legendLabels,0);
+    fh.legend = legend(plotHandle,legendLabels,'Location','southeast');
 end
 if showMeasurePoint
-    set(gca,'Position',[0.13 0.18 0.79 0.65]);
+    set(gca,'Position',[0.14 0.18 0.79 0.65]);
 else
     set(gca,'Position',[0.13 0.18 0.79 0.75]);
 end

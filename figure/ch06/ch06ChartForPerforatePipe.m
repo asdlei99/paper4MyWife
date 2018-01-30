@@ -7,7 +7,7 @@ baseField = 'rawData';
 errorType = 'ci';
 isSaveFigure = 0;
 dataPath = getDataPath();
-theoryOnly = 0;
+theoryOnly = 1;
 %% 数据路径
 if ~theoryOnly
 	perforateN20DataPath = fullfile(dataPath,'实验原始数据\内插孔管\D0.5N20RPM420两头堵');
@@ -33,8 +33,9 @@ if ~theoryOnly
     simPerforateN20DataCell.rawData.pulsationValue(index) = nan;
     simPerforateN36DataCell.rawData.pulsationValue(index) = nan;
     simPerforateN68DataCell.rawData.pulsationValue(index) = nan;
-    n20 = simPerforateN20DataCell.rawData.pulsationValue;
-    n20
+    
+    n20SimY = [nan,nan,nan,nan,8.7357,8.56085,7.89048,2.65308,3.5774,4.80772,5.28376,6.98776,8.21878,9.38138,10.3945,11.2395,11.892,12.3366,12.5647];
+    simPerforateN20DataCell.rawData.pulsationValue=n20SimY;
     simDataCells = {simPerforateN20DataCell,simPerforateN36DataCell,simPerforateN68DataCell};
 end
 %% 绘制多组压力脉动
@@ -82,8 +83,8 @@ end
 % xSection1，xSection2 孔管每圈孔的间距，从0开始算，x的长度为孔管孔的圈数+1，x的值是当前一圈孔和上一圈孔的距离，如果间距一样，那么x里的值都一样
 param.acousticVelocity = 345;%声速（m/s）
 param.isDamping = 1;
-param.coeffFriction = 0.03;
-param.meanFlowVelocity = 16;
+param.coeffFriction = 0.01;
+param.meanFlowVelocity = 10;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
 param.l  =  0.01;%(m)缓冲罐的连接管长
@@ -125,11 +126,11 @@ param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))]
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
 
 
-if 1 && ~theoryOnly
+if 0 && ~theoryOnly
 	paperPlotPerforatePipeExpSimThe(param,expCombineDataCells,simDataCells,isSaveFigure);
 end
 
-if 0
+if 1
 	paperPlotPerforatePipeTheory(param,isSaveFigure)
 end
 

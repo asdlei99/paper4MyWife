@@ -27,7 +27,7 @@ endDotIndex = strfind(fileName,'.');
 excelPath = fileName(1:(endDotIndex(end)-1));
 excelPath = strcat(excelPath,'_sigmaPlusValue.xls');
 excelPath = fullfile(pathName,excelPath);
-rpm = getRpmFromDataStruct(dataStructCells{1,2});
+rpm = getRPMFromDataStruct(dataStructCells{1,2});
 vesselCombineDataStruct = getPureVesselCombineDataStruct(rpm);%获取单一缓冲罐的数据
 [ meanPureVesselVal,stdPureVesselVal,maxPureVesselVal,minPureVesselVal,muciPureVessel,sigmaciPureVessel ] = getExpCombineReadedPlusData(vesselCombineDataStruct);
 if exist(excelPath,'file')
