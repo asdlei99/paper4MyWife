@@ -133,7 +133,7 @@ if 0
     ddMean = mean(vesselDirectInDirectOutCombineData.readPlus);
     ddMean = ddMean(1:13);
     suppressionRateBase = {ddMean};
-    legendText = {'侧前进直出(A)','侧前进侧前出(B)','侧前进侧后出(C)','直进侧前出(D)','直进侧后出(E)'};;
+    legendText = {'侧前进直出(A)','侧前进侧前出(B)','侧前进侧后出(C)','直进侧前出(D)','直进侧后出(E)'};
     xlabelText = '距离';
     ylabelText = '脉动抑制率(%)';
 

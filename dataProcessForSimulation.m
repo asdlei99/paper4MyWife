@@ -58,7 +58,7 @@ else
     simulationDataSection = {1:6};
     beforeAfterMeaPoint = nan;%[14,15];%定义抑制装置的进口出口的测点号，如果没有定义为nan
     Fs = 200;%1/0.005
-    calcPeakPeakValueSection = [0.8,1.0];%用于标记计算峰峰值的区间，例如[0.7,0.9]，表示70%~90%区间计算峰峰值
+    calcPeakPeakValueSection = [0.5,1.0];%用于标记计算峰峰值的区间，例如[0.7,0.9]，表示70%~90%区间计算峰峰值
     polyfitN = 4;%去趋势使用的多项式阶次
     baseFrequency = rpm/60*2;%定义一个基准频率，若没有定义为nan，相应的倍频*2.56不能超过采样频率
     allowDeviation = 0.5;%查找基准频率时的允许频率误差范围

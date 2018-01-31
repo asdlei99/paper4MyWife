@@ -57,7 +57,8 @@ end
 function theoryChangedp(rang,massFlowDataCell,param,isSaveFigure)
 % 迭代开孔孔径
 	res = PerforateClosePulsationChangedp(param,rang...
-							,'massflowdata',massFlowDataCell,'fast',true);
+							,'massflowdata',massFlowDataCell,'fast',true...
+                            ,'fixFunPtr',@fixTheoryPerforate);
                         
 	figure('Name','内插管开孔孔径对气流脉动的影响')
 	paperFigureSet('small',6);
@@ -71,6 +72,11 @@ function theoryChangedp(rang,massFlowDataCell,param,isSaveFigure)
     set(get(hbar,'label'),'String','压力脉动峰峰值(kPa)','FontSize',paperFontSize());
     set(hbar,'Position',[0.804347826086957 0.18 0.0424309618852597 0.75]);
     
+	hold on;
+	ax = axis();
+	plot([ax(1),ax(2)],[param.dp1,param.dp1].*1000,'--k');
+	text(ax(1),param.dp1*1000+1,sprintf('%g mm',param.dp1*1000));
+
 	xlabel('管线距离(m)','FontSize',paperFontSize);
 	ylabel('开孔孔径(mm)','FontSize',paperFontSize)
 	if isSaveFigure

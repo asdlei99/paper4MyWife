@@ -30,7 +30,7 @@ if 0
 end
 
 %扫频结果分析
-if 1
+if 0
     useSubplot = 0;
     sweepResult = loadExperimentPressureData(fullfile(dataPath,'实验原始数据\无内件缓冲罐\无内件缓冲罐开机450降300转0.05mpa.CSV'));
     STFT.windowSectionPointNums = 512;
@@ -127,14 +127,19 @@ if 1
 end
 
 %% 对比直进侧后出和侧前进直出的区别
-if 0
+if 1
+    figure
+    paperFigureSet('normal2',7);
     fh = figureExpPressurePlus({vesselSideFontInDirectOutCombineData,vesselDirectInSideBackOutCombineData}...
-        ,{'侧进直出','直进侧出'});
+        ,{'侧进直出','直进侧出'}...
+        ,'isFigure',0);
     for i = 1:length(fh.plotHandle)
         h = fh.plotHandle(i);
         set(h,'LineStyle',getLineStyle(i),'Marker','.');
     end
-    set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
+    set(gca,'Position',[0.149323668042243 0.179016148252809 0.755676331957757 0.675671351747191]);
+    set(fh.legend,'Position',[0.505114555924395 0.217056331365931 0.376940634084619 0.167569440239006]);
+    set(fh.textboxMeasurePoint,'Position',[0.472751141552511 0.920277777777779 0.116718036529681 0.0912000000000004]);
     box on;
     set(gca,'color','none');
     saveFigure(fullfile(getPlotOutputPath(),'ch05'),'侧进直出和直进侧出结构形式实验结果对比');
@@ -175,7 +180,7 @@ if 0
     x = constSimMeasurementPointDistance();%模拟测点对应的距离
     xSim = [[0.5,1,1.5,2,2.5,2.85,3],[5.1,5.6,6.1,6.6,7.1,7.6,8.1,8.6,9.1,9.6,10.1,10.6]];
     xThe = theDataCells{2, 3};
-    expVesselRang = [3.75,4.5];
+    expVesselRang = constExpVesselRangDistance;
     simVal = vesselSideFontInDirectOutSimData.rawData.pulsationValue;
     simVal(xSim < 2.5) = nan;
     theCells = theDataCells{2, 2};
@@ -194,6 +199,8 @@ if 0
     % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
     theCells.pulsationValue = theVal;
     legnedText = {'实验','模拟','理论'};
+    figure
+    paperFigureSet('normal2',7);
     fh = figureExpAndSimThePressurePlus(vesselSideFontInDirectOutCombineData...
                                 ,vesselSideFontInDirectOutSimData...
                                 ,theCells...
@@ -204,8 +211,11 @@ if 0
                                 ,'showVesselRigion',1,'ylim',[0,40]...
                                 ,'xlim',[2,12]...
                                 ,'figureHeight',7 ...
-                                ,'expVesselRang',expVesselRang);
-    set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
+                                ,'expVesselRang',expVesselRang...
+                                ,'isFigure',0 ...
+                                );
+    set(gca,'Position',[0.147288812785388 0.18 0.772711187214612 0.65]);
+    set(fh.legend,'Position',[0.606598572893038 0.206766980565439 0.28995433530715 0.241064808506657]);
     box on;
     set(gca,'color','none');
     saveFigure(fullfile(getPlotOutputPath(),'ch05'),'侧进直出缓冲罐压力脉动峰峰值理论模拟实验对比');

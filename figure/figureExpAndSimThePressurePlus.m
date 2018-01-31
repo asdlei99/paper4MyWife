@@ -119,12 +119,20 @@ for plotCount = 1:length(expDataCombineStruct)
     if(1 == length(expDataCombineStruct))
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(expDataCombineStruct);
         ySimVal = simDataStruct.rawData.pulsationValue;
-        yTheVal = theDataStruct.pulsationValue;
+        if isstruct(theDataStruct)
+            yTheVal = theDataStruct.pulsationValue;
+        else
+            yTheVal = theDataStruct;
+        end
         yTheVal = yTheVal ./ 1000;
     else
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(expDataCombineStruct{plotCount});
         ySimVal = simDataStruct{plotCount}.rawData.pulsationValue;
-        yTheVal = theDataStruct{plotCount}.pulsationValue;
+        if isstruct(theDataStruct{plotCount})
+            yTheVal = theDataStruct{plotCount}.pulsationValue;
+        else
+            yTheVal = theDataStruct{plotCount};
+        end
         yTheVal = yTheVal ./ 1000;
     end
 
@@ -221,10 +229,10 @@ if ~isempty(legendLabels)
         plotHandle(length(plotHandle)+1) = fh.plotHandleThe(i);
     end
         
-    fh.legend = legend(plotHandle,legendLabels,0);
+    fh.legend = legend(plotHandle,legendLabels,'Location','southeast');
 end
 if showMeasurePoint
-    set(gca,'Position',[0.13 0.18 0.79 0.65]);
+    set(gca,'Position',[0.14 0.18 0.79 0.65]);
 else
     set(gca,'Position',[0.13 0.18 0.79 0.75]);
 end
@@ -261,6 +269,7 @@ end
 xlabel(xlabelText,'FontSize',paperFontSize(),'FontName',paperFontName());
 ylabel(ylabelText,'FontSize',paperFontSize(),'FontName',paperFontName());
 fh.gca = gca;
+box on;
 end
 
 function r = getCellRang(rang,i,defaultRang)

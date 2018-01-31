@@ -4,20 +4,8 @@ pp = varargin;
 
 %% 数据路径
 %缓冲罐中间插入孔管,两端堵死，开孔个数不足以等效为亥姆霍兹共鸣器,缓冲罐入口偏置
-%                 L1
-%                     |
-%                     |
-%           l   LBias |                                    L2  
-%              _______|_________________________________        
-%             |    dp(n1)            |    dp(n2)        |
-%             |           ___ _ _ ___|___ _ _ ___ lc    |     
-%             |          |___ _ _ ___ ___ _ _ ___|Din   |----------
-%             |           la1 lp1 la2|lb1 lp2 lb2       |
-%             |______________________|__________________|       
-%                             Lin         Lout          l
-%                       Lv1                  Lv2
-%    Dpipe                       Dv                     Dpipe             
-%
+
+<<<<<<< HEAD
 % Lin 内插孔管入口段长度 
 % Lout内插孔管出口段长度
 % lc  孔管壁厚
@@ -40,6 +28,7 @@ param.L2 = 6;
 
 param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+
 param.Dpipe = 0.098;%管道直径（m）
 param.Lbias = 0.168+0.150;
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
@@ -60,10 +49,12 @@ param.lp2  = 0.16;%内插管出口段孔管开孔长度
 param.n1   = 24;%入口段孔数
 param.n2   = 24;%出口段孔数
 param.la1  = 0.03;%孔管入口段靠近入口长度
+
 param.la2  = 0.06;
 param.lb1  = 0.06;
 param.lb2  = 0.03;
 param.Din  = 0.049;
+
 param.Lout = param.lb1 + param.lp2+ param.lb2;%内插管入口段长度
 param.bp1 = calcPerforatingRatios(param.n1,param.dp1,param.Din,param.lp1);
 param.bp2 = calcPerforatingRatios(param.n2,param.dp2,param.Din,param.lp2);
@@ -72,6 +63,14 @@ param.LBias = (0.150+0.168);%232
 param.Dbias = 0;%无内插管
 param.sectionNum1 = [1];%对应孔1的组数
 param.sectionNum2 = [1];%对应孔2的组数
+
+param.Lout = param.lb1 + param.lp2+ param.lb2;%鍐呮彃绠″叆鍙ｆ闀垮害
+param.bp1 = calcPerforatingRatios(param.n1,param.dp1,param.Din,param.lp1);
+param.bp2 = calcPerforatingRatios(param.n2,param.dp2,param.Din,param.lp2);
+param.Lin  = param.la1 + param.lp1+ param.la2;%鍐呮彃绠″叆鍙ｆ闀垮害
+param.LBias = (0.150+0.168);%232
+param.Dbias = 0;%鏃犲唴鎻掔
+param.sectionNum1 = [1];%瀵瑰簲瀛?鐨勭粍鏁?param.sectionNum2 = [1];%瀵瑰簲瀛?鐨勭粍鏁?>>>>>>> tmp
 param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))];
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
 

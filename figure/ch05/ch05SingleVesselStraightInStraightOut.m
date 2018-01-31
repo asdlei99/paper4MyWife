@@ -51,7 +51,7 @@ if 0
     xlabelText = '管线距离(m)';
     ylabelText = '压力脉动抑制率(%)';
     fh = figureExpPressurePlusSuppressionRate(vesselDirectInDirectOutCombineData...
-            ,'errorDrawType','bar'...
+            ,'errorPlotType','bar'...
             ,'showVesselRigon',0 ...
             ,'suppressionRateBase',suppressionRateBase...
             ,'isFigure',0 ...
@@ -65,7 +65,7 @@ if 0
         ,'Position',[0.588958333333333 0.164779870052758 0.368526785714287 0.758490572110663]);
     title('(b)','fontSize',paperFontSize());
     set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-和直管脉动对比+抑制率');
+    %saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-和直管脉动对比+抑制率');
 end
 
 %% 绘制理论模拟实验
@@ -104,7 +104,7 @@ if 1
     x = constSimMeasurementPointDistance();%模拟测点对应的距离
     xSim = [[0.5,1,1.5,2,2.5,2.85,3],[5.1,5.6,6.1,6.6,7.1,7.6,8.1,8.6,9.1,9.6,10.1,10.6]];
     xThe = theDataCells{2, 3};
-    expVesselRang = [3.75,4.5];
+    expVesselRang = constExpVesselRangDistance;
     simVal = vesselDirectInDirectOutSimData.rawData.pulsationValue;
     simVal(xSim < 2.5) = nan;
     theCells = theDataCells{2, 2};
@@ -124,7 +124,7 @@ if 1
     theCells.pulsationValue = theVal;
     legnedText = {'实验','模拟','理论'};
     figure
-    paperFigureSet('small',6);
+    paperFigureSet('normal2',6);
     fh = figureExpAndSimThePressurePlus(vesselDirectInDirectOutCombineData...
                                 ,vesselDirectInDirectOutSimData...
                                 ,theCells...
@@ -137,7 +137,7 @@ if 1
                                 ,'figureHeight',7 ...
                                 ,'expVesselRang',expVesselRang...
                                 ,'isFigure',0);
-    set(fh.legend,'Position',[0.665133105268771 0.20284722642766 0.238124996583081 0.16070987233777]);
+    set(fh.legend,'Position',[0.662487271935439 0.197947536120994 0.238124996583081 0.241064808506657]);
     box on;
     if 0
         set(gca,'color','none');

@@ -43,7 +43,6 @@ param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
 param.Dpipe = 0.098;%管道直径（m）
 param.Lbias = 0.168+0.150;
-param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
 param.rpm = 420;
 param.outDensity = 1.5608;
@@ -52,6 +51,7 @@ param.l  =  0.01;%(m)缓冲罐的连接管长
 param.Dv = 0.372;%缓冲罐的直径（m）
 param.Lv1 = 1.1/2;%缓冲罐腔1总长
 param.Lv2 =  1.1/2;
+param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
 %
 param.lc   = 0.005;%内插管壁厚
 param.dp1  = 0.013;%开孔径
@@ -69,7 +69,7 @@ param.Lout = param.lb1 + param.lp2+ param.lb2;%内插管入口段长度
 param.bp1 = calcPerforatingRatios(param.n1,param.dp1,param.Din,param.lp1);
 param.bp2 = calcPerforatingRatios(param.n2,param.dp2,param.Din,param.lp2);
 param.Lin  = param.la1 + param.lp1+ param.la2;%内插管入口段长度
-param.LBias = (0.150+0.168);
+param.LBias = (0.150+0.168);%232
 param.Dbias = 0;%无内插管
 param.sectionNum1 = [1];%对应孔1的组数
 param.sectionNum2 = [1];%对应孔2的组数
@@ -84,6 +84,7 @@ semiFreTimes = 3;
 massflowData = nan;
 isFast = false;
 allowDeviation = 0.5;
+fixFunPtr = [];
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -101,6 +102,8 @@ while length(pp)>=2
 			semiFreTimes = val;
 		case 'fast'%快速计算，此计算返回的cell只有3个，第一个是所有压力数据，第二个是压力脉动峰峰值，第三个是峰峰值对应x值
 			isFast = val;
+        case 'fixfunptr'
+            fixFunPtr = val;
         otherwise
             error('错误属性%s',prop);
 	end
@@ -159,20 +162,29 @@ if ~isFast
 	beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
 	%[plus,filterData] = calcPuls(pressure,dcpss);
 	theoryDataCells{2,1} = sprintf('内插管直径:%g,Lin:%g,Lout:%g',param.Dinnerpipe,param.Lin,param.Lout);
-	theoryDataCells{2,2} = fun_dataProcessing(pressure...
-								,'fs',param.Fs...
-								,'basefrequency',baseFrequency...
-								,'allowdeviation',allowDeviation...
-								,'multfretimes',multFreTimes...
-								,'semifretimes',semiFreTimes...
-								,'beforeAfterMeaPoint',beforeAfterMeaPoint...
-								,'calcpeakpeakvaluesection',nan...
-								);
+	st = fun_dataProcessing(pressure...
+                                    ,'fs',param.Fs...
+                                    ,'basefrequency',baseFrequency...
+                                    ,'allowdeviation',allowDeviation...
+                                    ,'multfretimes',multFreTimes...
+                                    ,'semifretimes',semiFreTimes...
+                                    ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
+                                    ,'calcpeakpeakvaluesection',nan...
+                                    );
+    if ~isempty(fixFunPtr)
+        st.pulsationValue = fixFunPtr(param,st.pulsationValue);
+    end
+    theoryDataCells{2,2} = st;
 	theoryDataCells{2,3} = X;
 	theoryDataCells{2,4} = param;
+    
 else
 	theoryDataCells{1} = pressure;
-	theoryDataCells{2} = calcPuls(pressure,dcpss);
+    pulsV = calcPuls(pressure,dcpss);
+    if ~isempty(fixFunPtr)
+        pulsV = fixFunPtr(param,pulsV);
+    end
+	theoryDataCells{2} = pulsV;
 	theoryDataCells{3} = X;
 end
 

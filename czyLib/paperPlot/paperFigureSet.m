@@ -17,6 +17,9 @@ function paperFigureSet(wType,h)
         paperFigureSet_FullWidth(h);
     case 'fullwidth'
         paperFigureSet_FullWidth(h);
+    case 'normal2'
+        set(gcf,'color','w');
+        set(gcf,'unit','centimeter','position',[8,4,10,h]);
     otherwise
         paperFigureSet_normal(h);
     end

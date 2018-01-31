@@ -6,7 +6,7 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
-expVesselRang = [3.75,4.5];
+expVesselRang = constExpVesselRangDistance;
 isSaveFigure = 1;
 %% 数据路径
 orificD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
@@ -77,8 +77,8 @@ STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
 
 %% 绘制理论模拟实验
-if 0
-    legendText = {'单一缓冲罐','内置孔板缓冲罐'};
+if 1
+    legendText = {''};
     x = constExpMeasurementPointDistance();%测点对应的距离
     xExp = {x,x};
     x = constSimMeasurementPointDistance();%模拟测点对应的距离
@@ -87,19 +87,24 @@ if 0
     
     vesselInBiasResultCell.pulsationValue(1:8) = vesselInBiasResultCell.pulsationValue(1:8) + ones(1,8).*6e3;
     theDataCells{3, 2}.pulsationValue(1:8) = theDataCells{3, 2}.pulsationValue(1:8) + ones(1,8).*6e3;
-    
-    fh = figureExpAndSimThePressurePlus({expVesselCombineData,expOrificD0_5CombineData}...
-                            ,{simVesselDataCell,simOrificD0_5DataCell}...
-                            ,{vesselInBiasResultCell,theDataCells{3, 2}}...
+    figure();
+    paperFigureSet('normal2',6);
+    fh = figureExpAndSimThePressurePlus(expOrificD0_5CombineData...
+                            ,simOrificD0_5DataCell...
+                            ,theDataCells{3, 2}...
                             ,legendText...
                             ,'showMeasurePoint',1 ...
                             ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
-                            ,'showVesselRigion',1,'ylim',[0,40]...
+                            ,'showVesselRigion',1,'ylim',[0,30]...
                             ,'xlim',[2,12]...
                             ,'figureHeight',9 ...
                             ,'expVesselRang',expVesselRang);
-    set(fh.legend,'Position',[0.12935185921137 0.520347230633097 0.37041665930715 0.307700608873072]);
+    set(fh.legend,'Position',[0.685346209609021 0.205978015633128 0.21166666477422 0.241064808506657]);
     set(fh.textarrowVessel,'X',[0.336545138888889 0.30795138888889],'Y',[0.440439814814815 0.391597222222223]);
+    if 0
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'侧进直出缓冲罐压力脉动峰峰值理论模拟实验对比');
+    end
 end
 %% 1D孔板的[1,3,7,13]测点的时频分析波形
 if 0
@@ -132,7 +137,7 @@ end
 %     ,'yfilterfunptr',@fixInnerOrificY ...
 % );
 %% 绘制多组压力脉动抑制率
-if 1
+if 0
     paperPlotOrificeExpCmp(orificDataCells,legendLabels,isSaveFigure);
 end
 %% 绘制多组压力降
