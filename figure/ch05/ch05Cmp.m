@@ -147,7 +147,7 @@ end
 
 
 %% 研究L1变化对各种形式的缓冲罐的变化趋势
-if 1
+if 0
 	totalL = param.L1 + param.L2;
 	L1Ite = 0.1:0.5:5;
 	L2Ite = totalL - L1Ite;

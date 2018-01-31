@@ -5,12 +5,13 @@ function paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,
     chartType = 'contourf';
      
     endIndex = length(param.sectionL1) + length(param.sectionL2);
-    indexs = 1:7:endIndex;
-    if indexs(end) ~= endIndex
-        indexs = [indexs,endIndex];
-    end
+    indexs = [1,endIndex];
+%     indexs = 1:7:endIndex;
+%     if indexs(end) ~= endIndex
+%         indexs = [indexs,endIndex];
+%     end
     Lv = linspace(0.3,3,42);
-    lv1 = linspace(0,param.Lv-param.Dpipe,32);
+    lv1 = linspace(param.Dpipe,param.Lv-param.Dpipe,32);
     
     [X,Y,Zc] = oneVesselChangBiasLengthAndAspectRatio(lv1,Lv,indexs...
         ,'vType','straightInBiasOut'...
@@ -25,22 +26,23 @@ function paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,
             view(131,29);
         else
             [C,h] = contourf(X,Y,Z...
-							,'ShowText','on'...
-							,'LevelStep',0.2 ...
-							,'TextStep',0.5 ...
-							);
+							,'LevelStep',0.01 ...
+							,'ShowText','off'...
+                            ,'LineStyle','none'...
+                            );
+            hold on;
+            [C,h] = contour(X,Y,Z,'ShowText','on');
+            set(h,'LineColor','k','LevelStep',0.3);
         end
         colormap jet;
-        xlabel('偏置距离l1(m)','FontSize',paperFontSize());%l1就是lv1
+        xlabel('偏置距离(m)','FontSize',paperFontSize());%l1就是lv1
         ylabel('长径比','FontSize',paperFontSize());
         zlabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
 		
         ch = colorbar();
-		set(gca,'Position',[0.1811 0.2043 0.6242 0.7207]...
-						  ,'XTick',[0:0.25:1]...
-						  );
-		set(ch,'Position',[0.8381 0.2043 0.02804 0.7111]);
-		
+		set(gca,'Position',[0.154537671232877 0.197638888888889 0.605279680365297 0.727361111111111]);
+		set(ch,'Position',[0.777939497716895 0.2043 0.0253710045662108 0.7111]);
+		axis tight;
         set(get(ch,'Label'),'String','压力脉动峰峰值(kPa)','FontSize',paperFontSize(),'FontName',paperFontName());
         box on;
 		if isSaveFigure

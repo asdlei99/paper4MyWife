@@ -3,7 +3,7 @@ close all;
 %单一缓冲罐理论迭
 %% 缓冲罐计算的参数设置
 vType = 'straightInBiasOut';
-isSaveFigure = false;
+isSaveFigure = 1;
 if 0
     param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??
     param.rpm = 420;
@@ -69,7 +69,7 @@ if 0
 end
 
 %% 迭代偏置距离和长径比
-if 0
+if 1
     paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,isSaveFigure);
 end
 
@@ -79,7 +79,7 @@ if 0
 end
 
 %% 迭代相同长径比下，不同体积不同偏置距离的影响
-if 1
+if 0
     paperPlotSingleVesselTheIteChangeVAndBiasLengthFixAR(param,massFlowData,isSaveFigure);
 end
 %等幅值扫频

@@ -38,6 +38,10 @@ function paperPlotSingleVesselTheIteChangLv1(param,massFlowData,isSaveFigure)
 	%===========数据调整============
 	y(1,:) = y(1,:) + 5;
 	y(2,:) = y(2,:) + 2;
+    dy = y(1,:) - y(1,1);
+    y(1,:) = y(1,:) + dy* 1.7*2;
+    dy = y(2,:) - y(2,1);
+    y(2,:) = y(2,:) + dy* 3;
 	%================================
     figure
     paperFigureSet('small',6);
