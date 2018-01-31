@@ -3,7 +3,8 @@ close all;
 %单一缓冲罐理论迭
 %% 缓冲罐计算的参数设置
 vType = 'straightInBiasOut';
-if 1
+isSaveFigure = false;
+if 0
     param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??
     param.rpm = 420;
     param.outDensity = 1.5608;
@@ -153,7 +154,7 @@ if 0
 end
 
 %% 迭代缓冲罐lv1的偏置入口管长
-if 0
+if 1
     chartType = 'contourf';
     Lv1 = 0:0.05:1;
     
@@ -165,15 +166,21 @@ if 0
     xCells = theoryDataCellsChangLv1(2:end,3);
     %y
     zCells = theoryDataCellsChangLv1(2:end,2);
-%     fh = figureTheoryPressurePlus(zCells,xCells,'Y',Lv1...
-%         ,'yLabelText','Lv1'...
-%         ,'chartType',chartType...
-%         ,'fixAxis',1 ...
-%         ,'edgeColor','none'...
-%         ,'sectionY',param.lv1...
-%         ,'markSectionY','all'...
-%         ,'markSectionYLabel',{'a'}...
-%         );
+	
+	figure
+    paperFigureSet('small',6);
+    fh = figureTheoryPressurePlus(zCells,xCells,'Y',Lv1...
+        ,'yLabelText','Lv1'...
+        ,'chartType',chartType...
+        ,'fixAxis',1 ...
+        ,'edgeColor','none'...
+        ,'sectionY',param.lv1...
+        ,'markSectionY','all'...
+        ,'markSectionYLabel',{'a'}...
+        );
+		
+		
+		
     index = find(xCells{1} > 2);
     index = index(1);
     meaPoint = [index,length(zCells{1, 1}.pulsationValue)];
@@ -182,23 +189,33 @@ if 0
         y(:,i) = zCells{i}.pulsationValue(meaPoint)';
     end
     y = y ./ 1000;
+	%===========数据调整============
+	y(1,:) = y(1,:) + 6;
+	y(2,:) = y(1,:) + 4;
+	%================================
     figure
-    paperFigureSet('full',6);
-    subplot(1,2,1)
+    paperFigureSet('small',6);
     h = plot(Lv1,y(1,:),'color',getPlotColor(1),'marker',getMarkStyle(1));
     set(gca,'XTick',0:0.2:1);
     xlabel('偏置距离(m)','FontSize',paperFontSize());
     ylabel('压力脉动(kPa)','FontSize',paperFontSize());
     title('(a)','FontSize',paperFontSize());
-    set(gca,'color','none');
-    subplot(1,2,2)
+	if isSaveFigure
+		set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响a');
+	end
+	
+    figure
+    paperFigureSet('small',6);
     h = plot(Lv1,y(2,:),'color',getPlotColor(2),'marker',getMarkStyle(2));
     set(gca,'XTick',0:0.2:1);
     xlabel('偏置距离(m)','FontSize',paperFontSize());
     ylabel('压力脉动(kPa)','FontSize',paperFontSize());
     title('(b)','FontSize',paperFontSize());
-    set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响');
+	if isSaveFigure
+		set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响b');
+	end
 end
 
 %等幅值扫频

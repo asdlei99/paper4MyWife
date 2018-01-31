@@ -6,6 +6,7 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
+isSaveFigure = false;
 %% Êý¾ÝÂ·¾¶
 vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\RPM420');%²àÇ°½øÖ±ºó³ö
 vesselSideFontInSideFontOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\µ¥¹Þ²àÇ°½ø²àÇ°³ö420×ª0.05mpa');
@@ -13,7 +14,7 @@ vesselSideFontInSideBackOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄ
 vesselDirectInSideFontOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\µ¥¹ÞÖ±½ø²àÇ°³ö420×ª0.05mpa');
 vesselDirectInSideBackOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\µ¥¹ÞÖ±½ø²àºó³ö420×ª0.05mpa');
 vesselDirectInDirectOutCombineDataPath = fullfile(dataPath,'ÊµÑéÔ­Ê¼Êý¾Ý\ÎÞÄÚ¼þ»º³å¹Þ\µ¥¹ÞÖ±½øÖ±³ö420×ª0.05mpaModify');
-%% ¼ÓÔØÖÐ¼ä¿×°åÒÔ¼°»º³å¹ÞÊý¾Ý
+%% ¼ÓÔØ»º³å¹ÞÊý¾Ý
 [vesselSideFontInDirectOutDataCells,vesselSideFontInDirectOutCombineData] ...
     = loadExpDataFromFolder(vesselSideFontInDirectOutCombineDataPath);
 [vesselSideFontInSideFontOutDataCells,vesselSideFontInSideFontOutCombineData] ...
@@ -91,30 +92,31 @@ end
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% »æÖÆ¶à×éÑ¹Á¦Âö¶¯
 if 1
-    fh = figureExpPressurePlus(vesselCombineDataCells,legendLabels...
-        ,'errorType','none'...
-        ,'showPureVessel',0);
-    set(fh.legend,...
-        'Position',[0.197702551027417 0.469635426128899 0.282222217491105 0.346163184982204]);
-    set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
-    annotation(fh.gcf,'ellipse',...
-        [0.857892361111112 0.674088541666667 0.0430972222222221 0.171979166666667]);
-    annotation(fh.gcf,'arrow',[0.865638766519824 0.814977973568282],...
-        [0.675567656765677 0.564356435643564]);
-    set(gca,'color','none');
-    ax = axes('Parent',fh.gcf...
-        ,'Position',[0.618767361111111 0.257369791666667 0.275208333333337 0.29765625]...
-        ,'color','w');
-    box(ax,'on');
-    err = [vesselDiffLinkLastMeasureMeanValues'-vesselDiffLinkLastMeasureMeanValuesDown'...
-        ,vesselDiffLinkLastMeasureMeanValuesUp'-vesselDiffLinkLastMeasureMeanValues'];
-    barHandle = barwitherr(err,vesselDiffLinkLastMeasureMeanValues');
-    ylim([30,40]);
-    xlim([0,7]);
-    set(barHandle,'FaceColor',getPlotColor(1));
-    set(ax,'XTickLabel',legendLabelsAbb);
-    set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'»º³å¹Þ²»Í¬½Ó·¨¶Ô¹ÜÏµÆøÁ÷Âö¶¯µÄÓ°Ïì');
+	paperPlotSingleVesselExpResult(vesselCombineDataCells,legendLabels,isSaveFigure);
+    % fh = figureExpPressurePlus(vesselCombineDataCells,legendLabels...
+        % ,'errorType','none'...
+        % ,'showPureVessel',0);
+    % set(fh.legend,...
+        % 'Position',[0.197702551027417 0.469635426128899 0.282222217491105 0.346163184982204]);
+    % set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
+    % annotation(fh.gcf,'ellipse',...
+        % [0.857892361111112 0.674088541666667 0.0430972222222221 0.171979166666667]);
+    % annotation(fh.gcf,'arrow',[0.865638766519824 0.814977973568282],...
+        % [0.675567656765677 0.564356435643564]);
+    % set(gca,'color','none');
+    % ax = axes('Parent',fh.gcf...
+        % ,'Position',[0.618767361111111 0.257369791666667 0.275208333333337 0.29765625]...
+        % ,'color','w');
+    % box(ax,'on');
+    % err = [vesselDiffLinkLastMeasureMeanValues'-vesselDiffLinkLastMeasureMeanValuesDown'...
+        % ,vesselDiffLinkLastMeasureMeanValuesUp'-vesselDiffLinkLastMeasureMeanValues'];
+    % barHandle = barwitherr(err,vesselDiffLinkLastMeasureMeanValues');
+    % ylim([30,40]);
+    % xlim([0,7]);
+    % set(barHandle,'FaceColor',getPlotColor(1));
+    % set(ax,'XTickLabel',legendLabelsAbb);
+    % set(gca,'color','none');
+    % saveFigure(fullfile(getPlotOutputPath(),'ch05'),'»º³å¹Þ²»Í¬½Ó·¨¶Ô¹ÜÏµÆøÁ÷Âö¶¯µÄÓ°Ïì');
 end
 %»æÖÆ0.25DµÄÑ¹Á¦Âö¶¯ÒÖÖÆÂÊ
 % fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...

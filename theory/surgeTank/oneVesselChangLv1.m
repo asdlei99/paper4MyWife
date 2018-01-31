@@ -112,8 +112,10 @@ end
 
 
 if isnan(massflowData)
-    [massFlowRaw,time,~,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
+	
+    [massFlowRaw,time,ttmp,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
         ,0.14,1.075,param.outDensity,'rcv',0.15,'k',1.4,'pr',0.15,'fs',param.Fs,'oneSecond',6);
+	clear ttmp;
     [freRaw,AmpRaw,PhRaw,massFlowERaw] = frequencySpectrum(detrend(massFlowRaw,'constant'),param.Fs);
     freRaw = [7,14,21,28,14*3];
     massFlowERaw = [0.02,0.2,0.03,0.003,0.007];

@@ -23,8 +23,9 @@ param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.
 lvLen = 0.318;
 param.lv1 = lvLen;
 param.lv2 = lvLen;
-if 1
-    coeffFriction = 0.03;
+
+if 0
+	coeffFriction = 0.03;
     meanFlowVelocity = 12;
     coeffFrictionBias = 0.03;
     meanFlowVelocityBias = 10;
@@ -103,11 +104,12 @@ if 1
         plotDatasCell{4,2} = theoryDataCellsStraightInBiasFrontOut(2:end,2);
 
     end
+	% 体积变化对脉动的影响
     sectionXDatas = {};
     sectionX = [2,7,10];
     markSectionXLabel = {'b','c','d'};
     figure
-    paperFigureSet_large(12);
+    paperFigureSet('large',12);
     for i=1:size(plotDatasCell,1)
         subplot(3,3,i)
         fh = figureTheoryPressurePlus(plotDatasCell{i,2},plotDatasCell{i,1},'Y',V...
@@ -165,10 +167,13 @@ if 1
     ylabel('脉动抑制率(%)');
     box on;
 %highLowColorbar();
+	
 end
 
+
+
 %改变距离对结果的影响
-if 1
+if 0
     coeffFriction = 0.03;
     meanFlowVelocity = 12;
     coeffFrictionBias = 0.03;
@@ -293,6 +298,7 @@ if 0
     view(-41,20);
     highLowColorbar();
 end
+
 %% 缓冲罐改变接管位置对气流脉动的影响
 if 0
     theoryDataCellsChangL1 = oneVesselChangL1FixL('massflowdata',[freRaw;massFlowERaw]);
