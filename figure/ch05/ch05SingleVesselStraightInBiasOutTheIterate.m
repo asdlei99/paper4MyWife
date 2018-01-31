@@ -57,184 +57,48 @@ else
     massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 
 end
+massFlowData = [freRaw;massFlowERaw];
 %% 1迭代长径比
 if 0
-    chartType = 'surf';
-    Lv = 0.3:0.05:3;
-    theoryDataCellsChangLengthDiameterRatio = oneVesselChangLengthDiameterRatio('vType','straightInBiasOut'...
-        ,'massflowdata',[freRaw;massFlowERaw]...
-        ,'param',param...
-        ,'Lv',Lv);
-    %
-    %x
-    xCells = theoryDataCellsChangLengthDiameterRatio(2:end,3);
-    %y
-    zCells = theoryDataCellsChangLengthDiameterRatio(2:end,2);
-    yValue = cellfun(@(x) x,theoryDataCellsChangLengthDiameterRatio(2:end,6));%长径比值
-    expLengthDiameterRatio = param.Lv / param.Dv;
-    fh = figureTheoryPressurePlus(zCells,xCells,'Y',yValue...
-        ,'yLabelText','长径比'...
-        ,'chartType',chartType...
-        ,'fixAxis',1 ...
-        ,'edgeColor','none'...
-        ,'sectionY',expLengthDiameterRatio...
-        ,'markSectionY','all'...
-        ,'markSectionYLabel',{'a'}...
-        );
+    paperPlotSingleVesselTheIteChangLengthDiameterRatio(param,massFlowData,isSaveFigure);
 end
 
 %% 迭代缓冲罐位置
 if 0
-    %chartType = 'surf';
-    chartType = 'contourf';
-    L1 = 0:0.1:8;
-    
-    theoryDataCellsChangL1 = oneVesselChangL1FixL(L1,param.L...
-        ,'vType','straightInBiasOut'...
-        ,'massflowdata',[freRaw;massFlowERaw]...
-        ,'param',param);
-    %x
-    xCells = theoryDataCellsChangL1(2:end,3);
-    %y
-    zCells = theoryDataCellsChangL1(2:end,2);
-    fh = figureTheoryPressurePlus(zCells,xCells,'Y',L1...
-        ,'yLabelText','L1'...
-        ,'chartType',chartType...
-        ,'fixAxis',1 ...
-        ,'edgeColor','none'...
-        ,'sectionY',param.L1...
-        ,'markSectionY','all'...
-        ,'markSectionYLabel',{'a'}...
-        );
-    ch = colorbar();
-    set(get(ch,'Label'),'String','压力脉动峰峰值(kPa)');
-    colormap jet;
+    paperPlotSingleVesselTheIteChangL1(param,massFlowData,isSaveFigure);
 end
 
 %% 迭代偏置距离和长径比
 if 0
-     %chartType = 'surf';
-     chartType = 'contourf';
-     
-    endIndex = length(param.sectionL1) + length(param.sectionL2);
-    indexs = 1:7:endIndex;
-    if indexs(end) ~= endIndex
-        indexs = [indexs,endIndex];
-    end
-    Lv = linspace(0.3,3,42);
-    lv1 = linspace(0,param.Lv-param.Dpipe,32);
-    
-    [X,Y,Zc] = oneVesselChangBiasLengthAndAspectRatio(lv1,Lv,indexs...
-        ,'vType','straightInBiasOut'...
-        ,'massflowdata',[freRaw;massFlowERaw]...
-        ,'param',param);
-    for i = 1:length(Zc)
-        Z = Zc{i}./1000;
-        figure
-        paperFigureSet_normal(9);
-        if strcmpi(chartType,'surf')
-            surf(X,Y,Z);
-            view(131,29);
-        else
-            [C,h] = contourf(X,Y,Z,'ShowText','on','LevelStep',0.2);
-        end
-        colorbar();
-        colormap jet;
-        xlabel('偏置距离l1(m)','FontSize',paperFontSize());%l1就是lv1
-        ylabel('长径比','FontSize',paperFontSize());
-        zlabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
-        ch = colorbar();
-        set(get(ch,'Label'),'String','压力脉动峰峰值(kPa)','FontSize',paperFontSize(),'FontName',paperFontName());
-        box on;
-        set(gca,'color','none');
-        saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('直进侧出缓冲罐-长径比和偏置距离迭代云图(%g)',X(1,indexs(i))));
-    end
-    
-    
+    paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,isSaveFigure);
 end
 
 %% 迭代缓冲罐lv1的偏置入口管长
-if 1
-    chartType = 'contourf';
-    Lv1 = 0:0.05:1;
-    
-    theoryDataCellsChangLv1 = oneVesselChangLv1(Lv1...
-        ,'vType','straightInBiasOut'...
-        ,'massflowdata',[freRaw;massFlowERaw]...
-        ,'param',param);
-    %x
-    xCells = theoryDataCellsChangLv1(2:end,3);
-    %y
-    zCells = theoryDataCellsChangLv1(2:end,2);
-	
-	figure
-    paperFigureSet('small',6);
-    fh = figureTheoryPressurePlus(zCells,xCells,'Y',Lv1...
-        ,'yLabelText','Lv1'...
-        ,'chartType',chartType...
-        ,'fixAxis',1 ...
-        ,'edgeColor','none'...
-        ,'sectionY',param.lv1...
-        ,'markSectionY','all'...
-        ,'markSectionYLabel',{'a'}...
-        );
-		
-		
-		
-    index = find(xCells{1} > 2);
-    index = index(1);
-    meaPoint = [index,length(zCells{1, 1}.pulsationValue)];
-    y = zeros(length(meaPoint),length(Lv1));
-    for i=1:length(Lv1)
-        y(:,i) = zCells{i}.pulsationValue(meaPoint)';
-    end
-    y = y ./ 1000;
-	%===========数据调整============
-	y(1,:) = y(1,:) + 6;
-	y(2,:) = y(1,:) + 4;
-	%================================
-    figure
-    paperFigureSet('small',6);
-    h = plot(Lv1,y(1,:),'color',getPlotColor(1),'marker',getMarkStyle(1));
-    set(gca,'XTick',0:0.2:1);
-    xlabel('偏置距离(m)','FontSize',paperFontSize());
-    ylabel('压力脉动(kPa)','FontSize',paperFontSize());
-    title('(a)','FontSize',paperFontSize());
-	if isSaveFigure
-		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响a');
-	end
-	
-    figure
-    paperFigureSet('small',6);
-    h = plot(Lv1,y(2,:),'color',getPlotColor(2),'marker',getMarkStyle(2));
-    set(gca,'XTick',0:0.2:1);
-    xlabel('偏置距离(m)','FontSize',paperFontSize());
-    ylabel('压力脉动(kPa)','FontSize',paperFontSize());
-    title('(b)','FontSize',paperFontSize());
-	if isSaveFigure
-		set(gca,'color','none');
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响b');
-	end
+if 0
+    paperPlotSingleVesselTheIteChangLv1(param,massFlowData,isSaveFigure);
 end
 
-%等幅值扫频
-if 0
-	addtion = -10:1:70;
-	
-	for i = 1:length(addtion)
-		fre = freRaw+addtion(i);
-		baseFrequency = 14 + addtion(i);
-		res{i} = oneVesselPulsation('massflowdata',[fre;massFlowERaw]...
-							, 'param', param ...
-							, 'vType', vType ...
-							, 'baseFrequency', baseFrequency...
-							, 'multFreTimes', 1 ...
-							, 'semiFreTimes', 1 ...
-								);
-		%脉动抑制率，还需直管
-	end
-	
-	
+%% 迭代相同长径比下，不同体积不同偏置距离的影响
+if 1
+    paperPlotSingleVesselTheIteChangeVAndBiasLengthFixAR(param,massFlowData,isSaveFigure);
 end
+%等幅值扫频
+% if 0
+	% addtion = -10:1:70;
+	
+	% for i = 1:length(addtion)
+		% fre = freRaw+addtion(i);
+		% baseFrequency = 14 + addtion(i);
+		% res{i} = oneVesselPulsation('massflowdata',[fre;massFlowERaw]...
+							% , 'param', param ...
+							% , 'vType', vType ...
+							% , 'baseFrequency', baseFrequency...
+							% , 'multFreTimes', 1 ...
+							% , 'semiFreTimes', 1 ...
+								% );
+		% %脉动抑制率，还需直管
+	% end
+	
+	
+% end
 

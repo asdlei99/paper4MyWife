@@ -1,5 +1,5 @@
-%% 单一缓冲罐固定管长,体积，改变lv1(x)和Lv(y)
-function [X,Y,Z] = oneVesselChangBiasLengthAndAspectRatio(lv1,Lv,index,varargin)
+%% 迭代相同长径比下，不同体积不同偏置距离的影响
+function [X,Y,Z] = oneVesselChangeVAndBiasLengthFixAR(V,lv1,index,varargin)
 vType = 'straightInBiasFrontOut';
 
 %biasInBiasOut：侧进侧出 (侧前进侧后出)
@@ -73,6 +73,7 @@ vType = 'straightInBiasFrontOut';
 %  outlet:  | L2 Dpipe (Dbias为插入管的管道直径，取0即可)
 pp = varargin;
 massflowData = nan;
+ar = [];%长径比，如果不指定，按照param的参数进行计算
 %% 初始参数
 %
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
@@ -106,6 +107,8 @@ while length(pp)>=2
             vType = val;
         case 'param'
             param = val;
+		case 'ar'
+			ar = val;
         otherwise
             error('错误参数:%s',prop);
     end
@@ -134,10 +137,11 @@ multFreTimes = 3;
 semiFreTimes = 3;
 allowDeviation = 0.5;
 
-V = (pi * param.Dv.^2 / 4) .* param.Lv;%缓冲罐体积
-%开始计算迭代的Lv和Dv
 
-Dv = calcDFromLengthDiameterRatio(V,Lv);
+%计算长径比
+if isempty(ar)
+	ar = param.Lv / param.Dv;
+end
 
 
 dcpss = getDefaultCalcPulsSetStruct();
@@ -158,15 +162,14 @@ Z = cell(length(index),1);
 X = [];
 Y = [];
 
-for i=1:length(Lv)
+for i=1:length(V)
     for j = 1:length(lv1)
-        param.lv1 = lv1(j);
-        param.Lv = Lv(i);
-        param.Dv = Dv(i);
-        aspectR = param.Lv / param.Dv;
+        param.Dv = calcDFixAspectRatio(V(i),ar);%根据长径比和体积计算直径
+		param.Lv = ar * param.Dv;%计算缓冲罐长度
+
         X(i,j) = lv1(j);
-        Y(i,j) = aspectR;
-        maxLv1 = Lv(i) - param.Dpipe;
+        Y(i,j) = V(i);
+        maxLv1 = param.Lv - param.Dpipe;
         if lv1(j) > maxLv1
             count = 1;
             for kk=index
@@ -175,7 +178,7 @@ for i=1:length(Lv)
             end
             continue;
         end
-        if lv1(j) < param.Dpipe
+		if lv1(j) < param.Dpipe
             count = 1;
             for kk=index
                 Z{count}(i,j) = nan;
@@ -183,7 +186,7 @@ for i=1:length(Lv)
             end
             continue;
         end
-		
+        
         [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
             ,param.L1,param.L2,param.Lv,param.l,param.Dpipe,param.Dv ...
             ,param.sectionL1,param.sectionL2 ...
@@ -211,6 +214,6 @@ end
 
 
 
-function Dv = calcDFromLengthDiameterRatio(V,Lv)
-    Dv = ((4*V) ./ (pi * Lv)).^0.5;
+function Dv = calcDFixAspectRatio(V,ar)
+    Dv = ((4 .* V) ./ (pi .* ar)) .^ (1/3);
 end
