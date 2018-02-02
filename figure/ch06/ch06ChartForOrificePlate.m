@@ -77,7 +77,7 @@ STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
 
 %% 绘制理论模拟实验
-if 1
+if 0
     legendText = {''};
     x = constExpMeasurementPointDistance();%测点对应的距离
     xExp = {x,x};
@@ -124,7 +124,7 @@ end
 %绘制0.25D的压力脉动
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% 绘制多组压力脉动
-if 0
+if 1
     fh = figureExpPressurePlus(orificDataCells,legendLabels,'errorType',errorType...
         ,'showPureVessel',1,'purevessellegend','单一缓冲罐'...
         ,'expVesselRang',expVesselRang);
