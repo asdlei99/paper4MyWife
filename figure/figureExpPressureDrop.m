@@ -10,6 +10,7 @@ pp = varargin;
 errorType = 'ci';
 chartType = 'line';
 baseField = 'rawData';
+isUseDropRate=false;%这个为true时，绘制的是压力损失率
 isFigure = true;
 while length(pp)>=2
     prop =pp{1};
@@ -24,6 +25,8 @@ while length(pp)>=2
             baseField = val;
         case 'isfigure'
             isFigure = val;
+        case 'isusedroprate'
+            isUseDropRate = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -32,27 +35,55 @@ if isFigure
     fh.figure = figure;
     paperFigureSet_normal();
 end
+
 x = 1:length(dataCombineStructCells);
 if iscell(measureRang)
     for i=1:length(dataCombineStructCells)
          [ pressureDropMeanVal,pressureDropStdVal,pressureDropMaxVal,pressureDropMinVal,pressureDropMuci,~] ...
         = getExpCombinePressureDropData(dataCombineStructCells{i},measureRang{i},baseField);
+        
         pressureDropInfo.mean(i) = pressureDropMeanVal;
         pressureDropInfo.std(i) = pressureDropStdVal;
         pressureDropInfo.max(i) = pressureDropMaxVal;
         pressureDropInfo.min(i) = pressureDropMinVal;
         pressureDropInfo.muci(:,i) = pressureDropMuci(:);
+        
+        [ pressureMeanVal,pressureStdVal,pressureMaxVal,pressureMinVal,pressureMuci,~] ...
+            = getExpCombinePressureData(dataCombineStructCells{i});
+        mr = measureRang{i};
+        pressureMeanVal = pressureMeanVal(mr);
+        pressureMeanVal = mean(pressureMeanVal);
+        pressureDropInfo.pressureMean(i) = pressureMeanVal;
     end
-    y = pressureDropInfo.mean;
+    
+    if isUseDropRate
+        y = pressureDropInfo.mean./pressureDropInfo.pressureMean;
+    else  
+        y = pressureDropInfo.mean;
+    end
+    
 else
     [ pressureDropMeanVal,pressureDropStdVal,pressureDropMaxVal,pressureDropMinVal,pressureDropMuci,~] ...
         = cellfun(@(x) getExpCombinePressureDropData(x,measureRang,baseField),dataCombineStructCells,'UniformOutput',0);
+    [ pressureMeanVal,pressureStdVal,pressureMaxVal,pressureMinVal,pressureMuci,~] ...
+        = cellfun(@(x) getExpCombinePressureData(x,baseField),dataCombineStructCells,'UniformOutput',0);
     pressureDropInfo.mean = cell2mat(pressureDropMeanVal);
     pressureDropInfo.std = cell2mat(pressureDropStdVal);
     pressureDropInfo.max = cell2mat(pressureDropMaxVal);
     pressureDropInfo.min = cell2mat(pressureDropMinVal);
-    pressureDropInfo.muci = [cell2mat(cellfun(@(x) x(1,1),pressureDropMuci,'UniformOutput',0));cell2mat(cellfun(@(x) x(2,1),pressureDropMuci,'UniformOutput',0))];
-    y = pressureDropInfo.mean;
+    pressureDropInfo.muci = [cell2mat(cellfun(@(x) x(1,1),pressureDropMuci,'UniformOutput',0))...
+        ;cell2mat(cellfun(@(x) x(2,1),pressureDropMuci,'UniformOutput',0))];
+    
+    
+    pressureDropInfo.pressureMean = cellfun(@(x) mean(x(measureRang)),pressureMeanVal);
+    clear pressureStdVal;clear pressureMaxVal;clear pressureMinVal;clear pressureMuci;
+    
+    if isUseDropRate
+        y = pressureDropInfo.mean./pressureDropInfo.pressureMean;
+        y = y.*100;
+    else  
+        y = pressureDropInfo.mean;
+    end
 end
 
 if strcmp(errorType,'std')
@@ -64,6 +95,13 @@ elseif strcmp(errorType,'ci')
 elseif strcmp(errorType,'minmax')
     yUp = pressureDropInfo.max;
     yDown = pressureDropInfo.min;
+end
+    
+if isUseDropRate
+    yUp = yUp ./ pressureDropInfo.pressureMean;
+    yDown = yDown ./ pressureDropInfo.pressureMean;
+    yUp = yUp.*100;
+    yDown = yDown.*100;
 end
 y=y';
 yUp=yUp';
@@ -88,7 +126,11 @@ else
 end
 set(gca,'XTick',x,'XTickLabel',legendLabels);
 xlabel('类型','fontsize',paperFontSize());
-ylabel('压力降(kPa)','fontsize',paperFontSize());
+if isUseDropRate
+    ylabel('压力损失百分比(%)','fontsize',paperFontSize());
+else
+    ylabel('压力降(kPa)','fontsize',paperFontSize());
+end
 fh.gca = gca;
 end
 

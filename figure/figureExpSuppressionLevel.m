@@ -55,8 +55,10 @@ x = constExpMeasurementPointDistance();%测点对应的距离
 for plotCount = 1:length(dataCombineStructCells)
     if 1 == length(dataCombineStructCells)
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells);
+        yFunPtr = yFilterFunPtr;
     else     
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells{plotCount});
+        yFunPtr = yFilterFunPtr{plotCount};
     end
     if isnan(y)
         error('此数据未有进行完全的分析，没有脉动抑制率');
@@ -73,8 +75,9 @@ for plotCount = 1:length(dataCombineStructCells)
         yUp = maxVal(rang).* 100;
         yDown = minVal(rang).* 100;
     end
-    if isa(yFilterFunPtr,'function_handle')
-        [y,yUp,yDown]= yFilterFunPtr(y,yUp,yDown);
+    
+    if isa(yFunPtr,'function_handle')
+        [y,yUp,yDown]= yFunPtr(y,yUp,yDown);
     end
 
     if strcmp(errorType,'none')
@@ -93,9 +96,7 @@ end
 if ~isempty(legendLabels)
     fh.legend = legend(fh.plotHandle,legendLabels,0);
 end
-if isFigure
-    set(gca,'Position',[0.13 0.18 0.79 0.65]);
-end
+
 
 if showVesselRegion
     fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
@@ -105,6 +106,7 @@ end
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;
 if showMeasurePoint 
+    set(gca,'Position',[0.13 0.18 0.79 0.65]);
     for i = 1:length(x)
         fh.measurementGridLine(i) = plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
         if 0 == mod(i,2)
@@ -129,5 +131,6 @@ end
 
 xlabel('管线距离(m)','FontSize',paperFontSize());
 ylabel('脉动抑制率(%)','FontSize',paperFontSize());
+box on;
 fh.gca = gca;
 end

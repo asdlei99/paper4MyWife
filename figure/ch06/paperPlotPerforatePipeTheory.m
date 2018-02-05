@@ -21,30 +21,31 @@ end
 function theoryPerforatingRatios(param,isSaveFigure)
 	%迭代开孔率
 	n = 10:1:72;%孔数变化范围
-	dp = 10:5:300;%开孔孔径
+	dp = 10:5:200;%开孔孔径
 	dp = dp ./1000;
 	Din = 98/3 : 20 : 98*3;%内插管管径
 	Din = Din ./ 1000;
 	%内插管入口段非孔管开孔长度
-	lp = 8:8:120;
+	lp = 50:10:300;
 	lp = lp ./ 1000;
 	
 	figure
 	paperFigureSet('fill',10);
-	
+	LineStyle = 'none';
 	% x:n y:dp
 	subplot(3,3,1)
 	r1 = calcPerforatingRatios(param.n1,param.dp1,param.Din,param.lp1);
 	Zn_dp = NaN(length(dp),length(n));
 	for i = 1:length(dp)
 		Zn_dp(i,:) = calcPerforatingRatios(n,dp(i),param.Din,param.lp1);
-	end
+    end
+    Zn_dp(Zn_dp>100) = nan;
 	[X,Y] = meshgrid(n,dp);
-	[c,h]=contourf(X,Y,Zn_dp);
+	[c,h]=contourfSmooth(X,Y.*1000,Zn_dp,'LineStyle',LineStyle);
 	set(gca,'XTickLabel',{}...
-			,'YTick',[0.1:0.05:0.3]);
+			,'YTick',50:50:200);%linspace(dp(1),dp(end),4)
 	gcaHandle{1,1} = gca;
-	ylabel('dp','FontSize',paperFontSize);
+	ylabel('dp(mm)','FontSize',paperFontSize);
 	axis tight;
 	
 	% x:n y:Din
@@ -52,12 +53,13 @@ function theoryPerforatingRatios(param,isSaveFigure)
 	Zn_Din = NaN(length(Din),length(n));
 	for i = 1:length(Din)
 		Zn_Din(i,:) = calcPerforatingRatios(n,param.dp1,Din(i),param.lp1);
-	end
+    end
+    Zn_Din(Zn_Din>100) = nan;
 	[X,Y] = meshgrid(n,Din);
-	[c,h]=contourf(X,Y,Zn_Din);
+	[c,h]=contourfSmooth(X,Y.*1000,Zn_Din,'LineStyle',LineStyle);
 	set(gca,'XTickLabel',{});
 	gcaHandle{2,1} = gca;
-	ylabel('Din','FontSize',paperFontSize);
+	ylabel('Din(mm)','FontSize',paperFontSize);
 	axis tight;
 	
 	% x:dp y:Din
@@ -65,9 +67,10 @@ function theoryPerforatingRatios(param,isSaveFigure)
 	Zdp_Din = NaN(length(Din),length(dp));
 	for i = 1:length(Din)
 		Zdp_Din(i,:) = calcPerforatingRatios(param.n1,dp,Din(i),param.lp1);
-	end
+    end
+    Zdp_Din(Zdp_Din>100) = nan;
 	[X,Y] = meshgrid(dp,Din);
-	[c,h]=contourf(X,Y,Zdp_Din);
+	[c,h]=contourfSmooth(X.*1000,Y.*1000,Zdp_Din,'LineStyle',LineStyle);
 	set(gca,'XTickLabel',{},'YTickLabel',{});
 	gcaHandle{2,2} = gca;
 	axis tight;
@@ -77,12 +80,15 @@ function theoryPerforatingRatios(param,isSaveFigure)
 	Zn_lp = NaN(length(lp),length(n));
 	for i = 1:length(lp)
 		Zn_lp(i,:) = calcPerforatingRatios(n,param.dp1,param.Din,lp(i));
-	end
+    end
+    Zn_lp(Zn_lp>100) = nan;
 	[X,Y] = meshgrid(n,lp);
-	[c,h]=contourf(X,Y,Zn_lp);
+	[c,h]=contourfSmooth(X,Y.*1000,Zn_lp,'LineStyle',LineStyle);
 	xlabel('n','FontSize',paperFontSize);
 	gcaHandle{3,1} = gca;
-	ylabel('lp','FontSize',paperFontSize);
+    set(gca,'XTickLabelRotation',90 ...
+        );
+	ylabel('lp(mm)','FontSize',paperFontSize);
 	axis tight;
 	
 	% x:dp y:lp
@@ -90,11 +96,14 @@ function theoryPerforatingRatios(param,isSaveFigure)
 	Zdp_lp = NaN(length(lp),length(dp));
 	for i = 1:length(lp)
 		Zdp_lp(i,:) = calcPerforatingRatios(param.n1,dp,param.Din,lp(i));
-	end
+    end
+    Zdp_lp(Zdp_lp>100) = nan;
 	[X,Y] = meshgrid(dp,lp);
-	[c,h]=contourf(X,Y,Zdp_lp);
-	xlabel('dp','FontSize',paperFontSize);
-	set(gca,'YTickLabel',{});
+	[c,h]=contourfSmooth(X.*1000,Y.*1000,Zdp_lp,'LineStyle',LineStyle);
+	xlabel('dp(mm)','FontSize',paperFontSize);
+	set(gca,'YTickLabel',{}...
+        ,'XTickLabelRotation',90 ...
+        );
 	gcaHandle{3,2} = gca;
 	axis tight;
 	
@@ -103,21 +112,29 @@ function theoryPerforatingRatios(param,isSaveFigure)
 	ZDin_lp = NaN(length(lp),length(Din));
 	for i = 1:length(lp)
 		ZDin_lp(i,:) = calcPerforatingRatios(param.n1,param.dp1,Din,lp(i));
-	end
+    end
+    ZDin_lp(ZDin_lp>100) = nan;
 	[X,Y] = meshgrid(Din,lp);
-	[c,h]=contourf(X,Y,ZDin_lp);
-	set(gca,'YTickLabel',{});
+	[c,h]=contourfSmooth(X.*1000,Y.*1000,ZDin_lp,'LineStyle',LineStyle);
+	set(gca,'YTickLabel',{}...
+        ,'XTickLabelRotation',90 ...
+    );
 	gcaHandle{3,3} = gca;
-	xlabel('Din','FontSize',paperFontSize);
+	xlabel('Din(mm)','FontSize',paperFontSize);
 	axis tight;
 	
 	%%设置位置
-	set(gcaHandle{1,1},'Position',[0.13 0.657 0.2342 0.2469]);
-	set(gcaHandle{2,1},'Position',[0.13 0.4096 0.2342 0.2368]);
-	set(gcaHandle{2,2},'Position',[0.3731 0.4096 0.2425 0.2394]);
-	set(gcaHandle{3,1},'Position',[0.13 0.1319 0.2364 0.2639]);
-	set(gcaHandle{3,2},'Position',[0.3753 0.1346 0.2406 0.2612]);
-	set(gcaHandle{3,3},'Position',[0.6291 0.1346 0.2428 0.2639]);
+	set(gcaHandle{1,1},'Position',[0.13 0.67 0.24 0.25]);
+	set(gcaHandle{2,1},'Position',[0.13 0.4 0.24 0.25]);
+	set(gcaHandle{2,2},'Position',[0.385 0.4 0.24 0.25]);
+	set(gcaHandle{3,1},'Position',[0.13 0.13 0.24 0.25]);
+	set(gcaHandle{3,2},'Position',[0.385 0.13 0.24 0.25]);
+	set(gcaHandle{3,3},'Position',[0.64 0.13 0.24 0.25]);
+    colormap jet;
+    if isSaveFigure
+		set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch06'),'开孔率的影响');
+	end	
 end
 
 function theoryChangedp(rang,massFlowDataCell,param,isSaveFigure)
