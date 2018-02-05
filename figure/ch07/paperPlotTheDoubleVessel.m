@@ -1,20 +1,25 @@
-%% 第七章 绘图 - 双罐理论分析
-%第七章画图的参数设置
-clear all;
-% close all;
-clc;
-freRaw = [7,14,21,28,14*3];
-massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
-theoryDataCells = doubleVesselChangDistanceToFirstVessel('massflowdata',[freRaw;massFlowERaw]...
-    ,'meanFlowVelocity',14);
-plusValue = theoryDataCells(2:end,2);
-X = theoryDataCells(2:end,3);
-linkPipeLength = cell2mat(theoryDataCells(2:end,5));
-legendLabels = theoryDataCells(2:end,1);
-fh = figureTheoryPressurePlus(plusValue,X...
-    ,'Y',linkPipeLength...
-    ,'legendLabels',legendLabels...
-    ,'yLabelText','接管长'...
-    ,'chartType','surf'...
-    ,'edgeColor','none'...
-);
+function paperPlotTheDoubleVessel(param,isSaveFigure)
+%孔管的理论计算
+	freRaw = [14,21,28,42,56,70];
+	massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
+	massFlowDataCell = [freRaw;massFlowERaw];
+	if 0
+		%变缓冲罐距离L2
+		rang = [0.004:0.004:0.03];
+		theoryChangedp(rang,massFlowDataCell,param,isSaveFigure);
+	end
+	
+	if 1
+		%迭代开孔率
+		theoryPerforatingRatios(param,isSaveFigure)
+	end
+	
+	
+end
+
+function theoryChangeL2(param,massFlowDataCell,isSaveFigure)
+    L2 = 0:0.5:3;
+    doubleVesselChangDistanceToFirstVessel(L2...
+                                            ,'param',param...
+                                            ,'massflowdata',massFlowDataCell)
+end

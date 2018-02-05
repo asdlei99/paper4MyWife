@@ -27,8 +27,8 @@ st.notMach = 0;%是否马赫
 st.mach = st.meanFlowVelocity ./ st.a;
 st.D = Dpipe;
 
-L1 = 1.5;%L1(m)
-L2 = 1.5;%L2（m）长度
+L1 = 3.5;%L1(m)
+L2 = 6;%L2（m）长度
 
 Lbias = 0.150+0.168;%侧进或侧出的管道相对缓冲罐的偏置距离
 vhpicStruct.l = 0.01;
@@ -109,7 +109,15 @@ pipeLength = L1+vhpicStruct.Lv+L2;
 sectionL = [sectionL1,sectionL2+L1+vhpicStruct.Lv];
 afterIndex = length(sectionL1);
 %直管脉动计算
-pressurePipe = straightPipePulsationCalc(magE,frequency,time,pipeLength,sectionL,st);
+pressurePipe = straightPipePulsationCalc(magE,frequency,time,pipeLength,sectionL...
+    ,'D',Dpipe ...
+    ,'a',st.a...
+    ,'isDamping',st.isDamping...
+    ,'friction',st.coeffFriction...
+    ,'isOpening',st.isOpening...
+    ,'meanFlowVelocity',st.meanFlowVelocity...
+    ,'notMach',st.notMach...
+    );
 
 pressureVesselOSB = [pressure1OSB,pressure2OSB];
 pressureVesselOSFB = [pressure1OSFB,pressure2OSFB];
