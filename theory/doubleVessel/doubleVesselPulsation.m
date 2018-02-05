@@ -1,4 +1,4 @@
-function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
+function theoryDataCells = doubleVesselPulsation(varargin)
 
 %   massFlowE1 经过fft后的质量流量，直接对质量流量进行去直流fft
 %  长度 L1     l    Lv1   l   L2  l    Lv2   l     L3
@@ -8,7 +8,6 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 %             |__________|       |__________|  
 %  直径 Dpipe       Dv1    Dpipe       Dv2          Dpipe
 %   
-	detalDis = 0.5;
     pp = varargin;
     massflowData = nan;
 	param.acousticVelocity = 345;%声速
@@ -45,9 +44,6 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 	allowDeviation = 0.5;
 	
 	isFast = true;
-	
-	fixPipeLength = param.L1 + param.L2 + param.L3;
-	
     while length(pp)>=2
 		prop =pp{1};
 		val=pp{2};
@@ -65,8 +61,6 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 				semiFreTimes = val;
 			case 'fast'
 				isFast = val;
-			case 'fixpipelength'
-				fixPipeLength = val;
 			otherwise
 				error('错误属性%s',prop);
 		end
@@ -105,64 +99,47 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
     dcpss.rs = 30;%截止区衰减DB数设置
 
 	if ~isFast
-		theoryDataCells{1,1} = '名称';
-		theoryDataCells{1,2} = 'dataStrcutCell';
-		theoryDataCells{1,3} = 'X';
-		theoryDataCells{1,4} = 'param';
-		theoryDataCells{1,5} = '接管长';
-		theoryDataCells{1,6} = 'vesselRagion1';
-		theoryDataCells{1,7} = 'vesselRagion2';
+		theoryDataCells{1,1} = 'dataStrcutCell';
+		theoryDataCells{1,2} = 'X';
+		theoryDataCells{1,3} = 'param';
+		theoryDataCells{1,4} = 'vesselRagion1';
+		theoryDataCells{1,5} = 'vesselRagion2';
 	end
-	
-    
-    
-    
-    for count = 1:length(L2)
-        param.L2 = L2(count);
-        param.L3 = fixPipeLength - param.L2 - param.L1;
-        param.sectionL2 = 0:detalDis:param.L2;
-        param.sectionL3 = 0:detalDis:param.L3;
-        [pressure1,pressure2,pressure3] = ...
-            doubleVesselPulsationCalc(param.massFlowE,param.fre,time,...
-                param.L1,param.L2,param.L3,...
-                param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
-                param.sectionL1,param.sectionL2,param.sectionL3,...
-                'a',param.acousticVelocity,'isDamping',param.isDamping,'friction',0.045,...
-                'meanFlowVelocity',param.meanFlowVelocity,'isUseStaightPipe',1,...
-                'm',param.mach,'notMach',param.notMach...
-                ,'isOpening',param.isOpening...
-                );%,'coeffDamping',opt.coeffDamping
-		pressure = [pressure1,pressure2,pressure3];
-		X = [param.sectionL1...
-			,param.L1+param.LV1+2*param.l+param.sectionL2...
-			,param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3];
-		vesselRagion1 = [param.sectionL1(end),param.L1+param.LV1+2*param.l+param.sectionL2(1)];
-		vesselRagion2 = [param.L1+param.LV1+2*param.l+param.sectionL2(end),param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3(1)];
-		
-		if isFast
-		
-			theoryDataCells.plus = calcPuls(pressure,dcpss);
-			theoryDataCells.X = X;
-			theoryDataCells.param = param;
-			theoryDataCells.vesselRagion1 = vesselRagion1;
-			theoryDataCells.vesselRagion2 = vesselRagion2;
-		else
-			rawDataStruct = fun_dataProcessing(pressure...
-					,'fs',param.Fs...
-					,'basefrequency',baseFrequency...
-					,'allowdeviation',allowDeviation...
-					,'multfretimes',multFreTimes...
-					,'semifretimes',semiFreTimes...
-					,'beforeAfterMeaPoint',beforeAfterMeaPoint...
-					,'calcpeakpeakvaluesection',calcPeakPeakValueSection...
-					);
-			theoryDataCells{count+1,1} = sprintf('双罐串联L2=%g',L2(count));
-			theoryDataCells{count+1,2} = rawDataStruct;
-			theoryDataCells{count+1,3} = X;
-			theoryDataCells{count+1,4} = param;
-			theoryDataCells{count+1,5} = param.L2;
-			theoryDataCells{count+1,6} = vesselRagion1;
-			theoryDataCells{count+1,7} = vesselRagion2;
-		end
-    end
+	[pressure1,pressure2,pressure3] = ...
+			doubleVesselPulsationCalc(param.massFlowE,param.fre,time,...
+				param.L1,param.L2,param.L3,...
+				param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
+				param.sectionL1,param.sectionL2,param.sectionL3,...
+				'a',param.acousticVelocity,'isDamping',param.isDamping,'friction',0.045,...
+				'meanFlowVelocity',param.meanFlowVelocity,'isUseStaightPipe',1,...
+				'm',param.mach,'notMach',param.notMach...
+				,'isOpening',param.isOpening...
+				);%,'coeffDamping',opt.coeffDamping
+	pressure = [pressure1,pressure2,pressure3];
+	X = [param.sectionL1...
+		,param.L1+param.LV1+2*param.l+param.sectionL2...
+		,param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3];
+	if isFast
+		theoryDataCells.plus = calcPuls(pressure,dcpss);
+		theoryDataCells.X = X;
+		theoryDataCells.param = param;
+		theoryDataCells.vesselRagion1 = [param.sectionL1(end),param.L1+param.LV1+2*param.l+param.sectionL2(1)];
+		theoryDataCells.vesselRagion2 = [param.L1+param.LV1+2*param.l+param.sectionL2(end),param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3(1)];
+	else
+		rawDataStruct = fun_dataProcessing(pressure...
+				,'fs',param.Fs...
+				,'basefrequency',baseFrequency...
+				,'allowdeviation',allowDeviation...
+				,'multfretimes',multFreTimes...
+				,'semifretimes',semiFreTimes...
+				,'beforeAfterMeaPoint',beforeAfterMeaPoint...
+				,'calcpeakpeakvaluesection',calcPeakPeakValueSection...
+				);
+		theoryDataCells{2,1} = rawDataStruct;
+		theoryDataCells{2,2} = X;
+		theoryDataCells{2,3} = param;
+		theoryDataCells{2,4} = [param.sectionL1(end),param.L1+param.LV1+2*param.l+param.sectionL2(1)];
+		theoryDataCells{2,5} = [param.L1+param.LV1+2*param.l+param.sectionL2(end),param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3(1)];
+
+	end
 end
