@@ -3,7 +3,7 @@ function paperPlotTheDoubleVessel(param,isSaveFigure)
 	freRaw = [14,21,28,42,56,70];
 	massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 	massFlowDataCell = [freRaw;massFlowERaw];
-	if 0
+	if 1
 		%±‰ª∫≥Âπﬁæ‡¿ÎL2
 		L2 = 0:0.5:5;
 		theoryChangeL2(param,L2,massFlowDataCell,isSaveFigure);
@@ -29,7 +29,6 @@ function theoryChangeL2(param,L2,massFlowDataCell,isSaveFigure)
 	figure
 	paperFigureSet('small',6);
 	if plotInContourf
-		
 		for i=1:length(res)
 			data = res{i};
 			y = data.plus;
@@ -121,7 +120,7 @@ function theoryChangeV1V2(param,v1,v2,massFlowDataCell,isSaveFigure)
 	[c,h]=contourfSmooth(X,Y,res{index}.Z);
 	xlabel('V1(m^3)','FontSize',paperFontSize());
 	ylabel('V2(m^3)','FontSize',paperFontSize());
-	
+	colormap jet;
 	
 	figure
 	paperFigureSet('small',6);
@@ -131,4 +130,5 @@ function theoryChangeV1V2(param,v1,v2,massFlowDataCell,isSaveFigure)
 	[c,h]=contourfSmooth(X,Y,res{end}.Z);
 	xlabel('V1(m^3)','FontSize',paperFontSize());
 	ylabel('V2(m^3)','FontSize',paperFontSize());
+    colormap jet;
 end

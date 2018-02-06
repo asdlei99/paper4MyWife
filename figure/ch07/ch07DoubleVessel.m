@@ -3,13 +3,14 @@
 clear all;
 % close all;
 clc;
+errorType = 'ci';
 isSaveFigure = false;
-theoryOnly = 1;
-
+theoryOnly = 0;
+dataPath = getDataPath();
+%%
 if ~theoryOnly
-	perforateN20DataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\双容无间距0.099mpa');
-	perforateN36DataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\D0.5N36RPM420两头堵');
-	perforateN68DataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\D0.5N68RPM420两头堵');
+	dvDataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\25米管单容顺接0.104mpa');
+    [dvDataCells,dvCombineData] = loadExpDataFromFolder(dvDataPath);
 end
 
 
@@ -19,9 +20,9 @@ param.isDamping = 1;%是否计算阻尼
 param.coeffFriction = 0.003;%管道摩察系数
 param.notMach = 0;
 detalDis = 0.5;
-param.L1 = 3.5;%L1(m)
-param.L2 = 1.5;%1.5;%双罐串联两罐间距
-param.L3 = 4;%4%双罐串联罐二出口管长
+param.L1 = 13;%L1(m)
+param.L2 = 0;%1.5;%双罐串联两罐间距
+param.L3 = 13;%4%双罐串联罐二出口管长
 param.Dpipe = 0.098;%管道直径（m）%应该是0.106
 param.l = 0.01;
 param.DV1 = 0.372;%缓冲罐的直径（m）
@@ -41,6 +42,13 @@ param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%
 param.rpm = 420;
 param.outDensity = 1.5608;
 param.Fs = 4096;
+
+%% 绘制多组压力脉动
+if 0
+fh = figureExpPressurePlus(dvCombineData,{'双罐'},'errorType',errorType...
+    ,'rang',1:15 ...
+    );
+end
 
 %% 理论分析
 if 1

@@ -22,6 +22,7 @@ if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
     pp=pp(2:end);
 end
+resetExpVesselRang = false;
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -39,6 +40,7 @@ while length(pp)>=2
             rpm = val;
         case 'expvesselrang'
             expVesselRang = val;
+            resetExpVesselRang = true;
         case 'errorplottype'
             errorPlotType =val;
         case 'isfigure'
@@ -55,9 +57,17 @@ if isFigure
     fh.gcf = figure();
     paperFigureSet_normal();
 end
-x = constExpMeasurementPointDistance();%测点对应的距离
-%需要显示单一缓冲罐
-if showPureVessel
+if ~resetExpVesselRang && length(rang) == 15
+    expVesselRang = constExpTwoVesselRangDistance();   
+end
+if length(rang) == 13
+    x = constExpMeasurementPointDistance();%测点对应的距离
+elseif length(rang) == 15 %双罐
+    x = constExpTwoVesselMeasurementPointDistance();
+end
+
+if showPureVessel && (length(rang) == 13)
+    %需要显示单一缓冲罐
     meanVessel = constExpVesselPressrePlus(rpm);
     fh.vesselHandle =  plot(x,meanVessel(rang),'LineStyle','-','color',[160,162,162]./255);
     hold on;
@@ -101,14 +111,20 @@ for plotCount = 1:length(dataCombineStruct)
     end
 end
 box on;
-xlim([2,11]);
+if (length(rang) == 13)
+    xlim([2,11]);
+else
+    xlim([6,29]);
+end
 if ~isempty(legendLabels)
-    if isempty(pureVesselLegend)
-        fh.legend = legend(fh.plotHandle,legendLabels,0);
-    else
-        legendLabels(2:length(legendLabels)+1) = legendLabels;
-        legendLabels{1} = pureVesselLegend;
-        fh.legend = legend([fh.vesselHandle,fh.plotHandle],legendLabels,0);
+    if (length(rang) == 13)
+        if isempty(pureVesselLegend)
+            fh.legend = legend(fh.plotHandle,legendLabels,0);
+        else
+            legendLabels(2:length(legendLabels)+1) = legendLabels;
+            legendLabels{1} = pureVesselLegend;
+            fh.legend = legend([fh.vesselHandle,fh.plotHandle],legendLabels,0);
+        end
     end
 end
 
@@ -116,8 +132,13 @@ if  isFigure
     set(gca,'Position',[0.13 0.18 0.79 0.65]);
 end
 if showVesselRegion
-    fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
+    if 15 == length(rang)
+        fh.textarrowVessel = annotation('textarrow',[0.371822916666667 0.409305555555556],...
+        [0.766692708333333 0.723697916666667],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
+    else
+        fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
         [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
+    end
     fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 end
 

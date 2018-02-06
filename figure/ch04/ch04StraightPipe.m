@@ -34,7 +34,7 @@ param.notMach = 0;
 isSavePlot = 0;
 
 %% 实验数据分析
-if 1
+if 0
  	paperPlot04StraightPipeExpSimThe(straightPipeCombineData,straightPipeSimData,param,isSavePlot);
 end
 %% 绘制压力波和频率
@@ -70,5 +70,9 @@ end
 %% 理论 - 直管管径对脉动的影响
 if 0
 	paperPlot04StraightPipeTheory(param,isSavePlot);
+end
+
+if 1
+    paperPlot04StraightPipeTheoryFrequencyResponse(param,isSavePlot);
 end
 

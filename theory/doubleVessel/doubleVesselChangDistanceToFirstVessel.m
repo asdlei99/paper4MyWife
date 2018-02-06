@@ -46,7 +46,7 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 	
 	isFast = true;
 	
-	fixPipeLength = param.L1 + param.L2 + param.L3;
+	
 	
     while length(pp)>=2
 		prop =pp{1};
@@ -71,7 +71,7 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 				error('¥ÌŒÛ Ù–‘%s',prop);
 		end
 	end
-	
+	fixPipeLength = param.L1 + param.L2 + param.L3;
 	if isnan(massflowData)
 		
 		[massFlowRaw,time,tmp,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
