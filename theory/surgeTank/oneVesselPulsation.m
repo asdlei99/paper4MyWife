@@ -98,13 +98,15 @@ param.Dv = 0.372;
 param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
 param.Dpipe = 0.098;%管道直径（m）
-param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
+
 param.lv1 = 0.318;
 param.lv2 = 0.318;
 baseFrequency = 14;
 multFreTimes = 3;
 semiFreTimes = 3;
 allowDeviation = 0.5;
+
+isFast = false;
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -122,6 +124,8 @@ while length(pp)>=2
 			multFreTimes = val;
 		case 'semifretimes'
 			semiFreTimes = val;	
+		case 'fast'
+			isFast = val;
         otherwise
             error('错误属性%s',prop);
 	end
@@ -158,12 +162,14 @@ dcpss.f_pass = 7;%通过频率5Hz
 dcpss.f_stop = 5;%截止频率3Hz
 dcpss.rp = 0.1;%边带区衰减DB数设置
 dcpss.rs = 30;%截止区衰减DB数设置
-theoryDataCells{1,1} = '描述';
-theoryDataCells{1,2} = 'dataCells';
-theoryDataCells{1,3} = 'X';
-theoryDataCells{1,4} = '脉动值';
-theoryDataCells{1,5} = 'input';
 
+if ~isFast
+	theoryDataCells{1,1} = '描述';
+	theoryDataCells{1,2} = 'dataCells';
+	theoryDataCells{1,3} = 'X';
+	theoryDataCells{1,4} = '脉动值';
+	theoryDataCells{1,5} = 'input';
+end
 
 [pressure1,pressure2] = oneVesselPulsationCalc(param.massFlowE,param.fre,time...
     ,param.L1,param.L2,param.Lv,param.l,param.Dpipe,param.Dv ...
@@ -180,22 +186,28 @@ theoryDataCells{1,5} = 'input';
 beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
 pressure = [pressure1,pressure2];
 %[plus,filterData] = calcPuls(pressure,dcpss);
-i = 1;
-dc = fun_dataProcessing(pressure...
-                            ,'fs',param.Fs...
-                            ,'basefrequency',baseFrequency...
-                            ,'allowdeviation',allowDeviation...
-                            ,'multfretimes',multFreTimes...
-                            ,'semifretimes',semiFreTimes...
-                            ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
-                            ,'calcpeakpeakvaluesection',nan...
-                            );
-theoryDataCells{i+1,1} = '缓冲罐';
-theoryDataCells{i+1,2} = dc;
-theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv(i) + param.sectionL2];  
-theoryDataCells{i+1,4} = dc.pulsationValue;
-theoryDataCells{i+1,5} = param;
-
+if isFast
+	plus = calcPuls(pressure,dcpss);
+	theoryDataCells{1} = plus;
+	theoryDataCells{2} =[param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
+	theoryDataCells{3} = param;
+else
+	i = 1;
+	dc = fun_dataProcessing(pressure...
+								,'fs',param.Fs...
+								,'basefrequency',baseFrequency...
+								,'allowdeviation',allowDeviation...
+								,'multfretimes',multFreTimes...
+								,'semifretimes',semiFreTimes...
+								,'beforeAfterMeaPoint',beforeAfterMeaPoint...
+								,'calcpeakpeakvaluesection',nan...
+								);
+	theoryDataCells{i+1,1} = '缓冲罐';
+	theoryDataCells{i+1,2} = dc;
+	theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv(i) + param.sectionL2];  
+	theoryDataCells{i+1,4} = dc.pulsationValue;
+	theoryDataCells{i+1,5} = param;
+end
 
 
 end

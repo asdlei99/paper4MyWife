@@ -1,5 +1,11 @@
-function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
-
+function [theoryDataCells,X,Y,XDis] = doubleVesselChangV1V2(V1,V2,varargin)
+%迭代体积V1,V2的结果，其中，输出theoryDataCells是一个cell长度是分段数总和
+%既是length(param.sectionL1) + length(param.sectionL2) + length(param.sectionL3) 
+%theoryDataCells每个内容是一个结构体，结构体定义为:
+% res.X V1 
+% res.Y V2
+% res.Z 计算的脉动结果
+%
 %   massFlowE1 经过fft后的质量流量，直接对质量流量进行去直流fft
 %  长度 L1     l    Lv1   l   L2  l    Lv2   l     L3
 %              __________         __________
@@ -39,14 +45,10 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
     param.outDensity = 1.5608;
     param.Fs = 4096;
 
-	baseFrequency = 14;
-	multFreTimes = 3;
-	semiFreTimes = 3;
-	allowDeviation = 0.5;
-	
-	isFast = true;
-	
-	fixPipeLength = param.L1 + param.L2 + param.L3;
+	zMode = 'pulsation';%输出z值的类型:
+						%pulsation为输出脉动峰峰值
+						%cmpSameV为输出与同体积下的缓冲罐的比值
+						
 	
     while length(pp)>=2
 		prop =pp{1};
@@ -57,16 +59,8 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 				massflowData = val;
 			case 'param'
 				param = val;
-			case 'basefrequency'
-				baseFrequency = val;
-			case 'multfretimes'
-				multFreTimes = val;
-			case 'semifretimes'
-				semiFreTimes = val;
-			case 'fast'
-				isFast = val;
-			case 'fixpipelength'
-				fixPipeLength = val;
+			case 'zmode'
+				zMode = val;
 			otherwise
 				error('错误属性%s',prop);
 		end
@@ -91,9 +85,7 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
     
 
 
-    beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+length(param.sectionL2)+1];;
-
-
+    
     dcpss = getDefaultCalcPulsSetStruct();
     dcpss.calcSection = [0.3,0.7];
     dcpss.sigma = 2.8;
@@ -104,25 +96,18 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
     dcpss.rp = 0.1;%边带区衰减DB数设置
     dcpss.rs = 30;%截止区衰减DB数设置
 
-	if ~isFast
-		theoryDataCells{1,1} = '名称';
-		theoryDataCells{1,2} = 'dataStrcutCell';
-		theoryDataCells{1,3} = 'X';
-		theoryDataCells{1,4} = 'param';
-		theoryDataCells{1,5} = '接管长';
-		theoryDataCells{1,6} = 'vesselRagion1';
-		theoryDataCells{1,7} = 'vesselRagion2';
-	end
+
 	
-    
-    
-    
-    for count = 1:length(L2)
-        param.L2 = L2(count);
-        param.L3 = fixPipeLength - param.L2 - param.L1;
-        param.sectionL2 = 0:detalDis:param.L2;
-        param.sectionL3 = 0:detalDis:param.L3;
-        [pressure1,pressure2,pressure3] = ...
+	XDis = [param.sectionL1...
+		,param.L1+param.LV1+2*param.l+param.sectionL2...
+		,param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3];
+	for i = 1:length(V1)
+		for j = 1:length(V2)
+			v1 = V1(i);
+			v2 = V2(j);
+			param.DV1 = (4 * v1 / pi)^0.5;
+			param.DV2 = (4 * v2 / pi)^0.5;
+			[pressure1,pressure2,pressure3] = ...
             doubleVesselPulsationCalc(param.massFlowE,param.fre,time,...
                 param.L1,param.L2,param.L3,...
                 param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
@@ -132,38 +117,46 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
                 'm',param.mach,'notMach',param.notMach...
                 ,'isOpening',param.isOpening...
                 );%,'coeffDamping',opt.coeffDamping
-		pressure = [pressure1,pressure2,pressure3];
-		X = [param.sectionL1...
-			,param.L1+param.LV1+2*param.l+param.sectionL2...
-			,param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3];
-		vesselRagion1 = [param.sectionL1(end),param.L1+param.LV1+2*param.l+param.sectionL2(1)];
-		vesselRagion2 = [param.L1+param.LV1+2*param.l+param.sectionL2(end),param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3(1)];
-		
-		if isFast
-		
-			res.plus = calcPuls(pressure,dcpss);
-			res.X = X;
-			res.param = param;
-			res.vesselRagion1 = vesselRagion1;
-			res.vesselRagion2 = vesselRagion2;
-			theoryDataCells{count} = res;
-		else
-			rawDataStruct = fun_dataProcessing(pressure...
-					,'fs',param.Fs...
-					,'basefrequency',baseFrequency...
-					,'allowdeviation',allowDeviation...
-					,'multfretimes',multFreTimes...
-					,'semifretimes',semiFreTimes...
-					,'beforeAfterMeaPoint',beforeAfterMeaPoint...
-					,'calcpeakpeakvaluesection',calcPeakPeakValueSection...
-					);
-			theoryDataCells{count+1,1} = sprintf('双罐串联L2=%g',L2(count));
-			theoryDataCells{count+1,2} = rawDataStruct;
-			theoryDataCells{count+1,3} = X;
-			theoryDataCells{count+1,4} = param;
-			theoryDataCells{count+1,5} = param.L2;
-			theoryDataCells{count+1,6} = vesselRagion1;
-			theoryDataCells{count+1,7} = vesselRagion2;
+			pressure = [pressure1,pressure2,pressure3];
+			plus = calcPuls(pressure,dcpss);
+			
+			if strcmpi(zMode,'cmpSameV')
+				%处于和等体积单容对比模式，需要计算等体积单容的脉动
+				paramT = param;
+				V = v1 + v2;
+				paramT.L2 = param.L2+param.L3+param.LV2+2*param.l;
+				paramT.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+				paramT.lv1 = 0.318;
+				paramT.lv2 = 0.318;
+				paramT.Lv = param.LV1;
+				paramT.Dv = (4 * V / pi).^0.5;
+				vType = 'StraightInStraightOut';
+				singleVesselRes = oneVesselPulsation('param',paramT...
+									,'vType',vType...
+									,'fast',true...
+									);
+				svPlus = singleVesselRes{1};
+				svXDis = singleVesselRes{2};
+				% 计算脉动抑制率
+				for kk=1:length(plus)
+					dvesselXDis = XDis(kk);
+					[ clVal,index ] = closeValue(svXDis,dvesselXDis);
+					sv = svPlus(index);
+					theoryDataCells{kk}.Z(j,i) = (sv - plus(kk))./sv .* 100;
+					theoryDataCells{kk}.x = XDis(kk);
+				end
+			else
+				for kk = 1:length(plus)
+					theoryDataCells{kk}.Z(j,i) = plus(kk);
+					theoryDataCells{kk}.x = XDis(kk);
+				end
+			end
 		end
-    end
+	end
+	[X,Y] = meshgrid(V1,V2);
+	
+    
+    
+    
+    
 end
