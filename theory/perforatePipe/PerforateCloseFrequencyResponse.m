@@ -1,6 +1,7 @@
-%% 内插管的气流脉动
-function theoryDataCells = PerforateClosePulsation(varargin)
+%% 孔管扫频扫频
+function pressure = PerforateCloseFrequencyResponse(varargin)
 pp = varargin;
+responseType = 'm';%响应类型:m M序列 n:理想冲击，r,高斯随机信号
 
 %% 数据路径
 %缓冲罐中间插入孔管,两端堵死，开孔个数不足以等效为亥姆霍兹共鸣器,缓冲罐入口偏置
@@ -77,72 +78,35 @@ param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))]
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
 
 
-isOpening = false;
-baseFrequency = 14;
-multFreTimes = 3;
-semiFreTimes = 3;
-massflowData = nan;
-isFast = false;
-allowDeviation = 0.5;
-fixFunPtr = [];
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
     pp=pp(3:end);
     switch lower(prop)
-        case 'massflowdata'
-            massflowData = val;
+        case 'responsetype' %扫频类型:m 逆M序列 n:理想冲击，r,高斯随机信号
+            responseType = val;
         case 'param'
             param = val;
-		case 'basefrequency'
-			baseFrequency = val;
-		case 'multfretimes'
-			multFreTimes = val;
-		case 'semifretimes'
-			semiFreTimes = val;
-		case 'fast'%快速计算，此计算返回的cell只有3个，第一个是所有压力数据，第二个是压力脉动峰峰值，第三个是峰峰值对应x值
-			isFast = val;
-        case 'fixfunptr'
-            fixFunPtr = val;
+        case 'fs' %最大的扫频频率，默认200Hz
+            fs = val;
         otherwise
             error('错误属性%s',prop);
 	end
 end
+%% 初始参数
+%
 
 
-if isnan(massflowData)
-    [massFlowRaw,time,tmp,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
-        ,0.14,1.075,param.outDensity,'rcv',0.15,'k',1.4,'pr',0.15,'fs',param.Fs,'oneSecond',6);
-    clear tmp;
-	[freRaw,AmpRaw,PhRaw,massFlowERaw] = frequencySpectrum(detrend(massFlowRaw,'constant'),param.Fs);
-    freRaw = [7,14,21,28,14*3];
-    massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
-    massFlowE = massFlowERaw;
-    param.fre = freRaw;
-    param.massFlowE = massFlowE;
-else
-    time = makeTime(param.Fs,1024);
-    param.fre = massflowData(1,:);
-    param.massFlowE = massflowData(2,:);
+if strcmpi(responseType,'m')
+    [time,Y] = makeInvM(fs,6 ...
+                    ,'isshowfig',false...
+                    ,'midval',0.1 ...
+                    ,'pp',0.1*0.1 ...
+                    );
+    [param.fre,AmpRaw,PhRaw,param.massFlowE] = frequencySpectrum(detrend(Y,'constant'),fs);
 end
 
 
-
-
-dcpss = getDefaultCalcPulsSetStruct();
-dcpss.calcSection = [0.2,0.8];
-dcpss.fs = param.Fs;
-dcpss.isHp = 0;
-dcpss.f_pass = 7;%通过频率5Hz
-dcpss.f_stop = 5;%截止频率3Hz
-dcpss.rp = 0.1;%边带区衰减DB数设置
-dcpss.rs = 30;%截止区衰减DB数设置
-if ~isFast
-	theoryDataCells{1,1} = '描述';
-	theoryDataCells{1,2} = 'dataCells';
-	theoryDataCells{1,3} = 'X';
-	theoryDataCells{1,4} = 'input';
-end
 [pressure1,pressure2] = vesselInBiasHaveInnerPerfBothClosedCompCalc(param.massFlowE,param.fre,time...
 	,param.L1,param.L2,param.Dpipe,param.Dv,param.l...
 	,param.Lv1,param.Lv2,param.lc,param.dp1,param.dp2,param.lp1,param.lp2...
@@ -157,36 +121,6 @@ end
 	,'isOpening',param.isOpening...
 );
 pressure = [pressure1,pressure2];
-X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
-if ~isFast
-	beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
-	%[plus,filterData] = calcPuls(pressure,dcpss);
-	theoryDataCells{2,1} = sprintf('内插管直径:%g,Lin:%g,Lout:%g',param.Dinnerpipe,param.Lin,param.Lout);
-	st = fun_dataProcessing(pressure...
-                                    ,'fs',param.Fs...
-                                    ,'basefrequency',baseFrequency...
-                                    ,'allowdeviation',allowDeviation...
-                                    ,'multfretimes',multFreTimes...
-                                    ,'semifretimes',semiFreTimes...
-                                    ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
-                                    ,'calcpeakpeakvaluesection',nan...
-                                    );
-    if ~isempty(fixFunPtr)
-        st.pulsationValue = fixFunPtr(param,st.pulsationValue);
-    end
-    theoryDataCells{2,2} = st;
-	theoryDataCells{2,3} = X;
-	theoryDataCells{2,4} = param;
-    
-else
-	theoryDataCells{1} = pressure;
-    pulsV = calcPuls(pressure,dcpss);
-    if ~isempty(fixFunPtr)
-        pulsV = fixFunPtr(param,pulsV);
-    end
-	theoryDataCells{2} = pulsV;
-	theoryDataCells{3} = X;
-end
-
 
 end
+

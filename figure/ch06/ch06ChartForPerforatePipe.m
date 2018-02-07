@@ -130,11 +130,13 @@ if 0 && ~theoryOnly
 	paperPlotPerforatePipeExpSimThe(param,expCombineDataCells,simDataCells,isSaveFigure);
 end
 
-if 1
+if 0
 	paperPlotPerforatePipeTheory(param,isSaveFigure)
 end
 
-
+if 1
+	paperPlotPerforateTheoryFrequencyResponse(param,isSaveFigure);
+end
 
 
 

@@ -75,7 +75,7 @@ param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))]
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
 
 
-isOpening = false;
+
 baseFrequency = 14;
 multFreTimes = 3;
 semiFreTimes = 3;
@@ -152,7 +152,7 @@ for i=1:length(rangN)
 		,'isDamping',param.isDamping...
 		,'friction',param.coeffFriction...
 		,'meanFlowVelocity',param.meanFlowVelocity...
-		,'isOpening',isOpening...
+		,'isOpening',param.isOpening...
 	);
 	pressure = [pressure1,pressure2];
 	X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
