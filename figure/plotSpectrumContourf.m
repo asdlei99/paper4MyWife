@@ -1,4 +1,4 @@
-function fh = plotSpectrumContourf( mags,fres,x,varargin)
+function fh = plotSpectrumContourf( mags,fres,y,varargin)
 %绘制频谱
 %   此处显示详细说明
     %LineStyle = 'none';
@@ -30,17 +30,18 @@ function fh = plotSpectrumContourf( mags,fres,x,varargin)
             error('mags和fres的维度需要一致，或者fres是（1Xn）向量');
         end
     end
-    if size(mags,1) ~= size(x,1) || size(mags,2) ~= size(x,2)
-        if size(mags,2) ~= length(x)
+    if size(mags,1) ~= size(y,1) || size(mags,2) ~= size(y,2)
+        if size(mags,2) ~= length(y)
             error('y的长度和size(mags,1)需要一致');
         end
-        xTmp = x;
-        x = ones(size(mags));
+        yTmp = y;
+        y = ones(size(mags));
         for i = 1:size(mags,1)
-            x(i,:) = xTmp;
+            y(i,:) = yTmp;
         end
     end
-    [~,fh.contourfHandle] = contourf(fres,x,mags,input_args{:});
+    [ttmp,fh.contourfHandle] = contourf(fres,y,mags,input_args{:});
+	clear ttmp;
     if isShowColorbar
         fh.colorBar = colorbar;
     end

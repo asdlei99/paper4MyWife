@@ -6,13 +6,14 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
+theoryOnly = 1;
 %% 数据路径
-if 1
-straightPipeDataPath = fullfile(dataPath,'实验原始数据\纯直管\RPM420-0.1MPa');%直管
+if ~theoryOnly
+	straightPipeDataPath = fullfile(dataPath,'实验原始数据\纯直管\RPM420-0.1MPa');%直管
 
-%% 加载数据
-[straightPipeDataCells,straightPipeCombineData,straightPipeSimData] ...
-    = loadExpAndSimDataFromFolder(straightPipeDataPath);
+	%% 加载数据
+	[straightPipeDataCells,straightPipeCombineData,straightPipeSimData] ...
+		= loadExpAndSimDataFromFolder(straightPipeDataPath);
 end
 
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
