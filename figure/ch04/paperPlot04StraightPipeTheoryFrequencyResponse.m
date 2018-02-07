@@ -1,7 +1,7 @@
 function res = paperPlot04StraightPipeTheoryFrequencyResponse(param,isSaveFig)
 %绘制直管频率响应
 	fs = 400;
-	type = 'plot3';
+	type = 'contourf';
 	pressures = straightPipeFrequencyResponse('param',param,'fs',fs);
 	
 	figHandle = figure;

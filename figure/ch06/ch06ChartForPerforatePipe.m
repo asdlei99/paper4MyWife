@@ -138,7 +138,11 @@ if 1
 	paperPlotPerforateTheoryFrequencyResponse(param,isSaveFigure);
 end
 
-
+if 1
+	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口0.2kgs质量流量出口压力\扫频-内插孔管单侧16个孔0.5d');
+	figureSimFrequencyResponse(dataPath,[],'type','contourf');
+    xlim([0,50]);
+end
 
 
 

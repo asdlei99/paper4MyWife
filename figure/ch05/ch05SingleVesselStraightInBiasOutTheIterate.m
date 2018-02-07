@@ -103,5 +103,6 @@ end
 % end
 
 if 1
-	paperPlotSingleVesselTheoryFrequencyResponse(param,isSaveFigure);
+    vType = 'StraightInStraightOut';%biasInBiasOut,EqualBiasInOut,BiasFontInStraightOut,straightinbiasout,BiasFrontInBiasFrontOut,
+	paperPlotSingleVesselTheoryFrequencyResponse(param,vType,isSaveFigure);
 end

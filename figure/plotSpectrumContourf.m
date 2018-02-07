@@ -3,7 +3,7 @@ function fh = plotSpectrumContourf( mags,fres,y,varargin)
 %   此处显示详细说明
     %LineStyle = 'none';
     pp = varargin;
-    isShowColorbar = 1;
+    isShowColorbar = 0;
     input_args = {};
     while length(pp)>=2
         prop =pp{1};

@@ -118,7 +118,7 @@ end
 %绘制0.25D的压力脉动
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% 绘制多组压力脉动
-if 1
+if 0
 	paperPlotSingleVesselExpResult(vesselCombineDataCells,legendLabels,legendLabelsAbb,isSaveFigure);
     % fh = figureExpPressurePlus(vesselCombineDataCells,legendLabels...
         % ,'errorType','none'...
@@ -197,4 +197,10 @@ if 0
     fh = figureExpNatureFrequencyBar(vesselCombineDataCells,1,legendLabels);
     fh = figureExpNatureFrequencyBar(vesselCombineDataCells,2,legendLabels);
     fh = figureExpNatureFrequencyBar(vesselCombineDataCells,3,legendLabels);
+end
+
+if 0
+	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口0.2kgs质量流量出口压力\扫频-直径侧前出单罐');
+	figureSimFrequencyResponse(dataPath,[],'type','contourf');
+    xlim([0,50]);
 end

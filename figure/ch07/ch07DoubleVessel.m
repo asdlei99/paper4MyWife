@@ -50,11 +50,21 @@ fh = figureExpPressurePlus(dvCombineData,{'双罐'},'errorType',errorType...
     );
 end
 
+%% 理论模拟实验
+if 0
+	paperPlotExpSimTheDoubleVessel(param,isSaveFigure);
+end
+
 %% 理论分析
-if 1
+if 0
 	paperPlotTheDoubleVessel(param,isSaveFigure);
 end
 
+if 1
+	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口0.2kgs质量流量出口压力\扫频-双容罐二弯头');
+	figureSimFrequencyResponse(dataPath,[],'type','contourf');
+    xlim([0,50]);
+end
 
 
 

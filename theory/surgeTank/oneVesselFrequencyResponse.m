@@ -34,6 +34,8 @@ while length(pp)>=2
             param = val;
         case 'fs' %最大的扫频频率，默认200Hz
             fs = val;
+        case 'vtype' %
+            vType = val;
         otherwise
             error('错误属性%s',prop);
 	end

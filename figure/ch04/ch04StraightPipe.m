@@ -73,7 +73,11 @@ if 0
 	paperPlot04StraightPipeTheory(param,isSavePlot);
 end
 
-if 1
+if 0
     paperPlot04StraightPipeTheoryFrequencyResponse(param,isSavePlot);
 end
 
+if 1
+	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口1kgs质量流量出口压力\实验长度\扫频-直管');
+	figureSimFrequencyResponse(dataPath,[]);
+end

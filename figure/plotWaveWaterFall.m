@@ -32,9 +32,12 @@ function h = plotWaveWaterFall( waves,fs,varargin)
 		h = plotSpectrumContourf(amp,fre,y,input_args{:});
 	else 
 		hold on;
-		for i=1:length(amp)
+		for i=1:size(amp,2)
 			h(i) = plotSpectrum3(fre(:,i),amp(:,i),y(i),input_args{:});
-		end
+        end
+        view(6,54);
+        box on;
+        axis tight;
 	end
 end
 
