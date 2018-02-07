@@ -69,7 +69,7 @@ if 0
 end
 
 %% 迭代偏置距离和长径比
-if 1
+if 0
     paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,isSaveFigure);
 end
 
@@ -102,3 +102,6 @@ end
 	
 % end
 
+if 1
+	paperPlotSingleVesselTheoryFrequencyResponse(param,isSaveFigure);
+end
