@@ -30,14 +30,14 @@ function fh = plotSpectrumContourf( mags,fres,x,varargin)
             error('mags和fres的维度需要一致，或者fres是（1Xn）向量');
         end
     end
-    if size(mags) ~= size(x)
-        if size(mags,1) ~= length(x)
+    if size(mags,1) ~= size(x,1) || size(mags,2) ~= size(x,2)
+        if size(mags,2) ~= length(x)
             error('y的长度和size(mags,1)需要一致');
         end
         xTmp = x;
         x = ones(size(mags));
-        for i = 1:size(mags,2)
-            x(:,i) = xTmp;
+        for i = 1:size(mags,1)
+            x(i,:) = xTmp;
         end
     end
     [~,fh.contourfHandle] = contourf(fres,x,mags,input_args{:});
