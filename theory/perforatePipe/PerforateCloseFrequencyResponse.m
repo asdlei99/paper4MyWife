@@ -1,7 +1,7 @@
 %% 孔管扫频扫频
 function pressure = PerforateCloseFrequencyResponse(varargin)
 pp = varargin;
-responseType = 'm';%响应类型:m M序列 n:理想冲击，r,高斯随机信号
+responseType = 'n';%响应类型:m M序列 n:理想冲击，r,高斯随机信号
 
 %% 数据路径
 %缓冲罐中间插入孔管,两端堵死，开孔个数不足以等效为亥姆霍兹共鸣器,缓冲罐入口偏置
@@ -102,6 +102,13 @@ if strcmpi(responseType,'m')
                     ,'isshowfig',false...
                     ,'midval',0.1 ...
                     ,'pp',0.1*0.1 ...
+                    );
+    [param.fre,AmpRaw,PhRaw,param.massFlowE] = frequencySpectrum(detrend(Y,'constant'),fs);
+elseif strcmpi(responseType,'n')
+    %理想脉冲
+    [time,Y] = makeIdealPuls(fs,6,'isshowfig',false...
+                    ,'midval',10 ...
+                    ,'pp',10*0.1 ...
                     );
     [param.fre,AmpRaw,PhRaw,param.massFlowE] = frequencySpectrum(detrend(Y,'constant'),fs);
 end

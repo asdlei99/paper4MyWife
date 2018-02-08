@@ -81,7 +81,7 @@ if 0
 end
 
 %% 绘制多组压力降低
-if 1
+if 0
     paperPlotInnerPipeExpPressureDrop(innerPipeDataCells,legendLabels,isSaveFigure);
 end
 
@@ -102,7 +102,12 @@ end
 if 0
     paperPlotInnerPipeTheory(param,isSaveFigure);
 end
+
 if 1
+    paperPlotInnerPipeTheoryFrequencyResponse(param,isSaveFigure);
+end
+
+if 0
 	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口1kgs质量流量出口压力\实验长度\单罐侧向进轴向出内插0.5D管闭口-逆M序列进口边界');
 	figureSimFrequencyResponse(dataPath,[],'type','contourf');
     xlim([0,50]);

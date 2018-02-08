@@ -2,7 +2,7 @@
 function pressure = straightPipeFrequencyResponse(varargin)
 
 pp = varargin;
-responseType = 'm';%响应类型:m M序列 n:理想冲击，r,高斯随机信号
+responseType = 'n';%响应类型:m M序列 n:理想冲击，r,高斯随机信号
 massflowData = nan;
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
 param.rpm = 420;
@@ -43,6 +43,13 @@ if strcmpi(responseType,'m')
                     ,'isshowfig',false...
                     ,'midval',0.1 ...
                     ,'pp',0.1*0.1 ...
+                    );
+    [param.fre,AmpRaw,PhRaw,param.massFlowE] = frequencySpectrum(detrend(Y,'constant'),fs);
+elseif strcmpi(responseType,'n')
+    %理想脉冲
+    [time,Y] = makeIdealPuls(fs,6,'isshowfig',false...
+                    ,'midval',10 ...
+                    ,'pp',10*0.1 ...
                     );
     [param.fre,AmpRaw,PhRaw,param.massFlowE] = frequencySpectrum(detrend(Y,'constant'),fs);
 end

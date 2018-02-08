@@ -53,6 +53,8 @@ param.Dbias = 0;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
 param.Lv = 1.1;
+param.Lv1 = 1.1/2;
+param.Lv2 = 1.1/2;
 param.l = 0.01;%(m)缓冲罐的连接管长
 param.Dv = 0.372;
 param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
@@ -63,6 +65,8 @@ param.notMach = 0;
 param.allowDeviation = 0.5;
 param.multFreTimes = 3;
 param.semiFreTimes = 3;
+param.d = param.Dpipe/2;
+param.bias = 0.168+0.150;
 massFlowERaw(1,:) = [1:13,14,15,21,28,14*3];
 massFlowERaw(2,:) = [ones(1,13).*0.02,0.22,0.04,0.03,0.003,0.007];
 theDataCells = innerOrificTankChangD();
@@ -124,7 +128,7 @@ end
 %绘制0.25D的压力脉动
 %fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
 %% 绘制多组压力脉动
-if 1
+if 0
     fh = figureExpPressurePlus(orificDataCells,legendLabels,'errorType',errorType...
         ,'showPureVessel',1,'purevessellegend','单一缓冲罐'...
         ,'expVesselRang',expVesselRang);
@@ -169,8 +173,13 @@ if 0
         
     end
 end
-if 1
+if 0
 	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口1kgs质量流量出口压力\实验长度\单罐侧向进轴向出内插0.5D孔板闭口-逆M序列进口边界');
 	figureSimFrequencyResponse(dataPath,[],'type','contourf');
     xlim([0,50]);
+end
+
+
+if 1
+    paperPlotOrificePlateTheoryFrequencyResponse(param,isSaveFigure);
 end
