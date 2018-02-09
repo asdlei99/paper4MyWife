@@ -27,7 +27,6 @@ function theoryDataCells = doubleVesselPulsation(varargin)
 	param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
     param.rpm = 420;
     param.outDensity = 1.5608;
-    param.Fs = 4096;
     param.sectionL1 = 0:detalDis:param.L1;
     param.sectionL2 = 0:detalDis:param.L2;
     param.sectionL3 = 0:detalDis:param.L3;
