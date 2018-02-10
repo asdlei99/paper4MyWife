@@ -1,5 +1,5 @@
 %% 内插管的气流脉动
-function theoryDataCells = PerforateClosePulsation(varargin)
+function theoryDataCells = FacPerforateClosePulsation(varargin)
 pp = varargin;
 
 %% 数据路径
@@ -38,9 +38,14 @@ param.coeffFriction = 0.03;
 param.meanFlowVelocity = 16;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
+param.L3 = 6;
+param.L4 = 0.2;
+
 
 param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+param.sectionL3 = 0:0.5:param.L3;%linspace(0,param.L3,14);
+param.sectionL4 = 0:0.5:param.L4;%linspace(0,param.L4,14)
 param.Dpipe = 0.098;%管道直径（m）
 param.Lbias = 0.168+0.150;
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
@@ -49,9 +54,13 @@ param.outDensity = 1.5608;
 param.Fs = 4096;
 param.l  =  0.01;%(m)缓冲罐的连接管长
 param.Dv = 0.372;%缓冲罐的直径（m）
-param.Lv1 = 1.1/2;%缓冲罐腔1总长
-param.Lv2 =  1.1/2;
-param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
+param.Dv1 = 0.372;%缓冲罐的直径（m）
+param.Dv2 = 0.372;%缓冲罐的直径（m）
+param.LV2_1 = 1.1/2;%缓冲罐腔1总长
+param.LV2_2 =  1.1/2;
+param.LV1 = 1.1;%缓冲罐腔1总长
+param.LV3 =  1.1;
+
 %
 param.lc   = 0.005;%内插管壁厚
 param.dp1  = 0.013;%开孔径
@@ -143,21 +152,25 @@ if ~isFast
 	theoryDataCells{1,3} = 'X';
 	theoryDataCells{1,4} = 'input';
 end
-[pressure1,pressure2] = vesselInBiasHaveInnerPerfBothClosedCompCalc(param.massFlowE,param.fre,time...
-	,param.L1,param.L2,param.Dpipe,param.Dv,param.l...
-	,param.Lv1,param.Lv2,param.lc,param.dp1,param.dp2,param.lp1,param.lp2...
+[pressure1,pressure2,pressure3,pressure4] = facvesselInBiasHaveInnerPerfBothClosedCompCalc(param.massFlowE,param.fre,time...
+	,param.L1,param.L2,param.L3,param.L4,param.Dpipe,param.Dv,param.Dv1,param.Dv2,param.l...
+	,param.LV2_1,param.LV2_2,param.LV1,param.LV3,param.lc,param.dp1,param.dp2,param.lp1,param.lp2...
 	,param.n1,param.n2,param.la1,param.la2,param.lb1...
 	,param.lb2,param.Din,param.Dbias...
 	,param.LBias,param.xSection1,param.xSection2...
 	,param.sectionL1,param.sectionL2...
+    ,param.sectionL3,param.sectionL4...
 	,'a',param.acousticVelocity...
 	,'isDamping',param.isDamping...
 	,'friction',param.coeffFriction...
 	,'meanFlowVelocity',param.meanFlowVelocity...
 	,'isOpening',param.isOpening...
 );
-pressure = [pressure1,pressure2];
-X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
+pressure = [pressure1,pressure2,pressure3,pressure4];
+X = [param.sectionL1...
+    ,param.L1+param.LV1+2*param.l+param.sectionL2...
+    ,param.L1+(param.LV1+2*param.l) + param.L2+ (param.LV2_1 + param.LV2_2+2*param.l)+param.sectionL3...
+    ,param.L1+(param.LV1+2*param.l)+param.L2+(param.LV2_1 + param.LV2_2+2*param.l)+param.L3+(param.LV3+2*param.l)+param.sectionL4];
 if ~isFast
 	beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
 	%[plus,filterData] = calcPuls(pressure,dcpss);

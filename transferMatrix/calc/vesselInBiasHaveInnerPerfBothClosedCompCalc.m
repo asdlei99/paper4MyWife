@@ -41,6 +41,7 @@ coeffFriction = nan;
 meanFlowVelocity = nan;
 mach = nan;
 notMach = 0;%强制不使用mach
+pressureBoundary2 = 0;%计算传递矩阵对应p2值
 isOpening = 1;
 if 1 == size(pp,2)
 %如果多态参数只有一个，说明是个结构体
@@ -92,8 +93,10 @@ else
                 k = val;
             case 'oumiga' %圆频率
                 oumiga = val;
-            case 'isopening'%管道末端是否为无反射端(开口)，如果为0，就是为闭口，无流量端
+            case 'isopening' %管道末端是否为无反射端(开口)，如果为0，就是为闭口，无流量端 ，开口后设置pressureBoundary2值可以设置P2的边界条件
                 isOpening = val;
+            case 'pressureboundary2' %开口边界条件，p2的值，默认为0，如果不设置就相当于完全开口，这个属性必须在isOpening = 1的时候才生效
+                pressureBoundary2 = val; 
             otherwise
                 error('参数错误%s',prop);
         end
@@ -114,6 +117,8 @@ end
 % coeffDamping
 % k
 % oumiga
+
+
 
 
 count = 1;
@@ -142,10 +147,14 @@ for i = 1:length(Frequency)
     C = matrix_total(2,1);
     D = matrix_total(2,2);
     if(isOpening)
-        pressureE1(count) = ((-B/A)*massFlowE(count));
+        %pressureE1(count) = ((-B/A)*massFlowE(count));
+        pressureE1(count) = pressureBoundary2-(B*massFlowE(count)) / A;
     else
         pressureE1(count) = ((-D/C)*massFlowE(count));
     end
+
+    
+
     count = count + 1;
 end
 

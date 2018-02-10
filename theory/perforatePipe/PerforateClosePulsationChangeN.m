@@ -64,16 +64,16 @@ param.Dbias = 0;%ÎÞÄÚ²å¹Ü
 param.sectionNum1 = [1];%¶ÔÓ¦¿×1µÄ×éÊý
 param.sectionNum2 = [1];%¶ÔÓ¦¿×2µÄ×éÊý
 
-param.Lout = param.lb1 + param.lp2+ param.lb2;%å†…æ’ç®¡å…¥å£æ®µé•¿åº¦
+param.Lout = param.lb1 + param.lp2+ param.lb2;%å†…æ’ç®¡å…¥å£æ?µé•¿åº?
 param.bp1 = calcPerforatingRatios(param.n1,param.dp1,param.Din,param.lp1);
 param.bp2 = calcPerforatingRatios(param.n2,param.dp2,param.Din,param.lp2);
-param.Lin  = param.la1 + param.lp1+ param.la2;%å†…æ’ç®¡å…¥å£æ®µé•¿åº¦
+param.Lin  = param.la1 + param.lp1+ param.la2;%å†…æ’ç®¡å…¥å£æ?µé•¿åº?
 param.LBias = (0.150+0.168);%232
-param.Dbias = 0;%æ— å†…æ’ç®¡
+param.Dbias = 0;%æ— å†…æ’ç??
 param.sectionNum1 = [1];%å¯¹åº”å­?çš„ç»„æ•?param.sectionNum2 = [1];%å¯¹åº”å­?çš„ç»„æ•?>>>>>>> tmp
 param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))];
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
-
+param.pressureBoundary2 = 0;
 
 
 baseFrequency = 14;
@@ -153,6 +153,7 @@ for i=1:length(rangN)
 		,'friction',param.coeffFriction...
 		,'meanFlowVelocity',param.meanFlowVelocity...
 		,'isOpening',param.isOpening...
+		,'pressureBoundary2',param.pressureBoundary2...
 	);
 	pressure = [pressure1,pressure2];
 	X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];

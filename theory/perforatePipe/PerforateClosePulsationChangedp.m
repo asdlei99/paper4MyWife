@@ -74,7 +74,7 @@ param.sectionNum1 = [1];%对应孔1的组数
 param.sectionNum2 = [1];%对应孔2的组数
 param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))];
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
-
+param.pressureBoundary2 = 0;
 
 
 baseFrequency = 14;
@@ -157,6 +157,7 @@ for i=1:length(rang)
 		,'friction',param.coeffFriction...
 		,'meanFlowVelocity',param.meanFlowVelocity...
 		,'isOpening',param.isOpening...
+		,'pressureBoundary2',param.pressureBoundary2...
 	);
 	pressure = [pressure1,pressure2];
 	X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
