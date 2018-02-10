@@ -39,7 +39,7 @@ vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselDirectInDirectOutCombineData...
     };
 %% 绘制频率特性
-if 1
+if 0
     rang = 1:13;
     figure;
     paperFigureSet('small',6);
@@ -213,7 +213,7 @@ theVal(xThe>=2.5 & xThe < 5) = tmp+4.9*1e3;
 % theVal(xThe>=5 & xThe < 6) = theVal(xThe>5 & xThe < 6) + 8.97*1e3;
 % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
 theCells.pulsationValue = theVal;
-if 0
+if 1
     legnedText = {'实验','模拟','理论'};
     figure
     paperFigureSet('small',6);

@@ -35,6 +35,7 @@ meanFlowVelocity = nan;
 isUseStaightPipe = 1;%使用直管理论代替缓冲罐，那么缓冲罐时相当于三个直管拼接
 mach = nan;
 notMach = 0;%强制不使用mach
+pressureBoundary2 = 0;%计算传递矩阵对应p2值
 
 while length(pp)>=2
     prop =pp{1};
@@ -75,6 +76,8 @@ while length(pp)>=2
             isOpening = val;
         case 'notmach' %强制用马赫数计算设定
             notMach = val;
+        case 'pressureboundary2' %开口边界条件，p2的值，默认为0，如果不设置就相当于完全开口，这个属性必须在isOpening = 1的时候才生效
+            pressureBoundary2 = val; 
         otherwise
             error('参数错误%s',prop);
     end
@@ -128,7 +131,8 @@ for i = 1:length(Frequency)
     D = matrix_total(2,2);
 
     if(isOpening)
-        pressureE1(count) = ((-B/A)*massFlowE(count));
+        %pressureE1(count) = ((-B/A)*massFlowE(count));
+        pressureE1(count) = pressureBoundary2-(B*massFlowE(count)) / A;
     else
         pressureE1(count) = ((-D/C)*massFlowE(count));
     end
