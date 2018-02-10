@@ -7,11 +7,6 @@ errorType = 'ci';
 isSaveFigure = false;
 theoryOnly = 0;
 dataPath = getDataPath();
-%%
-if ~theoryOnly
-	dvDataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\25米管单容顺接0.104mpa');
-    [dvDataCells,dvCombineData] = loadExpDataFromFolder(dvDataPath);
-end
 
 
 
@@ -44,7 +39,7 @@ param.pressureBoundary2 = 0;
 
 %% 理论分析
 if 1
-	paperPlotFacTheDoubleVessel(param,isSaveFigure);
+	resDoubleVessel = paperPlotFacTheDoubleVessel(param,isSaveFigure);
 end
 
 

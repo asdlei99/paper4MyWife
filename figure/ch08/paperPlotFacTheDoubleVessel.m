@@ -1,4 +1,4 @@
-function paperPlotFacTheDoubleVessel(param,isSaveFigure)
+function ret = paperPlotFacTheDoubleVessel(param,isSaveFigure)
 %孔管的理论计算
 	freRaw = [11,22.39,33.62,44.85,56.01,67.24,78.4];%[11,22.39,33.62,44.85,56.01,67.24,78.4];
 	massFlowERaw = [0.95,0.38,0.0236,0.01647,0.01378,0.01199,0.09];%[0.95,0.38,0.236,0.1647,0.1378,0.1199,0.09];
@@ -9,6 +9,7 @@ function paperPlotFacTheDoubleVessel(param,isSaveFigure)
     y = res.plus./1000;
     xlswrite('D:\DVy.xls',y,'y','B1:B10000');
 	plot(x,y)
-	
+	ret.x = x';
+	ret.plus = y';
 end
 

@@ -61,6 +61,11 @@ if 0
 end
 
 if 1
+	paperPlotDoubleVesselTheFrequencyResponse(param,isSaveFigure);
+end
+
+
+if 0
 	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口0.2kgs质量流量出口压力\扫频-双容罐二弯头');
 	figureSimFrequencyResponse(dataPath,[],'type','contourf');
     xlim([0,50]);
