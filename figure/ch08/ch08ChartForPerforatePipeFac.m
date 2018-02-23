@@ -107,7 +107,7 @@ param.pressureBoundary2 = 0;
 
 
 if 1
-	paperPlotFacPerforatePipeTheory(param,isSaveFigure);
+	resPerforatePipe=paperPlotFacPerforatePipeTheory(param,isSaveFigure,'saveXlsPath','D:\孔管理论工程应用计算.xls');
 end
 
 if 0

@@ -4,8 +4,10 @@ function Matrix = sudEnlargeTransferMatrix( S_in,S_out,a,varargin)
 %   S2出口截面积
 %   S1BigThanS2 s1比s2大，说明是缩颈，否则为扩径
 %   a声速
-if(S_in > S_out)
-    error('S_in 需要小于 S_out');
+if ~isa(S_in,'sym') && ~isa(S_out,'sym')
+    if(S_in > S_out)
+        error('S_in 需要小于 S_out');
+    end
 end
 
 mach = 10/345;

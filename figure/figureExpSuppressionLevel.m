@@ -1,5 +1,6 @@
 function fh = figureExpSuppressionLevel(dataCombineStructCells,varargin)
-%绘制实验数据的压力脉动和抑制率图
+%绘制实验数据的压力脉动和抑制率图,这里的脉动抑制率是读取时自动和无内件缓冲罐的脉动抑制率，如果要自己计算
+%请使用figureExpPressurePlusSuppressionRate
 %允许特殊的把地一个varargin作为legend
 pp = varargin;
 errorType = 'ci';%绘制误差带的模式，std：mean+-sd,ci为95%置信区间，minmax为最大最小
@@ -53,12 +54,19 @@ end
 x = constExpMeasurementPointDistance();%测点对应的距离
 
 for plotCount = 1:length(dataCombineStructCells)
+    yFunPtr = [];
     if 1 == length(dataCombineStructCells)
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells);
         yFunPtr = yFilterFunPtr;
     else     
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadSuppressionLevelData(dataCombineStructCells{plotCount});
-        yFunPtr = yFilterFunPtr{plotCount};
+        if ~isempty(yFilterFunPtr)
+            if 1 == length(yFilterFunPtr)
+                yFunPtr = yFilterFunPtr;
+            else
+                yFunPtr = yFilterFunPtr{plotCount};
+            end
+        end
     end
     if isnan(y)
         error('此数据未有进行完全的分析，没有脉动抑制率');
@@ -105,8 +113,13 @@ if showVesselRegion
 end
 ax = axis;
 yLabel2Detal = (ax(4) - ax(3))/12;
+
+if isFigure
+	set(gca,'Position',[0.13 0.18 0.79 0.65]);
+end
+
 if showMeasurePoint 
-    set(gca,'Position',[0.13 0.18 0.79 0.65]);
+    
     for i = 1:length(x)
         fh.measurementGridLine(i) = plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
         if 0 == mod(i,2)

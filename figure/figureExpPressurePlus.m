@@ -8,6 +8,7 @@ function fh = figureExpPressurePlus(dataCombineStruct,varargin)
 pp = varargin;
 errorType = 'ci';
 errorPlotType = 'bar';
+markerStyle = 'haveMarker';%有marker，可以设置为point绘制点图
 rang = 1:13;
 showPureVessel = 0;
 showVesselRegion = 1;
@@ -17,6 +18,7 @@ legendLabels = {};
 rpm = 420;
 isFigure = 1;
 expVesselRang = constExpVesselRangDistance();
+yFilterFunPtr = [];
 %允许特殊的把地一个varargin作为legend
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
@@ -49,13 +51,17 @@ while length(pp)>=2
             showVesselRegion = val;
         case 'showmeasurepoint'
             showMeasurePoint = val;
+        case 'yfilterfunptr'
+            yFilterFunPtr = val;
+        case 'markerstyle'
+            markerStyle = val;
         otherwise
        		error('参数错误%s',prop);
     end
 end
 if isFigure
     fh.gcf = figure();
-    paperFigureSet_normal();
+    paperFigureSet('small',6);
 end
 if ~resetExpVesselRang && length(rang) == 15
     expVesselRang = constExpTwoVesselRangDistance();   
@@ -78,10 +84,15 @@ for plotCount = 1:length(dataCombineStruct)
     if 2 == plotCount
         hold on;
     end
+    yFunPtr = [];
     if(1 == length(dataCombineStruct))
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct);
+        yFunPtr = yFilterFunPtr;
     else
         [y,stdVal,maxVal,minVal,muci] = getExpCombineReadedPlusData(dataCombineStruct{plotCount});
+        if ~isempty(yFilterFunPtr)
+            yFunPtr = yFilterFunPtr{plotCount};
+        end
     end
     if isnan(y)
         error('没有获取到数据，请确保数据进行过人工脉动读取');
@@ -100,13 +111,28 @@ for plotCount = 1:length(dataCombineStruct)
         yDown = minVal(rang);
     end
 
+    if isa(yFunPtr,'function_handle')
+        [y,yUp,yDown]= yFunPtr(y,yUp,yDown);
+    end
+
     if strcmp(errorType,'none')
         fh.plotHandle(plotCount) = plot(x,y,'color',getPlotColor(plotCount)...
             ,'Marker',getMarkStyle(plotCount));
     else
+        if strcmpi(markerStyle,'haveMarker');
+            marker = getMarkStyle(plotCount);
+            markerSize = 6;
+            lineStyle = '-';
+        else
+            marker = 'o';
+            markerSize = 1;
+            lineStyle = getLineStyle(plotCount);
+        end
         [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] ...
             = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount)...
+            ,'Marker',marker...
+            ,'lineStyle',lineStyle ...
+            ,'MarkerSize',markerSize ...
             ,'type',errorPlotType);
     end
 end
@@ -118,7 +144,7 @@ else
 end
 if ~isempty(legendLabels)
     if (length(rang) == 13)
-        if isempty(pureVesselLegend)
+        if isempty(pureVesselLegend) || ~showPureVessel
             fh.legend = legend(fh.plotHandle,legendLabels,0);
         else
             legendLabels(2:length(legendLabels)+1) = legendLabels;
@@ -129,7 +155,8 @@ if ~isempty(legendLabels)
 end
 
 if  isFigure
-    set(gca,'Position',[0.13 0.18 0.79 0.65]);
+%     set(gca,'Position',[0.13 0.18 0.79 0.65]);
+    set(gca,'Position',[0.16 0.188819444444444 0.779252283105023 0.641180555555556]);
 end
 if showVesselRegion
     if 15 == length(rang)
@@ -147,7 +174,7 @@ yLabel2Detal = (ax(4) - ax(3))/12;
 % 绘制测点线
 if showMeasurePoint
     for i = 1:length(x)
-        plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
+        fh.measurePointGrid(i) = plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
         if 0 == mod(i,2)
             continue;
         end
@@ -158,7 +185,7 @@ if showMeasurePoint
         end
     end
     fh.textboxMeasurePoint = annotation('textbox',...
-        [0.48 0.885 0.0998 0.0912],...
+        [0.494497716894977 0.907048611111112 0.0998000000000001 0.0911999999999999],...
         'String','测点',...
         'FaceAlpha',0,...
         'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());

@@ -1,5 +1,5 @@
 function style = getLineStyle(index)
-	line_style = {'-';'--';':';'-.'};
+	line_style = {'-';'--';'-.';':'};
 	len = length(line_style);
 	if index > len
 		if 0 == mod(index,len)

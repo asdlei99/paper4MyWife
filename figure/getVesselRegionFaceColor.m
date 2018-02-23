@@ -1,7 +1,7 @@
 function color = getVesselRegionFaceColor()
 %»æÍ¼»º³å¹ŞÇøÓòµÄÌî³äÉ«
 
-color = [227,196,75]./255;
+color = [252,70,71]./255;
 
 end
 

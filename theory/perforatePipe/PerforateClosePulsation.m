@@ -1,9 +1,9 @@
-%% ÄÚ²å¹ÜµÄÆøÁ÷Âö¶¯
+%% å†…æ’ç®¡çš„æ°”æµè„‰åŠ¨
 function theoryDataCells = PerforateClosePulsation(varargin)
 pp = varargin;
 
-%% Êı¾İÂ·¾¶
-%»º³å¹ŞÖĞ¼ä²åÈë¿×¹Ü,Á½¶Ë¶ÂËÀ£¬¿ª¿×¸öÊı²»×ãÒÔµÈĞ§Îªº¥Ä·»ô×È¹²ÃùÆ÷,»º³å¹ŞÈë¿ÚÆ«ÖÃ
+%% æ•°æ®è·¯å¾„
+%ç¼“å†²ç½ä¸­é—´æ’å…¥å­”ç®¡,ä¸¤ç«¯å µæ­»ï¼Œå¼€å­”ä¸ªæ•°ä¸è¶³ä»¥ç­‰æ•ˆä¸ºäº¥å§†éœå…¹å…±é¸£å™¨,ç¼“å†²ç½å…¥å£åç½®
 %                 L1
 %                     |
 %                     |
@@ -19,20 +19,20 @@ pp = varargin;
 %    Dpipe                       Dv                     Dpipe             
 %           
 %
-% Lin ÄÚ²å¿×¹ÜÈë¿Ú¶Î³¤¶È 
-% LoutÄÚ²å¿×¹Ü³ö¿Ú¶Î³¤¶È
-% lc  ¿×¹Ü±Úºñ
-% dp  ¿×¹ÜÃ¿Ò»¸ö¿×¿×¾¶
-% n1  ¿×¹ÜÈë¿Ú¶Î¿ª¿×¸öÊı£»    n2  ¿×¹Ü³ö¿Ú¶Î¿ª¿×¸öÊı
-% la1 ¿×¹ÜÈë¿Ú¶Î¾àÈë¿Ú³¤¶È 
-% la2 ¿×¹ÜÈë¿Ú¶Î¾à¸ô°å³¤¶È
-% lb1 ¿×¹Ü³ö¿Ú¶Î¾à¸ô°å³¤¶È
-% lb2 ¿×¹Ü³ö¿Ú¶Î¾à¿ª¿×³¤¶È
-% lp1 ¿×¹ÜÈë¿Ú¶Î¿ª¿×³¤¶È
-% lp2 ¿×¹Ü³ö¿Ú¶Î¿ª¿×³¤¶È
-% Din ¿×¹Ü¹Ü¾¶£»
-% xSection1£¬xSection2 ¿×¹ÜÃ¿È¦¿×µÄ¼ä¾à£¬´Ó0¿ªÊ¼Ëã£¬xµÄ³¤¶ÈÎª¿×¹Ü¿×µÄÈ¦Êı+1£¬xµÄÖµÊÇµ±Ç°Ò»È¦¿×ºÍÉÏÒ»È¦¿×µÄ¾àÀë£¬Èç¹û¼ä¾àÒ»Ñù£¬ÄÇÃ´xÀïµÄÖµ¶¼Ò»Ñù
-param.acousticVelocity = 345;%ÉùËÙ£¨m/s£©
+% Lin å†…æ’å­”ç®¡å…¥å£æ®µé•¿åº¦ 
+% Loutå†…æ’å­”ç®¡å‡ºå£æ®µé•¿åº¦
+% lc  å­”ç®¡å£åš
+% dp  å­”ç®¡æ¯ä¸€ä¸ªå­”å­”å¾„
+% n1  å­”ç®¡å…¥å£æ®µå¼€å­”ä¸ªæ•°ï¼›    n2  å­”ç®¡å‡ºå£æ®µå¼€å­”ä¸ªæ•°
+% la1 å­”ç®¡å…¥å£æ®µè·å…¥å£é•¿åº¦ 
+% la2 å­”ç®¡å…¥å£æ®µè·éš”æ¿é•¿åº¦
+% lb1 å­”ç®¡å‡ºå£æ®µè·éš”æ¿é•¿åº¦
+% lb2 å­”ç®¡å‡ºå£æ®µè·å¼€å­”é•¿åº¦
+% lp1 å­”ç®¡å…¥å£æ®µå¼€å­”é•¿åº¦
+% lp2 å­”ç®¡å‡ºå£æ®µå¼€å­”é•¿åº¦
+% Din å­”ç®¡ç®¡å¾„ï¼›
+% xSection1ï¼ŒxSection2 å­”ç®¡æ¯åœˆå­”çš„é—´è·ï¼Œä»0å¼€å§‹ç®—ï¼Œxçš„é•¿åº¦ä¸ºå­”ç®¡å­”çš„åœˆæ•°+1ï¼Œxçš„å€¼æ˜¯å½“å‰ä¸€åœˆå­”å’Œä¸Šä¸€åœˆå­”çš„è·ç¦»ï¼Œå¦‚æœé—´è·ä¸€æ ·ï¼Œé‚£ä¹ˆxé‡Œçš„å€¼éƒ½ä¸€æ ·
+param.acousticVelocity = 345;%å£°é€Ÿï¼ˆm/sï¼‰
 param.isDamping = 1;
 param.coeffFriction = 0.03;
 param.meanFlowVelocity = 16;
@@ -41,41 +41,41 @@ param.L2 = 6;
 
 param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
-param.Dpipe = 0.098;%¹ÜµÀÖ±¾¶£¨m£©
+param.Dpipe = 0.098;%ç®¡é“ç›´å¾„ï¼ˆmï¼‰
 param.Lbias = 0.168+0.150;
-param.isOpening = 0;%¹ÜµÀ±Õ¿Ú%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%»·¾³25¶È¾øÈÈÑ¹Ëõµ½0.2MPaGµÄÎÂ¶È¶ÔÓ¦ÃÜ¶È
+param.isOpening = 0;%ç®¡é“é—­å£%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%ç¯å¢ƒ25åº¦ç»çƒ­å‹ç¼©åˆ°0.2MPaGçš„æ¸©åº¦å¯¹åº”å¯†åº¦
 param.rpm = 420;
 param.outDensity = 1.5608;
 param.Fs = 4096;
-param.l  =  0.01;%(m)»º³å¹ŞµÄÁ¬½Ó¹Ü³¤
-param.Dv = 0.372;%»º³å¹ŞµÄÖ±¾¶£¨m£©
-param.Lv1 = 1.1/2;%»º³å¹ŞÇ»1×Ü³¤
+param.l  =  0.01;%(m)ç¼“å†²ç½çš„è¿æ¥ç®¡é•¿
+param.Dv = 0.372;%ç¼“å†²ç½çš„ç›´å¾„ï¼ˆmï¼‰
+param.Lv1 = 1.1/2;%ç¼“å†²ç½è…”1æ€»é•¿
 param.Lv2 =  1.1/2;
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
 %
-param.lc   = 0.005;%ÄÚ²å¹Ü±Úºñ
-param.dp1  = 0.013;%¿ª¿×¾¶
-param.dp2  = 0.013;%¿ª¿×¾¶
-param.lp1  = 0.16;%ÄÚ²å¹ÜÈë¿Ú¶Î·Ç¿×¹Ü¿ª¿×³¤¶È
-param.lp2  = 0.16;%ÄÚ²å¹Ü³ö¿Ú¶Î¿×¹Ü¿ª¿×³¤¶È
-param.n1   = 24;%Èë¿Ú¶Î¿×Êı
-param.n2   = 24;%³ö¿Ú¶Î¿×Êı
-param.la1  = 0.03;%¿×¹ÜÈë¿Ú¶Î¿¿½üÈë¿Ú³¤¶È
+param.lc   = 0.005;%å†…æ’ç®¡å£åš
+param.dp1  = 0.013;%å¼€å­”å¾„
+param.dp2  = 0.013;%å¼€å­”å¾„
+param.lp1  = 0.16;%å†…æ’ç®¡å…¥å£æ®µéå­”ç®¡å¼€å­”é•¿åº¦
+param.lp2  = 0.16;%å†…æ’ç®¡å‡ºå£æ®µå­”ç®¡å¼€å­”é•¿åº¦
+param.n1   = 24;%å…¥å£æ®µå­”æ•°
+param.n2   = 24;%å‡ºå£æ®µå­”æ•°
+param.la1  = 0.03;%å­”ç®¡å…¥å£æ®µé è¿‘å…¥å£é•¿åº¦
 param.la2  = 0.06;
 param.lb1  = 0.06;
 param.lb2  = 0.03;
 param.Din  = 0.049;
-param.Lout = param.lb1 + param.lp2+ param.lb2;%ÄÚ²å¹ÜÈë¿Ú¶Î³¤¶È
+param.Lout = param.lb1 + param.lp2+ param.lb2;%å†…æ’ç®¡å…¥å£æ®µé•¿åº¦
 param.bp1 = calcPerforatingRatios(param.n1,param.dp1,param.Din,param.lp1);
 param.bp2 = calcPerforatingRatios(param.n2,param.dp2,param.Din,param.lp2);
-param.Lin  = param.la1 + param.lp1+ param.la2;%ÄÚ²å¹ÜÈë¿Ú¶Î³¤¶È
+param.Lin  = param.la1 + param.lp1+ param.la2;%å†…æ’ç®¡å…¥å£æ®µé•¿åº¦
 param.LBias = (0.150+0.168);%232
-param.Dbias = 0;%ÎŞÄÚ²å¹Ü
-param.sectionNum1 = [1];%¶ÔÓ¦¿×1µÄ×éÊı
-param.sectionNum2 = [1];%¶ÔÓ¦¿×2µÄ×éÊı
+param.Dbias = 0;%æ— å†…æ’ç®¡
+param.sectionNum1 = [1];%å¯¹åº”å­”1çš„ç»„æ•°
+param.sectionNum2 = [1];%å¯¹åº”å­”2çš„ç»„æ•°
 param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))];
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
-
+param.pressureBoundary2 = 0;
 
 isOpening = false;
 baseFrequency = 14;
@@ -100,12 +100,12 @@ while length(pp)>=2
 			multFreTimes = val;
 		case 'semifretimes'
 			semiFreTimes = val;
-		case 'fast'%¿ìËÙ¼ÆËã£¬´Ë¼ÆËã·µ»ØµÄcellÖ»ÓĞ3¸ö£¬µÚÒ»¸öÊÇËùÓĞÑ¹Á¦Êı¾İ£¬µÚ¶ş¸öÊÇÑ¹Á¦Âö¶¯·å·åÖµ£¬µÚÈı¸öÊÇ·å·åÖµ¶ÔÓ¦xÖµ
+		case 'fast'%å¿«é€Ÿè®¡ç®—ï¼Œæ­¤è®¡ç®—è¿”å›çš„cellåªæœ‰3ä¸ªï¼Œç¬¬ä¸€ä¸ªæ˜¯æ‰€æœ‰å‹åŠ›æ•°æ®ï¼Œç¬¬äºŒä¸ªæ˜¯å‹åŠ›è„‰åŠ¨å³°å³°å€¼ï¼Œç¬¬ä¸‰ä¸ªæ˜¯å³°å³°å€¼å¯¹åº”xå€¼
 			isFast = val;
         case 'fixfunptr'
             fixFunPtr = val;
         otherwise
-            error('´íÎóÊôĞÔ%s',prop);
+            error('é”™è¯¯å±æ€§%s',prop);
 	end
 end
 
@@ -133,12 +133,12 @@ dcpss = getDefaultCalcPulsSetStruct();
 dcpss.calcSection = [0.2,0.8];
 dcpss.fs = param.Fs;
 dcpss.isHp = 0;
-dcpss.f_pass = 7;%Í¨¹ıÆµÂÊ5Hz
-dcpss.f_stop = 5;%½ØÖ¹ÆµÂÊ3Hz
-dcpss.rp = 0.1;%±ß´øÇøË¥¼õDBÊıÉèÖÃ
-dcpss.rs = 30;%½ØÖ¹ÇøË¥¼õDBÊıÉèÖÃ
+dcpss.f_pass = 7;%é€šè¿‡é¢‘ç‡5Hz
+dcpss.f_stop = 5;%æˆªæ­¢é¢‘ç‡3Hz
+dcpss.rp = 0.1;%è¾¹å¸¦åŒºè¡°å‡DBæ•°è®¾ç½®
+dcpss.rs = 30;%æˆªæ­¢åŒºè¡°å‡DBæ•°è®¾ç½®
 if ~isFast
-	theoryDataCells{1,1} = 'ÃèÊö';
+	theoryDataCells{1,1} = 'æè¿°';
 	theoryDataCells{1,2} = 'dataCells';
 	theoryDataCells{1,3} = 'X';
 	theoryDataCells{1,4} = 'input';
@@ -155,13 +155,14 @@ end
 	,'friction',param.coeffFriction...
 	,'meanFlowVelocity',param.meanFlowVelocity...
 	,'isOpening',param.isOpening...
+    ,'pressureBoundary2',param.pressureBoundary2...
 );
 pressure = [pressure1,pressure2];
 X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
 if ~isFast
 	beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
 	%[plus,filterData] = calcPuls(pressure,dcpss);
-	theoryDataCells{2,1} = sprintf('ÄÚ²å¹ÜÖ±¾¶:%g,Lin:%g,Lout:%g',param.Din,param.Lin,param.Lout);
+	theoryDataCells{2,1} = sprintf('å†…æ’ç®¡ç›´å¾„:%g,Lin:%g,Lout:%g',param.Dinnerpipe,param.Lin,param.Lout);
 	st = fun_dataProcessing(pressure...
                                     ,'fs',param.Fs...
                                     ,'basefrequency',baseFrequency...

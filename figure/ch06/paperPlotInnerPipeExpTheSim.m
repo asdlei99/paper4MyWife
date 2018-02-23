@@ -8,10 +8,10 @@ function paperPlotInnerPipeExpTheSim(expDataCells,simDataCells,param,isSaveFigur
     xThe = param.X;
     param.Dinnerpipe = 0.5 * param.Dpipe;
     plotInnerPipe(expDataCells{1},simDataCells{1},xExp,xSim,xThe,param,isSaveFigure,'内插管0_5D理论模拟实验对比');
-    param.Dinnerpipe = 0.75 * param.Dpipe;
-    plotInnerPipe(expDataCells{2},simDataCells{2},xExp,xSim,xThe,param,isSaveFigure,'内插管0_75D理论模拟实验对比');
-    param.Dinnerpipe = param.Dpipe;
-    plotInnerPipe(expDataCells{3},simDataCells{3},xExp,xSim,xThe,param,isSaveFigure,'内插管1D理论模拟实验对比');
+%     param.Dinnerpipe = 0.75 * param.Dpipe;
+%     plotInnerPipe(expDataCells{2},simDataCells{2},xExp,xSim,xThe,param,isSaveFigure,'内插管0_75D理论模拟实验对比');
+%     param.Dinnerpipe = param.Dpipe;
+%     plotInnerPipe(expDataCells{3},simDataCells{3},xExp,xSim,xThe,param,isSaveFigure,'内插管1D理论模拟实验对比');
 
 end
 

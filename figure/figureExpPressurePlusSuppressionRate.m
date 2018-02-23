@@ -21,12 +21,14 @@ function fh = figureExpPressurePlusSuppressionRate(dataCombineStruct,varargin)
 pp = varargin;
 errorType = 'ci';
 errorPlotType = 'area';
+markerStyle = 'haveMarker';%有marker，可以设置为point绘制点图
 rangs = {};
 pureVesselLegend = {};
 legendLabels = {};
 rpm = 420;
 xs = {};
 suppressionRateBase = {};
+suppressionRateBaseErr = {};%脉动抑制率计算的分母项对应的误差，就是对比项的误差
 xlimRang = [];
 ylimRang = [];
 showVesselRigon = 1;
@@ -58,6 +60,8 @@ while length(pp)>=2
             xs = val;
         case 'suppressionratebase' %脉动抑制率计算的分母项
             suppressionRateBase = val;
+        case 'suppressionratebaseerr'%脉动抑制率计算的分母项对应的误差，就是对比项的误差
+            suppressionRateBaseErr = val;
         case 'xlim'
             xlimRang = val;
         case 'ylim'
@@ -82,6 +86,8 @@ while length(pp)>=2
             vesselText = val;
         case 'isfigure'
             isFigure = val;
+        case 'markerstyle'
+            markerStyle = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -123,37 +129,68 @@ for plotCount = 1:length(dataCombineStruct)
     else
         x = xs{plotCount};
     end
-    if 1 == length(rangs)
-        rang = rangs{1};
+    if iscell(rangs)
+        if 1 == length(rangs)
+            rang = rangs{1};
+        else
+            rang = rangs{plotCount};
+        end
     else
-        rang = rangs{plotCount};
+        rang = rangs;
     end
     if 1 == length(suppressionRateBase)
         srb = suppressionRateBase{1};
     else
         srb = suppressionRateBase{plotCount};
     end
-    y = y(rang);
-
-    if strcmp(errorType,'std')
-        yUp = y + stdVal(rang);
-        yDown = y - stdVal(rang);
-    elseif strcmp(errorType,'ci')
+    
+    if iscell(suppressionRateBaseErr) 
+        if 1 == length(suppressionRateBaseErr)
+            errPa = suppressionRateBase{1};
+        else
+            errPa = suppressionRateBase{plotCount};
+        end
+    else
+        errPa = suppressionRateBaseErr;
+    end
+    Pb = y(rang);
+    y = ((srb - Pb) ./ srb) .* 100;
+    if isempty(suppressionRateBaseErr)
+        if strcmp(errorType,'std')
+            yUp = Pb + stdVal(rang);
+            yDown = Pb - stdVal(rang);
+        elseif strcmp(errorType,'ci')
+            yUp = muci(2,rang);
+            yDown = muci(1,rang);
+        elseif strcmp(errorType,'minmax')
+            yUp = maxVal(rang);
+            yDown = minVal(rang);
+        end
+        yUp = ((srb - yUp) ./ srb) .* 100;
+        yDown = ((srb - yDown) ./ srb) .* 100;
+    else
         yUp = muci(2,rang);
         yDown = muci(1,rang);
-    elseif strcmp(errorType,'minmax')
-        yUp = maxVal(rang);
-        yDown = minVal(rang);
+        errPb = yUp - yDown;
+        Pa = srb;
+        errSr = errChange(errPa,errPb,Pa,Pb,y);
+        yUp = y + (errSr ./ 2);
+        yDown = y - (errSr ./ 2);
     end
-    y = ((srb - y) ./ srb) .* 100;
-    yUp = ((srb - yUp) ./ srb) .* 100;
-    yDown = ((srb - yDown) ./ srb) .* 100;
+    
+    if strcmpi(markerStyle,'haveMarker')
+        marker = getMarkStyle(plotCount);
+        lineStyle = '-';
+    else
+        marker = 'none';
+        lineStyle = getLineStyle(plotCount);
+    end
     if strcmp(errorType,'none')
         fh.plotHandle(plotCount) = plot(x,y,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount));
+            ,'Marker',marker,'lineStyle',lineStyle);
     else
         [fh.plotHandle(plotCount),fh.errFillHandle(plotCount)] = plotWithError(x,y,yUp,yDown,'color',getPlotColor(plotCount)...
-            ,'Marker',getMarkStyle(plotCount),'type',errorPlotType);
+            ,'Marker',marker,'lineStyle',lineStyle,'type',errorPlotType);
     end
 end
 if ~isempty(xlimRang)
@@ -180,7 +217,7 @@ if ~xIsMeasurePoint
     % 绘制测点线
     if showMeasurePoint
         for i = 1:length(x)
-            plot([x(i),x(i)],[ax(3),ax(4)],':','color',[160,160,160]./255);
+            fh.measurePointGrid(i) = plot([x(i),x(i)],[ax(3),ax(4)],'LineStyle',':','color',[160,160,160]./255);
             if 0 == mod(i,2)
                 continue;
             end
@@ -211,7 +248,14 @@ ylabel(ylabelText,'fontsize',paperFontSize());
 xlim([2,11]);
 box on;
 fh.gca = gca;
+if isfield(fh,'measurePointGrid')
+    for i = 1:length(fh.measurePointGrid)
+        set(fh.measurePointGrid(i),'LineStyle',':');
+    end
+end
 end
 
 
-
+function err = errChange(ErrPa,ErrPb,Pa,Pb,Psr)
+    err = Psr .* ((((ErrPa.^2 + ErrPb.^2) ./ (Pa - Pb).^2 ) + (ErrPa  ./ Pa ).^ 2) .^ 0.5 );
+end

@@ -26,16 +26,14 @@ param.LV1 = 1.1;%缓冲罐总长 （1.1m）
 param.DV2 = 0.372;%variant_DV2(i);%(4.*V2./(pi.*variant_r(i)))^(1/3);%缓冲罐的直径（0.372m）
 param.LV2 = 1.1;%variant_r(i).*param.DV2;%缓冲罐总长 （1.1m）
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
-param.rpm = 420;
+param.rpm = 300;
 param.outDensity = 1.5608;
 param.sectionL1 = 0:0.5:param.L1;
 param.sectionL2 = 0:0.5:param.L2;
 param.sectionL3 = 0:0.5:param.L3;
 param.meanFlowVelocity = 16;
 param.mach = param.meanFlowVelocity / param.acousticVelocity;
-param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
-param.rpm = 420;
-param.outDensity = 1.5608;
+
 
 while length(pp)>=2
     prop =pp{1};

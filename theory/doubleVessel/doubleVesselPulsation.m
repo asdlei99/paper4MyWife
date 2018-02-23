@@ -27,9 +27,9 @@ function theoryDataCells = doubleVesselPulsation(varargin)
 	param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
     param.rpm = 420;
     param.outDensity = 1.5608;
-    param.sectionL1 = 0:detalDis:param.L1;
-    param.sectionL2 = 0:detalDis:param.L2;
-    param.sectionL3 = 0:detalDis:param.L3;
+    param.sectionL1 = 0:0.5:param.L1;
+    param.sectionL2 = 0:0.5:param.L2;
+    param.sectionL3 = 0:0.5:param.L3;
     param.meanFlowVelocity = 16;
     param.mach = param.meanFlowVelocity / param.acousticVelocity;
     param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
@@ -70,8 +70,8 @@ function theoryDataCells = doubleVesselPulsation(varargin)
 		[massFlowRaw,time,tmp,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
 			,0.14,1.075,param.outDensity,'rcv',0.15,'k',1.4,'pr',0.15,'fs',param.Fs,'oneSecond',6);
 		[freRaw,AmpRaw,PhRaw,massFlowERaw] = frequencySpectrum(detrend(massFlowRaw,'constant'),param.Fs);
-		freRaw = [7,14,21,28,14*3];
-		massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
+% 		freRaw = [7,14,21,28,14*3];
+% 		massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
 		massFlowE = massFlowERaw;
 		param.fre = freRaw;
 		param.massFlowE = massFlowE;

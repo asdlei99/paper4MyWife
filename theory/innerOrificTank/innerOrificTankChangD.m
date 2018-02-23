@@ -4,6 +4,34 @@ pp = varargin;
 massflowData = nan;
 isOpening = 0;
 orificD = [0.25,0.5,0.75,1];
+
+
+
+%% 初始参数
+%
+param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
+param.rpm = 420;
+param.outDensity = 1.5608;
+param.Fs = 4096;
+param.acousticVelocity = 345;%声速（m/s）
+param.isDamping = 1;
+param.coeffFriction = 0.03;
+param.meanFlowVelocity = 16;
+param.L1 = 3.5;%(m)
+param.L2 = 6;
+param.Lv1 = 1.1/2;
+param.Lv2 = 1.1/2;
+param.l = 0.01;%(m)缓冲罐的连接管长
+param.Dv = 0.372;
+param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
+param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
+param.Dpipe = 0.098;%管道直径（m）
+param.LBias = 0.168+0.150;
+param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
+
+
+
+
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -13,16 +41,13 @@ while length(pp)>=2
             massflowData = val;
         case 'orificd'
             orificD = val;
+        case 'param'
+            param = val;
         case 'isopening'
             isOpening = val;
     end
 end
-%% 初始参数
-%
-param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
-param.rpm = 420;
-param.outDensity = 1.5608;
-param.Fs = 4096;
+
 
 if isnan(massflowData)
     [massFlowRaw,time,~,opt.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
@@ -40,21 +65,6 @@ else
 end
 
 
-param.acousticVelocity = 345;%声速（m/s）
-param.isDamping = 1;
-param.coeffFriction = 0.03;
-param.meanFlowVelocity = 16;
-param.L1 = 3.5;%(m)
-param.L2 = 6;
-param.Lv1 = 1.1/2;
-param.Lv2 = 1.1/2;
-param.l = 0.01;%(m)缓冲罐的连接管长
-param.Dv = 0.372;
-param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
-param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
-param.Dpipe = 0.098;%管道直径（m）
-param.bias = 0.168+0.150;
-param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
 
 baseFrequency = 14;
 multFreTimes = 3;
@@ -90,7 +100,7 @@ for i = 1:length(orificD)
     d = orificD(i);
     [pressure1,pressure2] = vesselBiasHaveOrificePulsationCalc(param.massFlowE,param.fre,time...
         ,param.L1,param.L2,param.Lv1,param.Lv2,param.l,param.Dpipe,param.Dv...
-        ,d,param.bias,param.sectionL1,param.sectionL2...
+        ,d,param.LBias,param.sectionL1,param.sectionL2...
         ,'a',param.acousticVelocity...
         ,'isDamping',param.isDamping...
         ,'friction',param.coeffFriction...

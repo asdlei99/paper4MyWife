@@ -1,5 +1,5 @@
 function [pressure1,pressure2] = vesselBiasHaveOrificePulsationCalc( massFlowE,Frequency,time ...
-,L1,L2,Lv1,Lv2,l,Dpipe,Dv,d,bias,sectionL1,sectionL2,varargin)
+,L1,L2,Lv1,Lv2,l,Dpipe,Dv,d,Lbias,sectionL1,sectionL2,varargin)
 %含孔板缓冲罐的气流脉动计算
 %   Detailed explanation goes here
 %           |  L1
@@ -87,7 +87,7 @@ for i = 1:length(Frequency)
     
      matrix_orifice{count} = orificeTransferMatrix(Dv,d,mfvVessel);
     
-     matrix_v1{count} = halfVesselBiasTransferMatrix(Lv1,l,bias,0,'f',f,'a',a,'D',Dpipe,'Dv',Dv...
+     matrix_v1{count} = halfVesselBiasTransferMatrix(Lv1,Lbias,l,0,1,'f',f,'a',a,'D',Dpipe,'Dv',Dv...
         ,'isDamping',isDamping,'coeffFriction',coeffFriction,'meanFlowVelocity',meanFlowVelocity...
         ,'isUseStaightPipe',isUseStaightPipe,'m',mach,'notmach',notMach);
 

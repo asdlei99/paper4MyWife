@@ -1,11 +1,6 @@
-function [theoryDataCells,X,Y,XDis] = doubleVesselChangV1V2(V1,V2,varargin)
-%迭代体积V1,V2的结果，其中，输出theoryDataCells是一个cell长度是分段数总和
-%既是length(param.sectionL1) + length(param.sectionL2) + length(param.sectionL3) 
-%theoryDataCells每个内容是一个结构体，结构体定义为:
-% res.X V1 
-% res.Y V2
-% res.Z 计算的脉动结果
-%
+function theoryDataCells = doubleVesselFixVChangeV1V2(V1,varargin)
+%在总体积固定情况下迭代体积V1和v2
+% 总体积V会根据param计算
 %   massFlowE1 经过fft后的质量流量，直接对质量流量进行去直流fft
 %  长度 L1     l    Lv1   l   L2  l    Lv2   l     L3
 %              __________         __________
@@ -41,11 +36,8 @@ function [theoryDataCells,X,Y,XDis] = doubleVesselChangV1V2(V1,V2,varargin)
     param.meanFlowVelocity = 16;
     param.mach = param.meanFlowVelocity / param.acousticVelocity;
 
-
-	zMode = 'pulsation';%输出z值的类型:
-						%pulsation为输出脉动峰峰值
-						%cmpSameV为输出与同体积下的缓冲罐的比值
-						
+    ldr = param.LV1 / param.DV1;
+	calcMode = 'fixR';%计算模式 fixR 锁定长径比 
 	
     while length(pp)>=2
 		prop =pp{1};
@@ -56,8 +48,6 @@ function [theoryDataCells,X,Y,XDis] = doubleVesselChangV1V2(V1,V2,varargin)
 				massflowData = val;
 			case 'param'
 				param = val;
-			case 'zmode'
-				zMode = val;
 			otherwise
 				error('错误属性%s',prop);
 		end
@@ -79,8 +69,11 @@ function [theoryDataCells,X,Y,XDis] = doubleVesselChangV1V2(V1,V2,varargin)
 		param.massFlowE = massflowData(2,:);
 	end
 
-    
-
+	paramV1 = param.LV1 * (pi * param.DV1 ^ 2 / 4);
+	paramV2 = param.LV2 * (pi * param.DV2 ^ 2 / 4);
+	paramTotalV = paramV1 + paramV2;
+	paramLDR1 = param.LV1 / param.DV1;%长径比
+	paramLDR2 = param.LV2 / param.DV2;
 
     
     dcpss = getDefaultCalcPulsSetStruct();
@@ -94,17 +87,32 @@ function [theoryDataCells,X,Y,XDis] = doubleVesselChangV1V2(V1,V2,varargin)
     dcpss.rs = 30;%截止区衰减DB数设置
 
 
-	
-	XDis = [param.sectionL1...
-		,param.L1+param.LV1+2*param.l+param.sectionL2...
-		,param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3];
-	for i = 1:length(V1)
-		for j = 1:length(V2)
-			v1 = V1(i);
-			v2 = V2(j);
-			param.DV1 = (4 * v1 / pi)^0.5;
-			param.DV2 = (4 * v2 / pi)^0.5;
-			[pressure1,pressure2,pressure3] = ...
+	Ltotal = param.L1 + param.L2 + param.L3;
+	paramT = doubleVesselParamToSingleVesselParam(param);
+	if strcmpi(calcMode,'fixr')
+		calcModeValue(1) = param.LV1 / param.DV1;
+		calcModeValue(2) = param.LV2 / param.DV2;
+		calcModeValue(3) = paramT.Lv / paramT.Dv;
+	end
+
+
+
+
+	for i=1:length(V1)
+		%计算V2，如果V1大于V就停下迭代
+		V2 = paramTotalV - V1(i);
+		if V2 <= 0
+			break;
+		end 
+		[param.DV1,param.LV1] = calcDLFixR(paramLDR1,V1(i));
+		[param.DV2,param.LV2] = calcDLFixR(paramLDR2,V2);
+
+		
+		XDis = [param.sectionL1...
+			,param.L1+param.LV1+2*param.l+param.sectionL2...
+			,param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3];
+		
+		[pressure1,pressure2,pressure3] = ...
             doubleVesselPulsationCalc(param.massFlowE,param.fre,time,...
                 param.L1,param.L2,param.L3,...
                 param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
@@ -113,43 +121,36 @@ function [theoryDataCells,X,Y,XDis] = doubleVesselChangV1V2(V1,V2,varargin)
                 'meanFlowVelocity',param.meanFlowVelocity,'isUseStaightPipe',1,...
                 'm',param.mach,'notMach',param.notMach...
                 ,'isOpening',param.isOpening...
-                );%,'coeffDamping',opt.coeffDamping
-			pressure = [pressure1,pressure2,pressure3];
-			plus = calcPuls(pressure,dcpss);
-			
-			if strcmpi(zMode,'cmpSameV')
-				%处于和等体积单容对比模式，需要计算等体积单容的脉动
-                
-                paramT = doubleVesselParamToSingleVesselParam(param);
-
-                
-				vType = 'StraightInStraightOut';
-				singleVesselRes = oneVesselPulsation('param',paramT...
+                );%,'coeffDamping',opt.coeffDampingo
+		pressureAll = [pressure1,pressure2,pressure3];
+		plusVal = calcPuls(pressureAll,dcpss);
+        pressurePart = [pressure1,pressure3];
+		plusPartVal = calcPuls(pressurePart,dcpss);
+        %计算等体积单罐
+		paramT = doubleVesselParamToSingleVesselParam(param,'r',ldr);
+        vType = 'StraightInStraightOut';
+        singleVesselRes = oneVesselPulsation('param',paramT...
 									,'vType',vType...
 									,'fast',true...
 									);
-				svPlus = singleVesselRes{1};
-				svXDis = singleVesselRes{2};
-				% 计算脉动抑制率
-				for kk=1:length(plus)
-					dvesselXDis = XDis(kk);
-					[ clVal,index ] = closeValue(svXDis,dvesselXDis);
-					sv = svPlus(index);
-					theoryDataCells{kk}.Z(j,i) = (sv - plus(kk))./sv .* 100;
-					theoryDataCells{kk}.x = XDis(kk);
-				end
-			else
-				for kk = 1:length(plus)
-					theoryDataCells{kk}.Z(j,i) = plus(kk);
-					theoryDataCells{kk}.x = XDis(kk);
-				end
-			end
-		end
+        svPlus = singleVesselRes{1};
+        sr = (svPlus - plusPartVal) ./ svPlus;
+        res.xDis = XDis;
+        res.v1 = V1(i);
+		res.v2 = V2;
+		res.param = param;
+		res.plus = plusVal;
+        res.plusL1L3 = plusPartVal;
+        res.xDisL1L3 = [param.sectionL1...
+			,param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3];;
+        res.sr = sr;
+		theoryDataCells{i} = res;
 	end
-	[X,Y] = meshgrid(V1,V2);
-	
-    
-    
-    
-    
+
+end
+
+function [D,L] = calcDLFixR(r,v)
+	%固定长径比计算直径和长度
+	L = ((4 .* v .* r .^ 2) ./ pi) .^ (1/3);
+	D = L ./ r;
 end

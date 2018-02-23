@@ -63,7 +63,7 @@ param.outDensity = 1.5608;
 param.Fs = 4096;
 param.Lin = 0.200;
 param.Lout = 0.200;
-param.Dinnerpipe = param.Dpipe;
+param.Dinnerpipe = param.Dpipe*0.5;
 
 
 %% 绘制多组压力脉动

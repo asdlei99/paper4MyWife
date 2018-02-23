@@ -40,10 +40,10 @@ end
 
 
 
-if true
+if true%内插管放置位置对脉动的影响
 	count = count + 1;
 	Lv1 = param.Lbias : 0.05: (param.Lv1+param.Lv2-param.Lbias);
-	res{count,1} = '内插管管径大小变化对脉动的影响';
+	res{count,1} = '内插管放置位置对脉动的影响';
 	res{count,2} = plotInnerPipeChangeLv1(Lv1,param,massFlowDataCell,isSaveFig);
 end
 
@@ -83,13 +83,14 @@ function res = plotInnerPipeChangeD(Dinnerpipe,param,massFlowDataCell,isSaveFig)
 	end
 end
 
-%绘制内插管管径大小改变对脉动的影响
+%内插管放置位置对脉动的影响
 function res = plotInnerPipeChangeLv1(Lv1,param,massFlowDataCell,isSaveFig)
 	res = innerPipePulsationChangInnerInnerLocation(Lv1,'param'...
 										,param,'massflowData'...
 										,massFlowDataCell...
 										,'fast',true...
-										);
+										);   
+                                    
 	figure
 	paperFigureSet('small',6);
 	measurePoints = floor(linspace(1,size(res{1,1},2),4));

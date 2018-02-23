@@ -28,7 +28,7 @@ a = 345;%ÉùËÙ
 
 
 isDamping = 0;
-isOpening = 1;
+isOpening = 0;
 coeffDamping = nan;
 coeffFriction = nan;
 meanFlowVelocity = nan;

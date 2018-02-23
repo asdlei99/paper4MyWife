@@ -127,7 +127,7 @@ if 0
 end
 
 %% 对比直进侧后出和侧前进直出的区别
-if 1
+if 0
     figure
     paperFigureSet('normal2',7);
     fh = figureExpPressurePlus({vesselSideFontInDirectOutCombineData,vesselDirectInSideBackOutCombineData}...

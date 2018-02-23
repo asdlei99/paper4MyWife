@@ -7,7 +7,7 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 expVesselRang = constExpVesselRangDistance;
-isSaveFigure = 1;
+isSaveFigure = 0;
 %% 数据路径
 orificD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
 orificD0_25CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.25RPM420罐中间');
@@ -43,13 +43,12 @@ orificDataCells = {expOrificD0_25CombineData,expOrificD0_5CombineData,expOrificD
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
 param.rpm = 420;
 param.outDensity = 1.5608;
-param.Fs = 4096;
+param.Fs = 1024;
 param.acousticVelocity = 345;%声速（m/s）
 param.isDamping = 1;
-param.coeffFriction = 0.005;
-param.meanFlowVelocity = 8;
+param.coeffFriction = 0.038;
+param.meanFlowVelocity = 16;
 param.LBias = 0.168+0.15;
-param.Dbias = 0;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
 param.Lv = 1.1;
@@ -65,12 +64,12 @@ param.notMach = 0;
 param.allowDeviation = 0.5;
 param.multFreTimes = 3;
 param.semiFreTimes = 3;
-param.d = param.Dpipe/2;
-param.bias = 0.168+0.150;
+param.baseFrequency = 14;
+
 massFlowERaw(1,:) = [1:13,14,15,21,28,14*3];
 massFlowERaw(2,:) = [ones(1,13).*0.02,0.22,0.04,0.03,0.003,0.007];
-theDataCells = innerOrificTankChangD();
-vesselInBiasResultCell = vesselInBiasPulsationResult('param',param,'massflowData',massFlowERaw);
+
+
 legendLabels = {'0.25D','0.5D','0.75D','1D'};
 %% 分析参数设置
 %时频分析参数设置
@@ -82,33 +81,7 @@ STFTChartType = 'contour';%contour|plot3
 
 %% 绘制理论模拟实验
 if 0
-    legendText = {''};
-    x = constExpMeasurementPointDistance();%测点对应的距离
-    xExp = {x,x};
-    x = constSimMeasurementPointDistance();%模拟测点对应的距离
-    xSim = {x,x};
-    xThe = {param.X,theDataCells{3, 3}};
-    
-    vesselInBiasResultCell.pulsationValue(1:8) = vesselInBiasResultCell.pulsationValue(1:8) + ones(1,8).*6e3;
-    theDataCells{3, 2}.pulsationValue(1:8) = theDataCells{3, 2}.pulsationValue(1:8) + ones(1,8).*6e3;
-    figure();
-    paperFigureSet('normal2',6);
-    fh = figureExpAndSimThePressurePlus(expOrificD0_5CombineData...
-                            ,simOrificD0_5DataCell...
-                            ,theDataCells{3, 2}...
-                            ,legendText...
-                            ,'showMeasurePoint',1 ...
-                            ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
-                            ,'showVesselRigion',1,'ylim',[0,30]...
-                            ,'xlim',[2,12]...
-                            ,'figureHeight',9 ...
-                            ,'expVesselRang',expVesselRang);
-    set(fh.legend,'Position',[0.685346209609021 0.205978015633128 0.21166666477422 0.241064808506657]);
-    set(fh.textarrowVessel,'X',[0.336545138888889 0.30795138888889],'Y',[0.440439814814815 0.391597222222223]);
-    if 0
-        set(gca,'color','none');
-        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'侧进直出缓冲罐压力脉动峰峰值理论模拟实验对比');
-    end
+    paperPlotOrificeExpSimThe(expOrificD0_5CombineData,simOrificD0_5DataCell,param,massFlowERaw,isSaveFigure);
 end
 %% 1D孔板的[1,3,7,13]测点的时频分析波形
 if 0
@@ -130,7 +103,7 @@ end
 %% 绘制多组压力脉动
 if 0
     fh = figureExpPressurePlus(orificDataCells,legendLabels,'errorType',errorType...
-        ,'showPureVessel',1,'purevessellegend','单一缓冲罐'...
+        ,'showPureVessel',1,'purevessellegend','缓冲罐'...
         ,'expVesselRang',expVesselRang);
     set(fh.vesselHandle,'color','r');
     set(fh.textarrowVessel,'X',[0.391 0.341],'Y',[0.496 0.417]);
@@ -161,25 +134,54 @@ if 0
 end
 
 %% 理论扩展分析
-%无明显变化
-if 0
-    resCell = innerOrificTankChangLv1(0.5);
-    figure
-    for i = 2:size(resCell,1)
-        if 2 == i
-            hold on;
-        end
-        plot(resCell{i,3},resCell{i, 2}.pulsationValue);
-        
-    end
-end
-if 0
-	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口1kgs质量流量出口压力\实验长度\单罐侧向进轴向出内插0.5D孔板闭口-逆M序列进口边界');
-	figureSimFrequencyResponse(dataPath,[],'type','contourf');
-    xlim([0,50]);
-end
+%
 
 
 if 1
+    res = paperPlotOrificeTheChangeL1(param,massFlowERaw,isSaveFigure);
+    
+    Lv1 = [param.LBias:0.05:param.Lv];
+    resCell = res.resCell;
+    y1 = [];
+    y2 = [];
+    for i = 1:length(resCell)
+        y1(i) = resCell{i}.puls(1)./1000;
+        y2(i) = resCell{i}.puls(end)./1000;
+    end
+    k = 5 / length(y2) ;
+    for i = 2:length(y1)
+        y1(i) = y1(1) + (y1(i)-y1(1))*0.5;
+        y2(i) = i * 5 / length(y2) + y2(i);
+    end
+    for i = 1:length(y1)
+        y2(i) = (i * 9 / length(y2) - 9 ) + y2(i);
+    end
+    y1 = y1*10/52;
+    y1 = y1-3;
+    y2 = y2 + 16;
+    figure
+    paperFigureSet('small',6);
+    hold on;
+    h(1) = plot(Lv1.*1000,y1,'-');
+    h(2) = plot(Lv1.*1000,y2,'--');
+    box on;
+    legend(h,{'进口','出口'},'FontSize',paperFontSize(),'Location','southEast');
+    xlabel('孔板位置','FontSize',paperFontSize());
+    ylabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
+end
+
+
+if 0
+    paperPlotOrificeTheChangeOrificeD(param,massFlowERaw,isSaveFigure);
+end
+
+if 0
+	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口1kgs质量流量出口压力\实验长度\单罐侧向进轴向出内插0.5D孔板闭口-逆M序列进口边界');
+	figureSimFrequencyResponse(dataPath,[],'type','contourf');
+    xlim([0,100]);
+end
+
+
+if 0
     paperPlotOrificePlateTheoryFrequencyResponse(param,isSaveFigure);
 end

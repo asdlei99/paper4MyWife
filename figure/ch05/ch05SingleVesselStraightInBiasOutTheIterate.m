@@ -2,8 +2,10 @@ clear all;
 close all;
 %单一缓冲罐理论迭
 %% 缓冲罐计算的参数设置
-vType = 'straightInBiasOut';
+vType = 'BiasFontInStraightOut';
 isSaveFigure = 1;
+
+coeffFriction = 0.03;
 if 0
     param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??
     param.rpm = 420;

@@ -48,7 +48,7 @@ function paperPlotSingleVesselTheIteChangLv1(param,massFlowData,isSaveFigure)
     h = plot(Lv1,y(1,:),'color',getPlotColor(1),'marker',getMarkStyle(1));
     set(gca,'XTick',0:0.2:1);
     xlabel('偏置距离(m)','FontSize',paperFontSize());
-    ylabel('压力脉动(kPa)','FontSize',paperFontSize());
+    ylabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
     title('(a)','FontSize',paperFontSize());
 	if isSaveFigure
 		set(gca,'color','none');
@@ -60,7 +60,7 @@ function paperPlotSingleVesselTheIteChangLv1(param,massFlowData,isSaveFigure)
     h = plot(Lv1,y(2,:),'color',getPlotColor(2),'marker',getMarkStyle(2));
     set(gca,'XTick',0:0.2:1);
     xlabel('偏置距离(m)','FontSize',paperFontSize());
-    ylabel('压力脉动(kPa)','FontSize',paperFontSize());
+    ylabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
     title('(b)','FontSize',paperFontSize());
 	if isSaveFigure
 		set(gca,'color','none');
