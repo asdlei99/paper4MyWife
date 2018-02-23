@@ -7,38 +7,41 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 expVesselRang = constExpVesselRangDistance;
+theoryOnly = 1;
 isSaveFigure = 0;
-%% 数据路径
-orificD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
-orificD0_25CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.25RPM420罐中间');
-orificD0_75CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.75RPM420罐中间');
-orificD1CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D1RPM420罐中间');
-orific28MultHoleD1CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\多孔孔板N28D1RPM420罐中间');
-vesselCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
-%% 加载中间孔板以及缓冲罐数据
-%0.25D,0.5D,0.75D,1D孔板的实验模拟数据
-[expOrificD0_25DataCells,expOrificD0_25CombineData,simOrificD0_25DataCell] ...
-    = loadExpAndSimDataFromFolder(orificD0_25CombineDataPath);
-[expOrificD0_5DataCells,expOrificD0_5CombineData,simOrificD0_5DataCell] ...
-    = loadExpAndSimDataFromFolder(orificD0_5CombineDataPath);
-[expOrificD0_75DataCells,expOrificD0_75CombineData,simOrificD0_75DataCell] ...
-    = loadExpAndSimDataFromFolder(orificD0_75CombineDataPath);
-[expOrificD01DataCells,expOrificD01CombineData,simOrificD01DataCell] ...
-    = loadExpAndSimDataFromFolder(orificD1CombineDataPath);
-simFixData = [2,3,4,4,3.5,3,-1,2,3,4,5,6,7,8,9,10,10,10,10];
-simOrificD0_25DataCell.rawData.pulsationValue(:) = simOrificD0_25DataCell.rawData.pulsationValue(:) + simFixData'; 
-simOrificD0_5DataCell.rawData.pulsationValue(:) = simOrificD0_5DataCell.rawData.pulsationValue(:) + simFixData';
-simOrificD0_75DataCell.rawData.pulsationValue(:) = simOrificD0_75DataCell.rawData.pulsationValue(:) + simFixData';
-simOrificD01DataCell.rawData.pulsationValue(:) = simOrificD01DataCell.rawData.pulsationValue(:) + simFixData';
-%单一缓冲罐数据
-[expVesselDataCells,expVesselCombineData,simVesselDataCell] ...
-    = loadExpAndSimDataFromFolder(vesselCombineDataPath);
-fixSimVessel = constSimVesselPlusValueFix();
-simVesselDataCell.rawData.pulsationValue(:) = simVesselDataCell.rawData.pulsationValue(:)+fixSimVessel';
-%多孔孔板
-[expOrific28MultHoleD01DataCells,expOrific28MultHoleD01CombineData] = loadExpDataFromFolder(orific28MultHoleD1CombineDataPath);
-%对比单孔
-orificDataCells = {expOrificD0_25CombineData,expOrificD0_5CombineData,expOrificD0_75CombineData,expOrificD01CombineData};
+if theoryOnly
+	%% 数据路径
+	orificD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
+	orificD0_25CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.25RPM420罐中间');
+	orificD0_75CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.75RPM420罐中间');
+	orificD1CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D1RPM420罐中间');
+	orific28MultHoleD1CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\多孔孔板N28D1RPM420罐中间');
+	vesselCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
+	%% 加载中间孔板以及缓冲罐数据
+	%0.25D,0.5D,0.75D,1D孔板的实验模拟数据
+	[expOrificD0_25DataCells,expOrificD0_25CombineData,simOrificD0_25DataCell] ...
+		= loadExpAndSimDataFromFolder(orificD0_25CombineDataPath);
+	[expOrificD0_5DataCells,expOrificD0_5CombineData,simOrificD0_5DataCell] ...
+		= loadExpAndSimDataFromFolder(orificD0_5CombineDataPath);
+	[expOrificD0_75DataCells,expOrificD0_75CombineData,simOrificD0_75DataCell] ...
+		= loadExpAndSimDataFromFolder(orificD0_75CombineDataPath);
+	[expOrificD01DataCells,expOrificD01CombineData,simOrificD01DataCell] ...
+		= loadExpAndSimDataFromFolder(orificD1CombineDataPath);
+	simFixData = [2,3,4,4,3.5,3,-1,2,3,4,5,6,7,8,9,10,10,10,10];
+	simOrificD0_25DataCell.rawData.pulsationValue(:) = simOrificD0_25DataCell.rawData.pulsationValue(:) + simFixData'; 
+	simOrificD0_5DataCell.rawData.pulsationValue(:) = simOrificD0_5DataCell.rawData.pulsationValue(:) + simFixData';
+	simOrificD0_75DataCell.rawData.pulsationValue(:) = simOrificD0_75DataCell.rawData.pulsationValue(:) + simFixData';
+	simOrificD01DataCell.rawData.pulsationValue(:) = simOrificD01DataCell.rawData.pulsationValue(:) + simFixData';
+	%单一缓冲罐数据
+	[expVesselDataCells,expVesselCombineData,simVesselDataCell] ...
+		= loadExpAndSimDataFromFolder(vesselCombineDataPath);
+	fixSimVessel = constSimVesselPlusValueFix();
+	simVesselDataCell.rawData.pulsationValue(:) = simVesselDataCell.rawData.pulsationValue(:)+fixSimVessel';
+	%多孔孔板
+	[expOrific28MultHoleD01DataCells,expOrific28MultHoleD01CombineData] = loadExpDataFromFolder(orific28MultHoleD1CombineDataPath);
+	%对比单孔
+	orificDataCells = {expOrificD0_25CombineData,expOrificD0_5CombineData,expOrificD0_75CombineData,expOrificD01CombineData};
+end
 %理论结果
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
 param.rpm = 420;
@@ -137,7 +140,7 @@ end
 %
 
 
-if 1
+if 0
     res = paperPlotOrificeTheChangeL1(param,massFlowERaw,isSaveFigure);
     
     Lv1 = [param.LBias:0.05:param.Lv];
@@ -171,7 +174,7 @@ if 1
 end
 
 
-if 0
+if 1
     paperPlotOrificeTheChangeOrificeD(param,massFlowERaw,isSaveFigure);
 end
 

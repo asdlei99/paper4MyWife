@@ -29,8 +29,8 @@ param.Dpipe = 0.098;%管道直径（m）
 param.LBias = 0.168+0.150;
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
 
-
-
+calcR = false;%是否计算脉动抑制率
+isFast = false;
 
 while length(pp)>=2
     prop =pp{1};
@@ -43,6 +43,10 @@ while length(pp)>=2
             orificD = val;
         case 'param'
             param = val;
+		case 'calcr'
+			calcR = val;
+		case 'fast'
+			isFast = val;
         case 'isopening'
             isOpening = val;
     end
@@ -80,12 +84,14 @@ dcpss.f_pass = 7;%通过频率5Hz
 dcpss.f_stop = 5;%截止频率3Hz
 dcpss.rp = 0.1;%边带区衰减DB数设置
 dcpss.rs = 30;%截止区衰减DB数设置
-theoryDataCells{1,1} = '描述';
-theoryDataCells{1,2} = 'dataCells';
-theoryDataCells{1,3} = 'X';
-theoryDataCells{1,4} = '内置孔板直径';
-theoryDataCells{1,5} = 'input';
 
+if ~isFast
+	theoryDataCells{1,1} = '描述';
+	theoryDataCells{1,2} = 'dataCells';
+	theoryDataCells{1,3} = 'X';
+	theoryDataCells{1,4} = '内置孔板直径';
+	theoryDataCells{1,5} = 'input';
+end
 %含孔板缓冲罐的气流脉动计算
 %   Detailed explanation goes here
 %           |  L1
@@ -107,24 +113,33 @@ for i = 1:length(orificD)
         ,'meanFlowVelocity',param.meanFlowVelocity...
         ,'isOpening',isOpening...
     );
-
+	X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
     beforeAfterMeaPoint = [length(param.sectionL1),length(param.sectionL1)+1];
     pressure = [pressure1,pressure2];
-    %[plus,filterData] = calcPuls(pressure,dcpss);
-    theoryDataCells{i+1,1} = sprintf('内置孔板直径:%g',d);
-    theoryDataCells{i+1,2} = fun_dataProcessing(pressure...
-                                ,'fs',param.Fs...
-                                ,'basefrequency',baseFrequency...
-                                ,'allowdeviation',allowDeviation...
-                                ,'multfretimes',multFreTimes...
-                                ,'semifretimes',semiFreTimes...
-                                ,'beforeAfterMeaPoint',beforeAfterMeaPoint...
-                                ,'calcpeakpeakvaluesection',nan...
-                                );
-    theoryDataCells{i+1,3} = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv1 + param.Lv2 + param.sectionL2];
-    theoryDataCells{i+1,4} = d;
-    theoryDataCells{i+1,5} = param;
-    
+	if calcR
+		
+	end
+	if isFast
+		theoryDataCells.puls = calcPuls(pressure,dcpss);
+		theoryDataCells.X = X;
+		theoryDataCells.d = d;
+		theoryDataCells.param = param;
+	else
+		%[plus,filterData] = calcPuls(pressure,dcpss);
+		theoryDataCells{i+1,1} = sprintf('内置孔板直径:%g',d);
+		theoryDataCells{i+1,2} = fun_dataProcessing(pressure...
+									,'fs',param.Fs...
+									,'basefrequency',baseFrequency...
+									,'allowdeviation',allowDeviation...
+									,'multfretimes',multFreTimes...
+									,'semifretimes',semiFreTimes...
+									,'beforeAfterMeaPoint',beforeAfterMeaPoint...
+									,'calcpeakpeakvaluesection',nan...
+									);
+		theoryDataCells{i+1,3} = X;
+		theoryDataCells{i+1,4} = d;
+		theoryDataCells{i+1,5} = param;
+    end
 end
 
 
