@@ -40,7 +40,7 @@ STFT.windowSectionPointNums = 512;
 STFT.noverlap = floor(STFT.windowSectionPointNums*3/4);
 STFT.nfft=2^nextpow2(STFT.windowSectionPointNums);
 STFTChartType = 'contour';%contour|plot3
-isSaveFigure = 0;
+isSaveFigure = 1;
 %%
 param.acousticVelocity = 345;%声速（m/s）
 param.isDamping = 1;
@@ -67,7 +67,7 @@ param.Dinnerpipe = param.Dpipe*0.5;
 
 
 %% 绘制多组压力脉动
-if 0
+if 1
 	paperPlotInnerPipeExpCmp(innerPipeDataCells,legendLabels,isSaveFigure)
 end
 
@@ -103,7 +103,7 @@ if 0
     paperPlotInnerPipeTheory(param,isSaveFigure);
 end
 
-if 1
+if 0
     paperPlotInnerPipeTheoryFrequencyResponse(param,isSaveFigure);
 end
 

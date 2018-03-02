@@ -33,7 +33,7 @@ while length(pp)>=2
 end
 if isFigure
     fh.figure = figure;
-    paperFigureSet_normal();
+    paperFigureSet('small',6);
 end
 
 x = 1:length(dataCombineStructCells);

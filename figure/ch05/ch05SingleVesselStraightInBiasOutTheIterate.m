@@ -61,7 +61,7 @@ else
 end
 massFlowData = [freRaw;massFlowERaw];
 %% 1µü´ú³¤¾¶±È
-if 0
+if 1
     paperPlotSingleVesselTheIteChangLengthDiameterRatio(param,massFlowData,isSaveFigure);
 end
 
@@ -104,7 +104,7 @@ end
 	
 % end
 
-if 1
+if 0
     vType = 'StraightInStraightOut';%biasInBiasOut,EqualBiasInOut,BiasFontInStraightOut,straightinbiasout,BiasFrontInBiasFrontOut,
 	paperPlotSingleVesselTheoryFrequencyResponse(param,vType,isSaveFigure);
 end

@@ -6,23 +6,24 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
-isEnglish = 0;
+isEnglish = 1;
+isSaveFigure = true;
 %grootDefaultPlotPropertySet
 %% 加载实验和模拟数据
 expStraightLinkCombineDataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\双缓冲罐串联420转0.1mpa');
 expElbowLinkCombineDataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\双缓冲罐串联罐二当弯头420转0.1mpa');
-expSingleVessel = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐直进直出420转0.05mpaModify');
+expSingleVesselDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐直进直出420转0.05mpaModify');
 %加载实验数据 及 模拟数据
 [expStraightLinkDataCells,expStraightLinkCombineData,simStraightLinkDataCells] ...
     = loadExpAndSimDataFromFolder(expStraightLinkCombineDataPath);
 [expElbowLinkDataCells,expElbowLinkCombineData,simElbowLinkDataCells] ...
     = loadExpAndSimDataFromFolder(expElbowLinkCombineDataPath);
-[expSingleVesselDataCells,expSingleVesselCombineData] ...
-    = loadExpDataFromFolder(expSingleVessel);
+[expSingleVesselDataCells,expSingleVesselCombineData,simSingleVesselDataCells] ...
+    = loadExpAndSimDataFromFolder(expSingleVesselDataPath);
 if isEnglish
-    legendText = {'TTE','ESSTE'};
+    legendText = {'ST','TTE','ESSTE'};
 else
-    legendText = {'双缓冲罐串联','双缓冲罐弯头串联'};
+    legendText = {'单容','双容串联','弯头式双容'};
 end
 
 %% 加载理论数据
@@ -32,7 +33,7 @@ massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
 % theoryDataCells = cmpDoubleVesselBeElbow('massflowdata',[freRaw;massFlowERaw]...
 %     ,'meanFlowVelocity',14);
 theoryDataCells = cmpDoubleVesselBeElbow();
-theAnalysisRow = [6,5];
+theAnalysisRow = [2,6,5];
 
 legendLabels = theoryDataCells(theAnalysisRow,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,57 +46,76 @@ legendLabels = theoryDataCells(theAnalysisRow,1);
 
 %% 绘制-模拟-实验-理论 对比分析
 %模拟对应距离
+%模拟测点
+%模拟数据修正
+[simSingleVesselDataCells.rawData.pulsationValue,xSVSim]= fixVesselDirectInSideFontOutSimData(simSingleVesselDataCells.rawData.pulsationValue);
+
+simRangSV = 1:length(xSVSim);
+simRangStraightDV = [4:5,10:17];
+simRangElbowLink = [5:6,8:10,12:18];
+simRang = {simRangSV,simRangStraightDV,simRangElbowLink};
+
+xSVExp = constExpMeasurementPointDistance();
+
 % xSim{1} = [[0.5,1,1.5,2,2.5,2.85,3]-0.25  ,[4.2] ,[5.5,6.5,7,7.5,8,8.5,9,9.5,10]] + 0.5;
 % xSim{2} = [[0.5,1,1.5,2,2.5,2.85,3]-0.25  ,[4.5,5,5.5],  [6.5,7,7.5,8,8.5,9,9.5,10]] + 0.5;
 % xSim{1} = [[0.5,1,1.5,2,2.5]+0.5 ,[6.5,7,7.5,8,8.5,9,9.5,10]] ;
 % xSim{2} = [[0.5,1,1.5,2,2.5,2.85]  ,[4.5,5,5.5]+0.65,  [7,7.5,8,8.5,9,9.5,10]+1.05];
-xSim{1} = [[2,2.5]+0.5 ,[6.5,7,7.5,8,8.5,9,9.5,10]] ;
-xSim{2} = [[2.5,2.85]  ,[4.5,5,5.5]+0.65,  [7,7.5,8,8.5,9,9.5,10]+1.05];
+xSimStraightDV = [[2,2.5]+0.5 ,[6.5,7,7.5,8,8.5,9,9.5,10]] ;
+xSimElbowLink = [[2.5,2.85]  ,[4.5,5,5.5]+0.65,  [7,7.5,8,8.5,9,9.5,10]+1.05];
+xSim = {xSVSim,xSimStraightDV,xSimElbowLink};
 %实验对应距离
-xStraightLinkVessel = [2.5,3,6.25,7.05,7.55,8.05,8.55,9.05,9.55,10.05];%缓冲罐串联的距离
+xStraightDBLinkVessel = [2.5,3,6.25,7.05,7.55,8.05,8.55,9.05,9.55,10.05];%缓冲罐串联的距离
 xElbowLinkVessel = [2.5,3,5.15,5.65,6.15,8.05,8.55,9.05,9.55,10.05,10.55,11.05];%缓冲罐弯头式缓冲罐距离
-xExp = {xStraightLinkVessel,xElbowLinkVessel};
+xExp = {xSVExp,xStraightDBLinkVessel,xElbowLinkVessel};
+
 %实验对应测点
-expRangStraightLinkVessel = [1,2,4,7,8,9,10,11,12,13];
+expRangSV = [1:13];
+expRangStraightDV = [1,2,4,7,8,9,10,11,12,13];
 expRangElbowLinkVessel = [1,2,4,5,6,7,8,9,10,11,12,13];
-expRang = {expRangStraightLinkVessel,expRangElbowLinkVessel};
+expRang = {expRangSV,expRangStraightDV,expRangElbowLinkVessel};
 
 %两个情况缓冲罐对应距离
 vesselRegion1 = [3.8,6];
 vesselRegion2_1 = [3.8,4.9];
 vesselRegion2_2 = [6.4,7.5];
-%模拟测点
-simRang{1} = [4:5,10:17];
-simRang{2} = [5:6,8:10,12:18];
+
 if 1
     if isEnglish
         xlabelText = 'Distance(m)';
-        ylabelText = 'Peak-to-peak pressure pulsation(kPa)';
+        ylabelText = sprintf('Peak-to-peak pressure\npulsation(kPa)');
+        legend0TextCells = {'ST-Experimental data','ST-Simulated data','ST-Theoretical data'};
         legend1TextCells = {'TTE-Experimental data','TTE-Simulated data','TTE-Theoretical data'};
         legend2TextCells = {'ESSTE-Experimental data','ESSTE-Simulated data','ESSTE-Theoretical data'};
     else
         xlabelText = '距离(m)';
         ylabelText = '压力脉动峰峰值(kPa)';
-        legend1TextCells = {'双罐串联-实验','双罐串联-模拟','双罐串联-理论'};
-        legend2TextCells = {'弯头式缓冲罐-实验','弯头式缓冲罐-模拟','弯头式缓冲罐-理论'};
+        legend0TextCells = {'单容-实验','单容-模拟','单容-理论'};
+        legend1TextCells = {'双容串联-实验','双容串联-模拟','双容串联-理论'};
+        legend2TextCells = {'弯头式双容-实验','弯头式双容-模拟','弯头式双容-理论'};
     end
     %理论数据
     thePlusValue = theoryDataCells(theAnalysisRow,2);%通过此函数的行索引设置不同的对比值
     xThe = theoryDataCells(theAnalysisRow,3);
     %vesselRegion1下的数据都应该清除
-    tmp = ( xThe{1} > vesselRegion1(1) & xThe{1} < vesselRegion1(2)) | xThe{1}<2.5;
-    xThe{1}(tmp) = [];
-    thePlusValue{1}.pulsationValue(tmp) = [];
-    tmp = xThe{2}<2.5;
+    tmp = ( xThe{2} > vesselRegion1(1) & xThe{2} < vesselRegion1(2)) | xThe{2}<2.5;
     xThe{2}(tmp) = [];
     thePlusValue{2}.pulsationValue(tmp) = [];
-    fh = figureExpAndSimThePressurePlus({expStraightLinkCombineData,expElbowLinkCombineData}...
-                            ,{simStraightLinkDataCells,simElbowLinkDataCells}...
+    tmp = xThe{3}<2.5;
+    xThe{3}(tmp) = [];
+    thePlusValue{3}.pulsationValue(tmp) = [];
+    [xTheSV,yTheSV] = idealVesselPlusValue();
+    thePlusValue{1}.pulsationValue = yTheSV;
+    xThe{1} = xTheSV;
+    figure;
+    paperFigureSet('Large',7);
+    fh = figureExpAndSimThePressurePlus({expSingleVesselCombineData,expStraightLinkCombineData,expElbowLinkCombineData}...
+                            ,{simSingleVesselDataCells,simStraightLinkDataCells,simElbowLinkDataCells}...
                             ,thePlusValue...
                             ,'showMeasurePoint',0 ...
                             ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
                             ,'expRang',expRang,'simRang',simRang...
-                            ,'showVesselRigion',0,'ylim',[0,35]...
+                            ,'showVesselRigion',0,'ylim',[0,40]...
                             ,'xlim',[2,12]);
     regionHandle = plotVesselRegion(fh.gca,vesselRegion1,'color',getPlotColor(1),'yPercent',[0,0]...
         ,'FaceAlpha',0.3,'EdgeAlpha',0.3);
@@ -105,80 +125,94 @@ if 1
     regionHandle = plotVesselRegion(fh.gca,vesselRegion2_2,'color',getPlotColor(2),'yPercent',[0,0]...
         ,'FaceAlpha',0,'EdgeAlpha',1);
     set(regionHandle,'LineWidth',2);
-    paperFigureSet_large(7)
     xlabel(xlabelText);
     ylabel(ylabelText);
-    legendGca1 = makePlotAxesLayout(fh.gca);
-
-   legendHandle1 = legend(legendGca1,[fh.plotHandle(1),fh.plotHandleSim(1),fh.plotHandleThe(1)]...
-       ,legend1TextCells); 
     
-    set(legendHandle1,'Position',[0.621015923169843 0.740763721727818 0.291041661672708 0.180798606379992]...
-        ,'EdgeColor','none');
+    set(gca,'Position',[0.13 0.18 0.79 0.585432098765432]);
+    chartGca = gca;
+
+    
+    
 
     legendGca2 = makePlotAxesLayout(fh.gca);
-
-    legendHandle2 = legend(legendGca2,[fh.plotHandle(2),fh.plotHandleSim(2),fh.plotHandleThe(2)]...
+    legendHandle2 = legend(legendGca2,[fh.plotHandle(3),fh.plotHandleSim(3),fh.plotHandleThe(3)]...
         ,legend2TextCells);
-
+    set(legendHandle2,'Position',[0.621349878169104 0.77949207919252 0.372400748200137 0.206289302777943]...
+        ,'EdgeColor','none');
     
-    set(legendHandle2,'Position',[0.270434136322998 0.740777644995141 0.343958326762336 0.180798606379992]...
+    legendGca1 = makePlotAxesLayout(fh.gca); 
+    legendHandle1 = legend(legendGca1,[fh.plotHandle(2),fh.plotHandleSim(2),fh.plotHandleThe(2)]...
+       ,legend1TextCells); 
+    set(legendHandle1,'Position',[0.306568634002113 0.784875299732803 0.340264643297755 0.206626978719991]...
         ,'EdgeColor','none');
 
-    annotation(fh.figure,'textarrow',[0.332599118942731 0.381057268722467],...
-        [0.683168316831683 0.594059405940594],'String',{'C'});
-    annotation(fh.figure,'textarrow',[0.204845814977974 0.270397087616253],...
-        [0.250825082508251 0.228376908003301],'String',{'A'});
-    annotation(fh.figure,'textarrow',[0.422907488986784 0.473242091899169],...
-        [0.531353135313531 0.505604630775578],'String',{'B'});
+        legendGca0 = makePlotAxesLayout(fh.gca); 
+    legendHandle0 = legend(legendGca0,[fh.plotHandle(1),fh.plotHandleSim(1),fh.plotHandleThe(1)]...
+       ,legend0TextCells); 
+    set(legendHandle0,'Position',[-0.00256263499879579 0.790139081473254 0.327032129514421 0.206289302777945]...
+        ,'EdgeColor','none');
+
+    annotation('textarrow',[0.365952380952381 0.40375],...
+        [0.570059523809524 0.494464285714286],'String',{'C'});
+    annotation('textarrow',[0.235550595238095 0.289295897140062],...
+        [0.248779761904762 0.217037622289015],'String',{'A'});
+    annotation('textarrow',[0.469895833333333 0.509149829994407],...
+        [0.630535714285715 0.592539154585102],'String',{'B'});
     
     if isEnglish
-        annotation(fh.figure,'rectangle',...
-        [0.253244047619048 0.733273809523811 0.676577380952381 0.185208333333332]);
+        annotation('rectangle',...
+        [0.00188988095238099 0.789285714285715 0.989613095238095 0.19723214285715]);
     else
-        annotation(fh.figure,'rectangle',...
+        annotation('rectangle',...
         [0.269568452380952 0.717470238095239 0.640669642857143 0.223005952380952]);
     end
     %绘制测点
     annotation('textbox',...
-    [0.843202380952381 0.50202380952381 0.0556964285714286 0.102053571428572],...
+    [0.860215613466561 0.353744120289625 0.0556964285714286 0.102053571428571],...
     'String',{'12'},...
     'FitBoxToText','off',...
     'EdgeColor','none');
     annotation('ellipse',...
-        [0.849771266540643 0.505660377358491 0.046258979206049 0.0905660377358489]);
-    annotation('line',[0.857979502196193 0.846998535871157],...
-        [0.516129032258065 0.485407066052227]);
+        [0.864894139886581 0.362264150943396 0.046258979206049 0.0856825749167592]);
+    annotation('line',[0.871455576559546 0.856332703213611],...
+        [0.381132075471698 0.358490566037736]);
 
     annotation('textbox',...
-        [0.783173098375514 0.603406298003072 0.0556964285714286 0.102053571428572],...
+        [0.777503455518374 0.523549554467084 0.0556964285714285 0.102053571428572],...
         'String','10',...
         'FitBoxToText','off',...
         'EdgeColor','none');
     annotation('ellipse',...
-        [0.787389413988659 0.607547169811321 0.046258979206049 0.0905660377358489]);
-    annotation('line',[0.791361639824305 0.776937618147448],...
-        [0.62826420890937 0.6]);
+        [0.781719771131518 0.533636879804333 0.046258979206049 0.0852310447239686]);
+    annotation('line',[0.786389413988658 0.771266540642722],...
+        [0.547169811320755 0.520754716981132]);
     
     annotation('ellipse',...
-        [0.127799370064794 0.447792945540967 0.0462589792060491 0.090566037735849]);
-    annotation('line',[0.159590043923865 0.166910688140556],...
-        [0.533562211981567 0.563748079877112]);
+        [0.139141525074246 0.569811320754717 0.0480040325817087 0.090566037735849]);
+    annotation('line',[0.166351606805293 0.164461247637051],...
+        [0.520754716981132 0.569811320754717]);
     annotation('textbox',...
-        [0.129254131956375 0.443652073732719 0.0556964285714287 0.102053571428572],...
+        [0.142486646134069 0.563796357861464 0.0556964285714286 0.100354585534762],...
         'String','1',...
         'FitBoxToText','off',...
         'EdgeColor','none');
     
     annotation('ellipse',...
-        [0.135120014281486 0.251172361823609 0.046258979206049 0.0905660377358491]);
-    annotation('line',[0.161054172767204 0.167642752562225],...
-        [0.340013824884793 0.391705069124424]);
+        [0.140791091786212 0.184905660377359 0.046258979206049 0.0827413984461714]);
+    annotation('line',[0.164834891103688 0.166351606805293],...
+        [0.266484413120087 0.314705882352941]);
     annotation('textbox',...
-        [0.13700100649797 0.247866200040576 0.0556964285714287 0.102053571428571],...
+        [0.144562443170938 0.173584905660377 0.0556964285714287 0.1007769145394],...
         'String','1',...
         'FitBoxToText','off',...
         'EdgeColor','none');
+    if isSaveFigure
+        set(chartGca,'color','none');
+        folderPath = fullfile(getPlotOutputPath(),'ch07');
+        figName = '弯头式双容-理论模拟实验对比';
+        export_fig(fullfile(folderPath,sprintf('%s.eps',figName)));
+        %saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式双容-理论模拟实验对比');
+    end
 end
 %% 绘制脉动抑制率
 %获取单一缓冲罐的数据
@@ -226,7 +260,7 @@ if 0
 %         ,'FaceAlpha',0,'EdgeAlpha',1);
 end
 %% 绘制倍频特性
-if 1
+if 0
     if isEnglish
         tte = 'TTE';
         esste = 'ESSTE';

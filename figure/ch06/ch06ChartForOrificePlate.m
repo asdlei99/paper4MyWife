@@ -7,9 +7,9 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 expVesselRang = constExpVesselRangDistance;
-theoryOnly = 1;
-isSaveFigure = 0;
-if theoryOnly
+theoryOnly = 0;
+isSaveFigure = 1;
+if ~theoryOnly
 	%% 数据路径
 	orificD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.5RPM420罐中间');
 	orificD0_25CombineDataPath = fullfile(dataPath,'实验原始数据\内置孔板\D0.25RPM420罐中间');
@@ -121,10 +121,14 @@ if 0
     paperPlotOrificeExpCmp(orificDataCells,legendLabels,isSaveFigure);
 end
 %% 绘制多组压力降
-if 0
+if 1
     fh = figureExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
     %'chartType'== 'bar' 时用于设置bar的颜色
     set(fh.barHandle,'FaceColor',getPlotColor(1));
+    if isSaveFigure
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置孔板-实验压力降');
+    end
 end
 %对测点1进行时频分析波形
 %fh = figureExpNatureFrequency(orificD01CombineData,'natureFre',[1,2],'showPureVessel',1);
@@ -141,40 +145,12 @@ end
 
 
 if 0
-    res = paperPlotOrificeTheChangeL1(param,massFlowERaw,isSaveFigure);
-    
-    Lv1 = [param.LBias:0.05:param.Lv];
-    resCell = res.resCell;
-    y1 = [];
-    y2 = [];
-    for i = 1:length(resCell)
-        y1(i) = resCell{i}.puls(1)./1000;
-        y2(i) = resCell{i}.puls(end)./1000;
-    end
-    k = 5 / length(y2) ;
-    for i = 2:length(y1)
-        y1(i) = y1(1) + (y1(i)-y1(1))*0.5;
-        y2(i) = i * 5 / length(y2) + y2(i);
-    end
-    for i = 1:length(y1)
-        y2(i) = (i * 9 / length(y2) - 9 ) + y2(i);
-    end
-    y1 = y1*10/52;
-    y1 = y1-3;
-    y2 = y2 + 16;
-    figure
-    paperFigureSet('small',6);
-    hold on;
-    h(1) = plot(Lv1.*1000,y1,'-');
-    h(2) = plot(Lv1.*1000,y2,'--');
-    box on;
-    legend(h,{'进口','出口'},'FontSize',paperFontSize(),'Location','southEast');
-    xlabel('孔板位置','FontSize',paperFontSize());
-    ylabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
+    useModifyValue = 1;
+    paperPlotOrificeTheChangeL1(useModifyValue,param,massFlowERaw,isSaveFigure);
 end
 
 
-if 1
+if 0
     paperPlotOrificeTheChangeOrificeD(param,massFlowERaw,isSaveFigure);
 end
 
