@@ -20,47 +20,34 @@ function paperPlotSingleVesselExpResult(expCombineDataCells,legendLabels,legendL
 		vesselDiffLinkLastMeasureMeanValues1Down(i) = muci(1,1);
     end
     figure
-    paperFigureSet('normal',7);
-    fh = figureExpPressurePlus(expCombineDataCells,legendLabels...
+    paperFigureSet('normal',9);
+    fh = figureExpPressurePlus(expCombineDataCells...
 			,'errorType','none'...
 			,'showPureVessel',0 ...
+			,'showVesselRegion',false...
             ,'isFigure',0);
+	plotVesselRegion(gca,constExpVesselRangDistance);
+	set(gca,'Position',[0.13 0.25 0.775 0.588235294117647]);
+	set(fh.textboxMeasurePoint...
+		,'Position',[0.474673928348722 0.883519199346406 0.0998000000000001 0.0911999999999999]);
+	%测点1的圆
 	annotation('ellipse',...
-            [0.857892361111112 0.674088541666667 0.0430972222222221 0.171979166666667]);
-    annotation('arrow',[0.865638766519824 0.814977973568282],...
-        [0.675567656765677 0.564356435643564]);
+            [0.147927083333333 0.397765012254902 0.0519166666666667 0.17859375]);
+    annotation('arrow',[0.1784140969163 0.215859030837004],...
+        [0.579411764705882 0.623529411764706]);
+	%最后测点的圆
     annotation('ellipse',...
-        [0.147927083333333 0.356588541666667 0.0519166666666667 0.17859375]);
-    annotation('arrow',[0.195434027777778 0.226302083333333],...
-        [0.4911875 0.561640625]);
+        [0.846879145252081 0.674088541666667 0.0430972222222221 0.171979166666667]);
+    annotation('arrow',[0.865638766519824 0.828193832599119],...
+        [0.675567656765677 0.597058823529412]);
 	
-    if length(legendLabels) > 4
-        set(fh.legend,...
-            'Position',[0.197702551027417 0.469635426128899 0.282222217491105 0.346163184982204]);
-        ax1Pos = [0.618767361111111 0.257369791666667 0.275208333333337 0.29765625];
-        ax2Pos = [0.202048611111112 0.564947916666667 0.235920138888888 0.248046875];
-    else
-        set(fh.legend,...
-            'Position',[0.305740746523221 0.579878478530376 0.317499994217523 0.23592013258073]);
-        ax1Pos = [0.618767361111111 0.257369791666667 0.275208333333337 0.29765625];
-        ax2Pos = [0.202048611111112 0.564947916666667 0.235920138888888 0.248046875];
-    end
-    set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
-    set(gca,'color','none');
-    ax = axes('Parent',gcf...
-        ,'Position',ax1Pos...
-        ,'color','w');
-    box(ax,'on');
-    err = [vesselDiffLinkLastMeasureMeanValues13'-vesselDiffLinkLastMeasureMeanValues13Down'...
-        ,vesselDiffLinkLastMeasureMeanValues13Up'-vesselDiffLinkLastMeasureMeanValues13'];
-    barHandleEnd = barwitherr(err,vesselDiffLinkLastMeasureMeanValues13');
-    ylim([30,40]);
-    xlim([0,length(legendLabels)+1]);
-    set(barHandleEnd,'FaceColor',getPlotColor(1));
-    set(ax,'XTickLabel',legendLabelsAbb);
     
+    set(gca,'color','none');
+	baseAxis = gca;
+    
+	%新图层，测点1压降
     ax = axes('Parent',gcf...
-            ,'Position',ax2Pos...
+            ,'Position',[0.254912047234461 0.588477328431373 0.22746680739109 0.220346200980392]...
             ,'color','w');
     box(ax,'on');
     err = [vesselDiffLinkLastMeasureMeanValues1'-vesselDiffLinkLastMeasureMeanValues1Down'...
@@ -70,8 +57,45 @@ function paperPlotSingleVesselExpResult(expCombineDataCells,legendLabels,legendL
     set(ax,'XTickLabel',legendLabelsAbb);
     ylim([10,20]);
     xlim([0,length(legendLabels)+1]);
+	m1Axis = gca;
+	
+	%新图层，末端测点压降
+    ax = axes('Parent',gcf...
+        ,'Position',[0.627577933798336 0.335294117647059 0.260087264439549 0.252084865196079]...
+        ,'color','w');
+    box(ax,'on');
+    err = [vesselDiffLinkLastMeasureMeanValues13'-vesselDiffLinkLastMeasureMeanValues13Down'...
+        ,vesselDiffLinkLastMeasureMeanValues13Up'-vesselDiffLinkLastMeasureMeanValues13'];
+    barHandleEnd = barwitherr(err,vesselDiffLinkLastMeasureMeanValues13');
+    ylim([30,40]);
+    xlim([0,length(legendLabels)+1]);
+    set(barHandleEnd,'FaceColor',getPlotColor(1));
+    set(ax,'XTickLabel',legendLabelsAbb);
+	mEndAxis = gca;
+	
+	%新图层
+	legend1Axis = makePlotAxesLayout(baseAxis);
+	lh = legend(legend1Axis,fh.plotHandle(1:2),legendLabels(1:2));
+	set(lh...
+		,'Position',[0.114170337738622 0.0230392156862745 0.363436123348018 0.123529411764706]...
+		,'EdgeColor','none'...
+	);
+
+	%新图层
+	legend2Axis = makePlotAxesLayout(baseAxis);
+	lh = legend(legend2Axis,fh.plotHandle(3:4),legendLabels(3:4));
+	set(lh...
+		,'Position',[0.534875183553603 0.0230392156862745 0.330396475770925 0.123529411764706]...
+		,'EdgeColor','none'...
+	);
+	
+	annotation('rectangle',...
+		[0.0969162995594714 0.0235294117647059 0.812775330396476 0.117647058823529],...
+		'FaceColor','flat');
+	
+	%绘制框选图例的矩形
+	
 	if isSaveFigure
-		set(gca,'color','none');
 		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'缓冲罐不同接法对管系气流脉动的影响');
 	end
 end

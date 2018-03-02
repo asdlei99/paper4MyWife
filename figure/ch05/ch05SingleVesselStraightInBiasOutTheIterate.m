@@ -3,7 +3,7 @@ close all;
 %单一缓冲罐理论迭
 %% 缓冲罐计算的参数设置
 vType = 'BiasFontInStraightOut';
-isSaveFigure = 1;
+isSaveFigure = 0;
 
 coeffFriction = 0.03;
 if 0
@@ -60,8 +60,17 @@ else
 
 end
 massFlowData = [freRaw;massFlowERaw];
+
+% [massFlowRaw,time,~,param.meanFlowVelocity] = massFlowMaker(0.25,0.098,param.rpm...
+            % ,0.14,1.075,param.outDensity,'rcv',0.15,'k',1.4,'pr',0.15,'fs',param.Fs,'oneSecond',6);
+% [freRaw,AmpRaw,PhRaw,massFlowERaw] = frequencySpectrum(detrend(massFlowRaw,'constant'),param.Fs);
+
+% massFlowERaw(freRaw>100)=[];
+% freRaw(freRaw>100)=[];
+% massFlowData = [freRaw';massFlowERaw];
+
 %% 1迭代长径比
-if 1
+if 0
     paperPlotSingleVesselTheIteChangLengthDiameterRatio(param,massFlowData,isSaveFigure);
 end
 
@@ -71,7 +80,7 @@ if 0
 end
 
 %% 迭代偏置距离和长径比
-if 0
+if 1
     paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,isSaveFigure);
 end
 

@@ -25,14 +25,9 @@ function paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,
             surf(X,Y,Z);
             view(131,29);
         else
-            [C,h] = contourf(X,Y,Z...
-							,'LevelStep',0.01 ...
-							,'ShowText','off'...
-                            ,'LineStyle','none'...
-                            );
-            hold on;
-            [C,h] = contour(X,Y,Z,'ShowText','on');
-            set(h,'LineColor','k','LevelStep',0.3);
+
+			[C,h] = contourfSmooth(X,Y,Z);
+			set(h{2},'LabelSpacing',320,'LevelStep',0.3);
         end
         colormap jet;
         xlabel('偏置距离(m)','FontSize',paperFontSize());%l1就是lv1
@@ -43,8 +38,9 @@ function paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,
 		set(gca,'Position',[0.154537671232877 0.197638888888889 0.605279680365297 0.727361111111111]);
 		set(ch,'Position',[0.777939497716895 0.2043 0.0253710045662108 0.7111]);
 		axis tight;
-        set(get(ch,'Label'),'String','压力脉动峰峰值(kPa)','FontSize',paperFontSize(),'FontName',paperFontName());
-        box on;
+		
+        % set(get(ch,'Label'),'String','压力脉动峰峰值(kPa)','FontSize',paperFontSize(),'FontName',paperFontName());
+		box on;
 		if isSaveFigure
 			set(gca,'color','none');
 			saveFigure(fullfile(getPlotOutputPath(),'ch05'),sprintf('直进侧出缓冲罐-长径比和偏置距离迭代云图(%g)',X(1,indexs(i))));

@@ -161,10 +161,10 @@ end
 if showVesselRegion
     if 15 == length(rang)
         fh.textarrowVessel = annotation('textarrow',[0.371822916666667 0.409305555555556],...
-        [0.766692708333333 0.723697916666667],'String',{'»º³å¹Þ'},'FontName',paperFontName(),'FontSize',paperFontSize());
+        [0.766692708333333 0.723697916666667],'String',{'µ¥ÈÝ'},'FontName',paperFontName(),'FontSize',paperFontSize());
     else
         fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
-        [0.744 0.665],'String',{'»º³å¹Þ'},'FontName',paperFontName(),'FontSize',paperFontSize());
+        [0.744 0.665],'String',{'µ¥ÈÝ'},'FontName',paperFontName(),'FontSize',paperFontSize());
     end
     fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 end
