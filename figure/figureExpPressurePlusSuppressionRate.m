@@ -37,7 +37,7 @@ figureHeight = 6;
 xlabelText = '管线距离(m)';
 xTopText = '测点';
 ylabelText = '脉动抑制率(%)';
-vesselText = '缓冲罐';
+vesselText = '单容';
 isFigure = 1;
 showMeasurePoint = 1;
 %允许特殊的把地一个varargin作为legend

@@ -115,36 +115,13 @@ if 0
         ,stftLabels,'STFT',STFT,'chartType',STFTChartType...
         ,'subplotRow',2,'figureHeight',10);
 end
-%绘制0.25D的压力脉动
-%fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
-%% 绘制多组压力脉动
+
+
+%% 绘制多组压力脉动及对比图
 if 0
 	paperPlotSingleVesselExpResult(vesselCombineDataCells,legendLabels,legendLabelsAbb,isSaveFigure);
-    % fh = figureExpPressurePlus(vesselCombineDataCells,legendLabels...
-        % ,'errorType','none'...
-        % ,'showPureVessel',0);
-    % set(fh.legend,...
-        % 'Position',[0.197702551027417 0.469635426128899 0.282222217491105 0.346163184982204]);
-    % set(fh.textarrowVessel,'X',[0.230711805555556 0.294722222222223],'Y',[0.277213541666667 0.231744791666667]);
-    % annotation(fh.gcf,'ellipse',...
-        % [0.857892361111112 0.674088541666667 0.0430972222222221 0.171979166666667]);
-    % annotation(fh.gcf,'arrow',[0.865638766519824 0.814977973568282],...
-        % [0.675567656765677 0.564356435643564]);
-    % set(gca,'color','none');
-    % ax = axes('Parent',fh.gcf...
-        % ,'Position',[0.618767361111111 0.257369791666667 0.275208333333337 0.29765625]...
-        % ,'color','w');
-    % box(ax,'on');
-    % err = [vesselDiffLinkLastMeasureMeanValues'-vesselDiffLinkLastMeasureMeanValuesDown'...
-        % ,vesselDiffLinkLastMeasureMeanValuesUp'-vesselDiffLinkLastMeasureMeanValues'];
-    % barHandle = barwitherr(err,vesselDiffLinkLastMeasureMeanValues');
-    % ylim([30,40]);
-    % xlim([0,7]);
-    % set(barHandle,'FaceColor',getPlotColor(1));
-    % set(ax,'XTickLabel',legendLabelsAbb);
-    % set(gca,'color','none');
-    % saveFigure(fullfile(getPlotOutputPath(),'ch05'),'缓冲罐不同接法对管系气流脉动的影响');
 end
+
 %绘制0.25D的压力脉动抑制率
 % fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
 %     ,'yfilterfunptr',@fixInnerOrificY ...
@@ -181,8 +158,8 @@ if 0
 end
 %% 绘制多组压力降
 if 0
-    
-    fh = figureExpPressureDrop(vesselCombineDataCells,legendLabels,pressureDropMeasureRang,'chartType','bar');
+    fh = figureExpPressureDrop(vesselCombineDataCells,legendLabels,pressureDropMeasureRang...
+		,'chartType','bar');
     %'chartType'== 'bar' 时用于设置bar的颜色
     set(fh.barHandle,'FaceColor',getPlotColor(1));
     set(fh.gca,'XTickLabelRotation',30);
