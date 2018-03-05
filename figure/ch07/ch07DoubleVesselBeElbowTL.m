@@ -136,19 +136,34 @@ if 0
         D22 = 1;
         M2 = [A11,B11;C11,D11] * [A12,B12;C12,D12] * [A21,B21;C21,D21] * [A22,B22;C22,D22];
         % TL2(f) = 20.*log10((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)));
-        KESEI21(count) = ((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)))^2;
+%         KESEI21(count) = ((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)))^2;
+        KESEI21(count) = 1/(((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)))^2);
         count = count+1;
     end
 
-    subplot(1,2,2);
+%     subplot(1,2,2);
+    figure
+    paperFigureSet_small(6.5)
+%     paperFigureSet('moreSmall',5.5);
     plot(v,KESEI21,'-*b');
     xlim([0,4]);
+    if 0
     xlabel('连接管长(m)','FontSize',paperFontSize(),'fontName',paperFontName());
     ylabel('阻抗系数','FontSize',paperFontSize(),'fontName',paperFontName());
-    set(gca,'Position',[0.632075471698113 0.223214285714286 0.340639398697521 0.663504464285714]);
+    end
+    if 1
+    xlabel('Lc(m)','FontSize',paperFontSize(),'fontName',paperFontName());
+    ylabel('Transmission coefficient','FontSize',paperFontSize(),'fontName',paperFontName());
+    end
+%     set(gca,'Position',[0.632075471698113 0.223214285714286 0.340639398697521 0.663504464285714]);
+%     annotation('textbox',...
+%         [0.540837398373984 0.88421052631579 0.0363983739837398 0.0631578947368421],...
+%         'String',{'(b)'},...
+%         'FontName','Times New Roman',...
+%         'FitBoxToText','off',...
+%         'EdgeColor','none');
     annotation('textbox',...
         [0.540837398373984 0.88421052631579 0.0363983739837398 0.0631578947368421],...
-        'String',{'(b)'},...
         'FontName','Times New Roman',...
         'FitBoxToText','off',...
         'EdgeColor','none');
@@ -168,7 +183,7 @@ if 1
     Dbias = 0;%偏置管伸入罐体部分为0，所以对应直径为0
     Sv1 = pi.*(DV1)^2./4;
     S= pi.*(Dpipe)^2./4;
-    AR = 0:0.5:5;%长径比
+    AR = 0:0.5:24;%长径比
     Dv2 = ((4.*V2)./(pi.*AR)).^(1/3);
     Sv2 = pi.*Dv2.^2./4;
     LV2 = Dv2.*AR;
@@ -218,8 +233,8 @@ if 1
     Z=KESEI2;
 
     figure
-    paperFigureSet_large(6.5);
-    subplot(1,2,1);
+%     paperFigureSet_large(6.5);
+%     subplot(1,2,1);
     surf(X,Y,Z);
 %     contourf(X,Y,Z);
     xlabel('长径比','FontSize',paperFontSize(),'fontName',paperFontName());
@@ -227,7 +242,7 @@ if 1
     zlabel('阻抗系数','FontSize',paperFontSize(),'fontName',paperFontName());
     box on;
     grid on;
-    rang=[0,5];
+    rang=[0,25];
     xlim(rang);
     hold on;
     ax=axis();
@@ -261,7 +276,7 @@ if 1
     L0 = 1.1;
     S0 = pi.*(0.372)^2./4;
     V0 = L0.*S0;%固定缓冲罐体积为实验体积
-    AR = 0:0.01:5;%长径比
+    AR = 0:0.1:30;%长径比
     Dv = ((4.*V0)./(pi.*AR)).^(1/3);
     Sv = pi.*Dv.^2./4;
     LV = Dv.*AR;
@@ -292,32 +307,43 @@ if 1
         D12 = cos(k.*L2);
         
         A21 = cos(k.*lv3);
-        B21 = 1i.*(a./Sv).*sin(k.*lv3);
-        C21 = 1i.*(Sv./a).*sin(k.*lv3);
+        B21 = 1i.*(a./Sv(count)).*sin(k.*lv3);
+        C21 = 1i.*(Sv(count)./a).*sin(k.*lv3);
         D21 = cos(k.*lv3);
         A22 = 1;
         B22 = 0;
-        C22 = 1i.*(Sv./a).*tan(k.*(LV-lv3));
+        C22 = 1i.*(Sv(count)./a).*tan(k.*(LV(count)-lv3));
         D22 = 1;
         M2 = [A11,B11;C11,D11] * [A12,B12;C12,D12] * [A21,B21;C21,D21] * [A22,B22;C22,D22];
         % TL2(f) = 20.*log10((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)));
-        KESEI21(count) = ((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)))^2;
+%          KESEI21(count) = ((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)))^2;
+         KESEI21(count) = 1/(((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)))^2);
 
         count = count+1;
     end
 
-    subplot(1,2,2);
+    figure
+    paperFigureSet('Small',6.5);
+%     subplot(1,2,2);
     plot(AR,KESEI21,'-b');
-    xlim([0,5]);
+    xlim([0,30]);
+    if 0
     xlabel('长径比','FontSize',paperFontSize(),'fontName',paperFontName());
     ylabel('阻抗系数','FontSize',paperFontSize(),'fontName',paperFontName());
-    set(gca,'Position',[0.632075471698113 0.223214285714286 0.340639398697521 0.663504464285714]);
-    annotation('textbox',...
-        [0.540837398373984 0.88421052631579 0.0363983739837398 0.0631578947368421],...
-        'String',{'(b)'},...
-        'FontName','Times New Roman',...
-        'FitBoxToText','off',...
-        'EdgeColor','none');
+    end
+    if 1
+    xlabel('r','FontSize',paperFontSize(),'fontName',paperFontName());
+    ylabel('Transmission coefficient','FontSize',paperFontSize(),'fontName',paperFontName());
+    end
+    
+    
+%     set(gca,'Position',[0.632075471698113 0.223214285714286 0.340639398697521 0.663504464285714]);
+%     annotation('textbox',...
+%         [0.540837398373984 0.88421052631579 0.0363983739837398 0.0631578947368421],...
+%         'String',{'(b)'},...
+%         'FontName','Times New Roman',...
+%         'FitBoxToText','off',...
+%         'EdgeColor','none');
 
 end
 
@@ -338,15 +364,14 @@ if 0
     Dpipe = 0.098;
     L0 = 1.1;
     S0 = pi.*(0.372)^2./4;
-    V0 = L0.*S0;%固定缓冲罐体积为实验体积
-    AR = 0:0.5:12;%长径比
-    Dv = ((4.*V0)./(pi.*AR)).^(1/3);
-    Sv = pi.*Dv.^2./4;
-    Lv = Dv.*AR;
+    AR = 0.0005:0.5:30;%长径比
     L2 = 1.5;
-    V0 = 0.05:0.05:0.18;
+    V0 = 0.05:0.01:0.18;
     for j = 1:length(AR)
         for g = 1:length(V0)
+            Dv = ((4.*V0(g))./(pi.*AR(j))).^(1/3);
+            Sv = pi.*Dv.^2./4;
+            Lv = Dv.*AR(j);
             oumiga = 2.*pi.*f0;
             k = oumiga./a;
 
@@ -357,23 +382,23 @@ if 0
             %       |---------|
             %         |
             %         | 出
-            A11 = cos(k(f).*LV1);
-            B11 = 1i.*(a./Sv1).*sin(k(f).*LV1);
-            C11 = 1i.*(Sv1./a).*sin(k(f).*LV1);
-            D11 = cos(k(f).*LV1);
+            A11 = cos(k.*LV1);
+            B11 = 1i.*(a./Sv1).*sin(k.*LV1);
+            C11 = 1i.*(Sv1./a).*sin(k.*LV1);
+            D11 = cos(k.*LV1);
                         
-            A12 = cos(k(f).*L2(j));
-            B12 = 1i.*(a./S).*sin(k(f).*L2(j));
-            C12 = 1i.*(S./a).*sin(k(f).*L2(j));
-            D12 = cos(k(f).*L2(j));
+            A12 = cos(k.*L2);
+            B12 = 1i.*(a./S).*sin(k.*L2);
+            C12 = 1i.*(S./a).*sin(k.*L2);
+            D12 = cos(k.*L2);
 
             A21 = cos(k.*lv3);
-            B21 = 1i.*(a./Sv(j)).*sin(k.*lv3);
-            C21 = 1i.*(Sv(j)./a).*sin(k.*lv3);
+            B21 = 1i.*(a./Sv).*sin(k.*lv3);
+            C21 = 1i.*(Sv./a).*sin(k.*lv3);
             D21 = cos(k.*lv3);
             A22 = 1;
             B22 = 0;
-            C22 = 1i.*(Sv(j)./a).*tan(k.*(Lv(j)-lv3));
+            C22 = 1i.*(Sv./a).*tan(k.*(Lv-lv3));
             D22 = 1;
             M2 = [A11,B11;C11,D11] * [A12,B12;C12,D12] * [A21,B21;C21,D21] * [A22,B22;C22,D22];
             % TL2(f) = 20.*log10((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)));
@@ -381,33 +406,29 @@ if 0
             KESEI22(j,g) = ((S1./S2)^(1/2).*0.5.*abs(M2(1,1) + M2(1,2).*(S2./a) + M2(2,1).*(a./S1) + M2(2,2).*(S2./S1)))^2;
             maxLv1 = Lv - Dpipe;
             if lv3 > maxLv1
-                KESEI22 = nan;
+                KESEI22(j,g) = nan;
                 continue;
             end
 
         end
 
     end
-    [X,Y] = meshgrid(l1,AR);
+    [X,Y] = meshgrid(V0,AR);
     Z=KESEI22;
 
     figure
     paperFigureSet_large(6.5);
-    subplot(1,2,1);
+%     subplot(1,2,1);
     surf(X,Y,Z);
-    xlabel('偏置距离l1(m)','FontSize',paperFontSize(),'fontName',paperFontName());
+    xlabel('体积(m3)','FontSize',paperFontSize(),'fontName',paperFontName());
     ylabel('长径比','FontSize',paperFontSize(),'fontName',paperFontName());
     zlabel('阻抗系数','FontSize',paperFontSize(),'fontName',paperFontName());
     box on;
     grid on;
-    rang=[0,12];
-    ylim(rang);
-    rang=[0,1.2];
-    xlim(rang);
     hold on;
     ax=axis();
     x = [ax(3),ax(3),ax(4),ax(4),ax(3)];
-    y = [14,14,14,14,14];
+    y = [2.957,2.957,2.957,2.957,2.957];
     z = [ax(3),ax(6),ax(6),ax(5),ax(5)];
     h = fill3(x,y,z,'r');
     set(h,'facealpha',0.2);
@@ -425,12 +446,12 @@ if 0
         'FontName','Times New Roman',...
         'FitBoxToText','off',...
         'EdgeColor','none');
-    hold on;
-    paperFigureSet_large(6.5);
-    subplot(1,2,2);
-    contourf(X,Y,Z)
-    xlabel('偏置距离l1(m)','FontSize',paperFontSize(),'fontName',paperFontName());
-    ylabel('长径比','FontSize',paperFontSize(),'fontName',paperFontName());
-    zlabel('阻抗系数','FontSize',paperFontSize(),'fontName',paperFontName());
-    box on;
+%     hold on;
+%     paperFigureSet_large(6.5);
+%     subplot(1,2,2);
+%     contourf(X,Y,Z)
+%     xlabel('体积（m3）','FontSize',paperFontSize(),'fontName',paperFontName());
+%     ylabel('长径比','FontSize',paperFontSize(),'fontName',paperFontName());
+%     zlabel('阻抗系数','FontSize',paperFontSize(),'fontName',paperFontName());
+%     box on;
 end

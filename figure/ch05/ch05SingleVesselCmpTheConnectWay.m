@@ -3,6 +3,7 @@
 clear all;
 close all;
 clc;
+isSaveFigure = false;
 %% 缓冲罐计算的参数设置
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
 param.rpm = 420;
@@ -50,13 +51,13 @@ straightPlus = calcPuls(pressure);
 % vTypes = {'StraightInStraightOut', 'BiasFontInStraightOut', 'straightinbiasout', 'biasInBiasOut',...
 		 % 'EqualBiasInOut', ...
 		 % 'BiasFrontInBiasFrontOut'};
-vTypes = {'StraightInStraightOut', 'BiasFontInStraightOut', 'straightinbiasout', 'biasInBiasOut'};
-textLabel = {'直进直出', '侧进直出', '直进侧出', '侧进侧出'};
+vTypes = {'StraightInStraightOut', 'BiasFontInStraightOut', 'straightinbiasout'};
+textLabel = {'直进直出', '侧进直出', '直进侧出'};
 
 
 %% 研究体积变化各种形式的缓冲罐的变化趋势
-if 0
-	VIte = (VApi618-0.05):0.025:(VExp*2);
+if 1
+	VIte = (VApi618-0.05):0.015:(VExp*2);
 	DvIte = ((4 .* VIte) ./ pi).^ 0.5;
 	resCell = {};
 	for v = 1:length(vTypes)
@@ -104,10 +105,9 @@ if 0
 		y1 = y1.*100;
 		yend = yend.*100;
 		%绘图
-		figure
-		paperFigureSet('large',6);
+		figure('Name','首端测点')
+		paperFigureSet('small',6);
 		%绘制测点0的
-		subplot(1,2,1)
 		hold on;
 		h = [];
 		for i = 1:size(y1,1)
@@ -117,15 +117,20 @@ if 0
 		ax = axis();
 		plot([VExp,VExp],[ax(3),ax(4)],'--r');
 		box on;
-		title('(a)','FontSize',paperFontSize());
 		xlabel('体积','FontSize',paperFontSize());
 		ylabel('抑制率(%)','FontSize',paperFontSize());
 		legend(h,textLabel,0,'FontSize',paperFontSize()...
-				,'Position',[0.248834328325613 0.191087962962963 0.204107139928355 0.332199065137517]);
+				,'Position',[0.48135494497354 0.208726851851853 0.39143835054753 0.332199065137517]);
         set(gca,'color','none');
+        if isSaveFigure
+            set(gca,'color','none');
+            saveFigure(fullfile(getPlotOutputPath(),'ch05'),'体积变化对单容不同接法的影响-首端测点');
+        end
+        
 		%绘制最后一个测点的
 		%绘制测点0的
-		subplot(1,2,2)
+		figure('Name','末端测点');
+		paperFigureSet('small',6);
 		hold on;
 		h = [];
 		for i = 1:size(y1,1)
@@ -137,11 +142,12 @@ if 0
 		box on;
 		xlabel('体积','FontSize',paperFontSize());
 		ylabel('抑制率(%)','FontSize',paperFontSize());
-		title('(b)','FontSize',paperFontSize());
 		legend(h,textLabel,0,'FontSize',paperFontSize()...
-				,'Position',[0.689151244790112 0.191259483598051 0.204158787240604 0.331864895624562]);
-        set(gca,'color','none');
-        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'变缓冲罐体积对照各种缓冲罐接法影响');
+				,'Position',[0.48135494497354 0.208726851851853 0.39143835054753 0.332199065137517]);
+        if isSaveFigure
+            set(gca,'color','none');
+            saveFigure(fullfile(getPlotOutputPath(),'ch05'),'体积变化对单容不同接法的影响-末端测点');
+        end
 	end
 end
 
@@ -258,7 +264,9 @@ if 0
 		title('(b)','FontSize',paperFontSize());
 		legend(h,textLabel(2:end),0,'FontSize',paperFontSize()...
             ,'Position',[0.751542661658948 0.194027784480196 0.204107139928356 0.254293974779064]);
-        set(gca,'color','none');
-        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'变缓冲罐进口长度对照各种缓冲罐接法影响');
+        if isSaveFigure
+            set(gca,'color','none');
+            saveFigure(fullfile(getPlotOutputPath(),'ch05'),'变缓冲罐进口长度对照各种缓冲罐接法影响');
+        end
 	end
 end

@@ -138,11 +138,16 @@ for plotCount = 1:length(dataCombineStruct)
     else
         rang = rangs;
     end
-    if 1 == length(suppressionRateBase)
-        srb = suppressionRateBase{1};
+    if iscell(suppressionRateBase)
+        if 1 == length(suppressionRateBase)
+            srb = suppressionRateBase{1};
+        else
+            srb = suppressionRateBase{plotCount};
+        end
     else
-        srb = suppressionRateBase{plotCount};
+        srb = suppressionRateBase;
     end
+    
     
     if iscell(suppressionRateBaseErr) 
         if 1 == length(suppressionRateBaseErr)

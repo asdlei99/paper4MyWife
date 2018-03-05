@@ -27,7 +27,7 @@ function paperPlotSingleVesselExpResult(expCombineDataCells,legendLabels,legendL
 			,'showVesselRegion',false...
             ,'isFigure',0);
 	plotVesselRegion(gca,constExpVesselRangDistance);
-	set(gca,'Position',[0.13 0.25 0.775 0.588235294117647]);
+	set(gca,'Position',[0.13 0.272870370370371 0.775 0.565364923747276]);
 	set(fh.textboxMeasurePoint...
 		,'Position',[0.474673928348722 0.883519199346406 0.0998000000000001 0.0911999999999999]);
 	%测点1的圆
@@ -91,7 +91,7 @@ function paperPlotSingleVesselExpResult(expCombineDataCells,legendLabels,legendL
 	
 	annotation('rectangle',...
 		[0.0969162995594714 0.0235294117647059 0.812775330396476 0.117647058823529],...
-		'FaceColor','flat');
+		'FaceColor','none');
 	
 	%绘制框选图例的矩形
 	

@@ -171,7 +171,7 @@ param.meanFlowVelocity = meanFlowVelocity;
 freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 vType = 'BiasFontInStraightOut';
-if 1
+if 0
     theDataCells = oneVesselPulsation('param',param,'vType',vType,'massflowdata',[freRaw;massFlowERaw]);
 
 

@@ -7,6 +7,7 @@ freRaw = [7,14,21,28,14*3];
 massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
 % grootDefaultPlotPropertySet();
 isEnglish = 0;
+isSaveFigure = 1;
 %% 冲击脉动响应
 if 0
     %参数
@@ -137,7 +138,7 @@ if 0
         ,'FontSize',paperFontSize());
 end
 %% 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
-if 0 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
+if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
     % 绘制 x:管线距离 y:连接两罐的距离 z:脉动峰峰值
     theoryDataCells = doubleVesselBeElbowChangDistanceToFirstVessel('massflowdata',[freRaw;massFlowERaw]...
         ,'meanFlowVelocity',14);
@@ -236,6 +237,20 @@ if 0 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
     [0.329930555555556 0.404895833333334],'String',{arr1Text},'fontName',fontName);
     titleHandle = title('(b)');
     set(titleHandle,'Position',[0.011,32.33,0]);
+    if isSaveFigure
+        set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-变连接管长');
+    end
+    
+    figure
+    paperFigureSet('Small',6.5);
+    plot(linkPipeLength,Y2./Y1);
+    xlabel('Lc(m)');
+    ylabel('Pressure ratio');
+    if isSaveFigure
+        set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-变连接管长-P1比P2');
+	end
 end
 
 %% 研究改变长径比对脉动的影响
@@ -270,7 +285,8 @@ param.beforeAfterMeaPoint = nan;
 param.calcPeakPeakValueSection = nan;
 param.notMach = 0;
 
-if 0
+%长径比变化对脉动的影响
+if 1
    
     theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio('massflowdata',[freRaw;massFlowERaw],...
         'param',param);
@@ -313,7 +329,7 @@ if 0
         'newfigure',0 ...
     );
     xlim([0,10.37]);
-    ylim([0,25]);
+    ylim([0,30]);
     box on;
     view(137,41);
     title('(a)');
@@ -338,11 +354,26 @@ if 0
     [0.766607142857143 0.675892857142858],'String',{arr1Text});
     annotation('textarrow',[0.838422619047619 0.806294642857143],...
     [0.452886904761905 0.396190476190476],'String',{arr12Text});
+    if isSaveFigure
+        set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-长径比');
+    end
+    
+    figure
+    paperFigureSet('Small',6.5);
+    plot(linkPipeLength,Y2./Y1);
+    xlabel('r');
+    ylabel('Pressure ratio');
+    xlim([0,30]);
+    if isSaveFigure
+        set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-长径比-P1比P2');
+    end
 end
 
 
-%%
-if 1
+%% 长径比和体积的综合影响
+if 0
     if isEnglish
         fontName = 'Cambria';
         contourfXlabelText = 'r';
@@ -367,6 +398,10 @@ if 1
     xlabel(contourfXlabelText);
     ylabel(contourfYlabelText);   
     set(f,'levelList',1:500:14000);
+    if isSaveFigure
+        set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-长径比和体积的综合影响');
+    end
     
     figure
     paperFigureSet_normal(7);
@@ -393,4 +428,8 @@ if 1
     set(gca,'Position',[0.13 0.165345907788607 0.718072916666667 0.755880509667427]);
     box on;
     resetDefaultPlotFontName();
+    if isSaveFigure
+        set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-长径比和体积的综合影响2');
+    end
 end

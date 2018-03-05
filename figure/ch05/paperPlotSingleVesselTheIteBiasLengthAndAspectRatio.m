@@ -5,16 +5,18 @@ function paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,
     chartType = 'contourf';
      
     endIndex = length(param.sectionL1) + length(param.sectionL2);
-    indexs = [1,endIndex];
+    indexs = endIndex;%[1,endIndex];
 %     indexs = 1:7:endIndex;
 %     if indexs(end) ~= endIndex
 %         indexs = [indexs,endIndex];
 %     end
     Lv = linspace(0.3,3,42);
     lv1 = linspace(param.Dpipe,param.Lv-param.Dpipe,32);
-    
+    vType = 'straightInBiasOut';
+%     vType = 'BiasFontInStraightOut';
+
     [X,Y,Zc] = oneVesselChangBiasLengthAndAspectRatio(lv1,Lv,indexs...
-        ,'vType','straightInBiasOut'...
+        ,'vType',vType...
         ,'massflowdata',massFlowData...
         ,'param',param);
     for i = 1:length(Zc)

@@ -7,6 +7,9 @@ function paperFigureSet(wType,h)
         h = 6;
     end
     switch lower(wType)
+    case 'moresmall'
+        set(gcf,'color','w');
+        set(gcf,'unit','centimeter','position',[8,4,6,h]);
     case 'small'
         paperFigureSet_small(h);
     case 'normal'

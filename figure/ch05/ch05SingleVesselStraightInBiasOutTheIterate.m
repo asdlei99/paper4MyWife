@@ -51,10 +51,13 @@ else
     param.lv1 = 0.318;
     param.lv2 = 0.318;
 
-    param.acousticVelocity = 320;%声速（m/s）
+    %param.acousticVelocity = 320;%声速（m/s）
+    param.acousticVelocity = 345;%声速（m/s）
+    %param.coeffFriction = 0.03;
     param.coeffFriction = 0.03;
-    param.meanFlowVelocity = 13;
-
+%     param.meanFlowVelocity = 13;
+    param.meanFlowVelocity = 16;
+    
     freRaw = [14,21,28,42,56,70];
     massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 
@@ -93,25 +96,7 @@ end
 if 0
     paperPlotSingleVesselTheIteChangeVAndBiasLengthFixAR(param,massFlowData,isSaveFigure);
 end
-%等幅值扫频
-% if 0
-	% addtion = -10:1:70;
-	
-	% for i = 1:length(addtion)
-		% fre = freRaw+addtion(i);
-		% baseFrequency = 14 + addtion(i);
-		% res{i} = oneVesselPulsation('massflowdata',[fre;massFlowERaw]...
-							% , 'param', param ...
-							% , 'vType', vType ...
-							% , 'baseFrequency', baseFrequency...
-							% , 'multFreTimes', 1 ...
-							% , 'semiFreTimes', 1 ...
-								% );
-		% %脉动抑制率，还需直管
-	% end
-	
-	
-% end
+
 
 if 0
     vType = 'StraightInStraightOut';%biasInBiasOut,EqualBiasInOut,BiasFontInStraightOut,straightinbiasout,BiasFrontInBiasFrontOut,
