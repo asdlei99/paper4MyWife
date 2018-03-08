@@ -42,7 +42,7 @@ if 0
     Vmin = pi* param.Dpipe^2 / 4 * param.Lv *1.5;
     Vmid = pi* param.Dv^2 / 4 * param.Lv;
     Vmax = Vmid*3;
-    VApi618 = 0.1;
+    VApi618 = constVExpApi618();
     V = Vmin:0.02:Vmax;
     chartTypeChangVolume = 'surf';
     theoryDataCellsStraightInStraightOut = oneVesselChangVolume(V,'massflowdata',[freRaw;massFlowERaw]...
