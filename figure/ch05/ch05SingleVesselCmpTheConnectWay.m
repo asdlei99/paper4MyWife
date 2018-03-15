@@ -26,8 +26,8 @@ lvLen = 0.318;
 param.lv1 = lvLen;
 param.lv2 = lvLen;
 
-VExp = (pi * (param.Dv^2)) ./ 4;%实验对应的体积
-VApi618 = 0.1;%API618的体积
+VExp = (pi * (param.Dv^2)) ./ 4 * param.Lv;%实验对应的体积
+VApi618 = constVExpApi618();%API618的体积
 
 freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
@@ -115,7 +115,8 @@ if 1
 			%text(VIte(end),y1(i,end),textLabel{i});
 		end
 		ax = axis();
-		plot([VExp,VExp],[ax(3),ax(4)],'--r');
+		plot([VApi618,VApi618],[ax(3),ax(4)],'--r');
+		plot([VExp,VExp],[ax(3),ax(4)],':b');
 		box on;
 		xlabel('体积','FontSize',paperFontSize());
 		ylabel('抑制率(%)','FontSize',paperFontSize());
@@ -138,7 +139,8 @@ if 1
 			%text(VIte(end),yend(i,end),textLabel{i});
 		end
 		ax = axis();
-		plot([VExp,VExp],[ax(3),ax(4)],'--r');
+		pplot([VApi618,VApi618],[ax(3),ax(4)],'--r');
+		plot([VExp,VExp],[ax(3),ax(4)],':b');
 		box on;
 		xlabel('体积','FontSize',paperFontSize());
 		ylabel('抑制率(%)','FontSize',paperFontSize());
