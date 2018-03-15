@@ -6,7 +6,7 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
-isSaveFigure = 1;
+isSaveFigure = 0;
 %% 数据路径
 if 0
     vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');%侧前进直后出
@@ -118,7 +118,7 @@ end
 
 
 %% 绘制多组压力脉动及对比图
-if 0
+if 1
 	paperPlotSingleVesselExpResult(vesselCombineDataCells,legendLabels,legendLabelsAbb,isSaveFigure);
 end
 
@@ -140,7 +140,7 @@ if 0
         );
 end
 %% 绘制多组压力降
-if 1
+if 0
     fh = figureExpPressureDrop(vesselCombineDataCells,legendLabels,pressureDropMeasureRang...
 		,'chartType','bar');
     %'chartType'== 'bar' 时用于设置bar的颜色

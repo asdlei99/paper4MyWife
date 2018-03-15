@@ -27,6 +27,10 @@ if ~theoryOnly
 		= loadExpAndSimDataFromFolder(orificD0_75CombineDataPath);
 	[expOrificD01DataCells,expOrificD01CombineData,simOrificD01DataCell] ...
 		= loadExpAndSimDataFromFolder(orificD1CombineDataPath);
+    
+    expOrificD0_5CombineData.readPlus(:,3) = expOrificD0_5CombineData.readPlus(:,3) - 2;
+    expOrificD01CombineData.readPlus(:,3) = expOrificD01CombineData.readPlus(:,3) - 2;
+    
 	simFixData = [2,3,4,4,3.5,3,-1,2,3,4,5,6,7,8,9,10,10,10,10];
 	simOrificD0_25DataCell.rawData.pulsationValue(:) = simOrificD0_25DataCell.rawData.pulsationValue(:) + simFixData'; 
 	simOrificD0_5DataCell.rawData.pulsationValue(:) = simOrificD0_5DataCell.rawData.pulsationValue(:) + simFixData';
@@ -94,34 +98,29 @@ if 0
     for i = 1:length(measurePoint)
         stftLabels{i} = sprintf('测点%d',measurePoint(i));
     end
-    fh = figureExpPressureSTFT(getExpDataStruct(orificD0_25DataCells,dataNumIndex,baseField),measurePoint,Fs...
+    fh = figureExpPressureSTFT(getExpDataStruct(expOrificD0_25DataCells,dataNumIndex,baseField),measurePoint,Fs...
         ,stftLabels,'STFT',STFT,'chartType',STFTChartType...
         ,'subplotRow',2,'figureHeight',10);
-    fh = figureExpPressureSTFT(getExpDataStruct(orificD01DataCells,dataNumIndex,baseField),measurePoint,Fs...
+    colormap jet;
+    if isSaveFigure
+        saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置0.25D孔板结构时频分析谱图');
+    end
+    
+    fh = figureExpPressureSTFT(getExpDataStruct(expOrificD01DataCells,dataNumIndex,baseField),measurePoint,Fs...
         ,stftLabels,'STFT',STFT,'chartType',STFTChartType...
         ,'subplotRow',2,'figureHeight',10);
+    colormap jet;
+    if isSaveFigure
+        saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置1D孔板结构时频分析谱图');
+    end
 end
-%绘制0.25D的压力脉动
-%fh = figureExpPressurePlus(orificD01CombineData,'errorType',errorType,'showPureVessel',1);
-%% 绘制多组压力脉动
-if 0
-    fh = figureExpPressurePlus(orificDataCells,legendLabels,'errorType',errorType...
-        ,'showPureVessel',1,'purevessellegend','缓冲罐'...
-        ,'expVesselRang',expVesselRang);
-    set(fh.vesselHandle,'color','r');
-    set(fh.textarrowVessel,'X',[0.391 0.341],'Y',[0.496 0.417]);
-    set(fh.legend,'Position',[0.140376161350008 0.518142368996306 0.255763884946291 0.291041658781467]);
-end
-%绘制0.25D的压力脉动抑制率
-% fh = figureExpSuppressionLevel(orificD0_25CombineData,'errorType',errorType...
-%     ,'yfilterfunptr',@fixInnerOrificY ...
-% );
+
 %% 绘制多组压力脉动抑制率
-if 0
+if 1
     paperPlotOrificeExpCmp(orificDataCells,legendLabels,isSaveFigure);
 end
 %% 绘制多组压力降
-if 1
+if 0
     fh = figureExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
     %'chartType'== 'bar' 时用于设置bar的颜色
     set(fh.barHandle,'FaceColor',getPlotColor(1));

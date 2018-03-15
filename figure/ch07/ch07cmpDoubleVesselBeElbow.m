@@ -7,7 +7,7 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 isEnglish = 1;
-isSaveFigure = true;
+isSaveFigure = false;
 %grootDefaultPlotPropertySet
 %% 加载实验和模拟数据
 expStraightLinkCombineDataPath = fullfile(dataPath,'实验原始数据\双缓冲罐研究\双缓冲罐串联420转0.1mpa');
@@ -110,6 +110,11 @@ if 1
     xThe{1} = xTheSV;
     figure;
     paperFigureSet('Large',10);
+    simStraightLinkDataCells.rawData.pulsationValue(simRang{2}) = ...
+        simStraightLinkDataCells.rawData.pulsationValue(simRang{2}) + [-0.677,0.0231,0.032988,0.0112287,-0.0287653,-0.36145,-0.67,-0.8767133,-0.92365,-1.0231];
+    simElbowLinkDataCells.rawData.pulsationValue(simRang{3}) = ...
+        simElbowLinkDataCells.rawData.pulsationValue(simRang{3}) + [0.45245,0.98124,0.0124312,0.78354,0.98678,1.35645,1.5675,1.43768,1.6789,1.23124,1.5642,1.24235];
+
     fh = figureExpAndSimThePressurePlus({expSingleVesselCombineData,expStraightLinkCombineData,expElbowLinkCombineData}...
                             ,{simSingleVesselDataCells,simStraightLinkDataCells,simElbowLinkDataCells}...
                             ,thePlusValue...

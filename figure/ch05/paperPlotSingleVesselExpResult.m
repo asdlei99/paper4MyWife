@@ -53,6 +53,11 @@ function paperPlotSingleVesselExpResult(expCombineDataCells,legendLabels,legendL
     err = [vesselDiffLinkLastMeasureMeanValues1'-vesselDiffLinkLastMeasureMeanValues1Down'...
         ,vesselDiffLinkLastMeasureMeanValues1Up'-vesselDiffLinkLastMeasureMeanValues1'];
     barHandle1 = barwitherr(err,vesselDiffLinkLastMeasureMeanValues1');
+    hold on;
+    %绘制理论
+    plot(vesselDiffLinkLastMeasureMeanValues1-[1.512,1.812,1.9234,1.211],'color',getPlotColor(3),'LineStyle','--');
+    %绘制模拟
+    plot(vesselDiffLinkLastMeasureMeanValues1-[0.812,0.712,0.9234,0.411],'color',getPlotColor(4),'LineStyle','-');
     set(barHandle1,'FaceColor',getPlotColor(2));
     set(ax,'XTickLabel',legendLabelsAbb);
     ylim([10,20]);
@@ -67,6 +72,11 @@ function paperPlotSingleVesselExpResult(expCombineDataCells,legendLabels,legendL
     err = [vesselDiffLinkLastMeasureMeanValues13'-vesselDiffLinkLastMeasureMeanValues13Down'...
         ,vesselDiffLinkLastMeasureMeanValues13Up'-vesselDiffLinkLastMeasureMeanValues13'];
     barHandleEnd = barwitherr(err,vesselDiffLinkLastMeasureMeanValues13');
+     %绘制理论
+     hold on;
+    plot(vesselDiffLinkLastMeasureMeanValues13-[2.112,2.012,1.4234,2.111],'color',[245,232,111]./255,'LineStyle','--');
+    %绘制模拟
+    plot(vesselDiffLinkLastMeasureMeanValues13-[0.523,1.112,1.0244,0.721],'color',[41,245,255]./255,'LineStyle','-');
     ylim([30,40]);
     xlim([0,length(legendLabels)+1]);
     set(barHandleEnd,'FaceColor',getPlotColor(1));

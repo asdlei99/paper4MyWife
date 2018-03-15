@@ -80,6 +80,7 @@ else
         colorbar('off');
         box on;
         xlim([0,50]);
+        set(gca,'XTick',[0:10:50]);
         if simpleLabel
             if ~isempty(legendLabels)
                 fh.title(i) = title(legendLabels{i},'FontName',paperFontName(),'FontSize',paperFontSize());

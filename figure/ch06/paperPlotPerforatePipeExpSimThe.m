@@ -39,6 +39,6 @@ function plotPerforatePipeN24(expRes,simRes,theRes,xExp,xSim,xThe,isSaveFigure)
                             ,'expVesselRang',expVesselRang);
     if isSaveFigure
         set(gca,'color','none');
-        saveFigure(fullfile(getPlotOutputPath(),'ch06'),sprintf('内置孔管%g-N24-理论模拟实验',param.Din));
+        saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置孔管-N24-理论模拟实验');
 	end		
 end

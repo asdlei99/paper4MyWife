@@ -30,7 +30,6 @@ expVesselRang = constExpVesselRangDistance();
 xlabelText = '管线距离(m)';
 xTopText = '测点';
 ylabelText = '压力脉动峰峰值(kPa)';
-vesselText = '缓冲罐';
 if 0 ~= mod(length(pp),2)
     legendLabels = pp{1};
     pp=pp(2:end);
@@ -82,8 +81,6 @@ while length(pp)>=2
             ylabelText = val;    
         case 'xtoptext'
             xTopText = val;
-        case 'vesseltext'
-            vesselText = val;
         case 'legendprefixlegend' %legend的前缀
             legendPrefixLegend = val;
         otherwise
@@ -242,8 +239,8 @@ else
     set(gca,'Position',[0.13 0.18 0.79 0.75]);
 end
 if showVesselRigion
-    fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
-        [0.744 0.665],'String',{vesselText},'FontName',paperFontName(),'FontSize',paperFontSize());
+%     fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
+%         [0.744 0.665],'String',{vesselText},'FontName',paperFontName(),'FontSize',paperFontSize());
     vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 end
 ax = axis;

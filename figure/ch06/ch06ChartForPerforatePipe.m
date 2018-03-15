@@ -1,18 +1,19 @@
 %% 第六章 绘图 - 内置孔管相关绘图
 %第六章画图的参数设置
-clear all;
+clear;
 close all;
 clc;
 baseField = 'rawData';
 errorType = 'ci';
-isSaveFigure = 0;
+isSaveFigure = 1;
 dataPath = getDataPath();
-theoryOnly = 1;
+theoryOnly = 0;
 %% 数据路径
 if ~theoryOnly
 	perforateN20DataPath = fullfile(dataPath,'实验原始数据\内插孔管\D0.5N20RPM420两头堵');
 	perforateN36DataPath = fullfile(dataPath,'实验原始数据\内插孔管\D0.5N36RPM420两头堵');
 	perforateN68DataPath = fullfile(dataPath,'实验原始数据\内插孔管\D0.5N68RPM420两头堵');
+    perforateD1N28DataPath = fullfile(dataPath,'实验原始数据\内插孔管\D1N28d20RPM420两头堵');
 	vesselDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');
 	[expPerforateN20DataCells,expPerforateN20CombineData,simPerforateN20DataCell] ...
 		= loadExpAndSimDataFromFolder(perforateN20DataPath);
@@ -20,13 +21,15 @@ if ~theoryOnly
 		= loadExpAndSimDataFromFolder(perforateN36DataPath);
 	[expPerforateN68DataCells,expPerforateN68CombineData,simPerforateN68DataCell] ...
 		= loadExpAndSimDataFromFolder(perforateN68DataPath);
+    [expPerforateeD1N28DataCells,expPerforateeD1N28CombineData,simPerforateeD1N28DataCell] ...
+		= loadExpAndSimDataFromFolder(perforateD1N28DataPath);
     %单一缓冲罐数据
     [expVesselDataCells,expVesselCombineData,simVesselDataCell] ...
         = loadExpAndSimDataFromFolder(vesselDataPath);
-	perforatePipeCombineDataCells = {expPerforateN20CombineData,expPerforateN36CombineData,expPerforateN68CombineData};
-	legendLabels = {'N24','N40','N72'};
-	expRawDataCells = {expPerforateN20DataCells{2,2}.rawData,expPerforateN36DataCells{2,2}.rawData,expPerforateN68DataCells{2,2}.rawData};
-    expCombineDataCells = {expPerforateN20CombineData,expPerforateN36CombineData,expPerforateN68CombineData};
+	perforatePipeCombineDataCells = {expPerforateN20CombineData,expPerforateN36CombineData,expPerforateN68CombineData,expPerforateeD1N28CombineData};
+	legendLabels = {'0.5DN24','0.5DN40','0.5DN72','1DN28'};
+	expRawDataCells = {expPerforateN20DataCells{2,2}.rawData,expPerforateN36DataCells{2,2}.rawData,expPerforateN68DataCells{2,2}.rawData,expPerforateeD1N28DataCells{2,2}.rawData};
+
     %模拟数据的修正
     xSim = constSimMeasurementPointDistance();
     index = find(xSim < 2.5);
@@ -126,15 +129,15 @@ param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))]
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
 param.pressureBoundary2 = 0;
 
-if 0 && ~theoryOnly
-	paperPlotPerforatePipeExpSimThe(param,expCombineDataCells,simDataCells,isSaveFigure);
+if 1 && ~theoryOnly
+	paperPlotPerforatePipeExpSimThe(param,perforatePipeCombineDataCells(1:3),simDataCells,isSaveFigure);
 end
 
 if 0
 	paperPlotPerforatePipeTheory(param,isSaveFigure)
 end
 
-if 1
+if 0
 	paperPlotPerforateTheoryFrequencyResponse(param,isSaveFigure);
 end
 

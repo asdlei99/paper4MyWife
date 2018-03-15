@@ -191,7 +191,7 @@ if showMeasurePoint
         'EdgeColor','none','FontName',paperFontName(),'FontSize',paperFontSize());
 end
 xlabel('管线距离(m)','FontSize',paperFontSize());
-ylabel('压力脉动峰峰值(kPa)','FontSize',paperFontSize());
+ylabel('脉动压力峰峰值(kPa)','FontSize',paperFontSize());
 fh.gca = gca;
 end
 

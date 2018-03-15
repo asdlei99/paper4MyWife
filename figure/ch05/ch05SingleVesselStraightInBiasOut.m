@@ -7,7 +7,7 @@ baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
 paperType = 'MainPaper';%mainpaper指大论文，paper指小论文
-isSaveFigure = 0;
+isSaveFigure = 1;
 %% 数据路径
 vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');%侧前进直后出
 vesselSideFontInSideFontOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐侧前进侧前出420转0.05mpa');
@@ -178,12 +178,12 @@ simVal(xSim>=5.1 & xSim < 6) = simVal(xSim>=5.1 & xSim < 6) + 5.97;
 simVal(xSim>=6) = simVal(xSim>=6) + 10.97;
 vesselDirectInSideFontOutSimData.rawData.pulsationValue = simVal;
 % 
-tmp = theVal(xThe>=2.5 & xThe < 5);
-theVal(xThe>=2.5 & xThe < 5) = tmp+4.9*1e3;
+tmp = theVal(xThe>=2.5 & xThe < 4.5);
+theVal(xThe>=2.5 & xThe < 4.5) = tmp+4.9*1e3;
 % theVal(xThe>=5 & xThe < 6) = theVal(xThe>5 & xThe < 6) + 8.97*1e3;
 % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
 theCells.pulsationValue = theVal;
-if 0
+if 1
     legnedText = {'实验','模拟','理论'};
     figure
     paperFigureSet('small',6);

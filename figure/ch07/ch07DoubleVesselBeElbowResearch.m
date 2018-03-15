@@ -7,7 +7,7 @@ freRaw = [7,14,21,28,14*3];
 massFlowERaw = [0.02,0.2,0.03,0.003,0.007];
 % grootDefaultPlotPropertySet();
 isEnglish = 0;
-isSaveFigure = 1;
+isSaveFigure = 0;
 %% 冲击脉动响应
 if 0
     %参数
@@ -152,14 +152,14 @@ if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
         ylabelText = 'Lc(m)';
         zLabelText = 'Peak-to-peak pressure pulsation(kPa)';
         arr1Text = 'Point 1';
-        arr12Text = 'Point 12';
+        arr2Text = 'Point 12';
     else
         fontName = '黑体';
         xlabelText = '管线距离(m)';
         ylabelText = '连接管长(m)';
         zLabelText = '压力脉动峰峰值(kPa)';
         arr1Text = '测点 1';
-        arr12Text = '测点 12';
+        arr2Text = '测点 12';
     end
     figure;
     paperFigureSet_large(7);
@@ -229,12 +229,15 @@ if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
     hold on;
     plot(linkPipeLength,Y2./1000,'-');
     xlabel(ylabelText,'fontName',fontName);
-    ylabel(zLabelText,'fontName',fontName);
+    ylabel(zLabelText,'fontName',fontName); 
     set(gca,'Position',[0.617587932900433 0.192364165480092 0.334659090909091 0.668013193010474]);
+    
     annotation('textarrow',[0.794955357142858 0.753377976190477],...
-    [0.770902777777779 0.651840277777779],'String',{arr12Text},'fontName',fontName);
+    [0.770902777777779 0.651840277777779],'String',{arr1Text},'fontName',fontName);
+
     annotation('textarrow',[0.728809523809524 0.764717261904762],...
-    [0.329930555555556 0.404895833333334],'String',{arr1Text},'fontName',fontName);
+    [0.329930555555556 0.404895833333334],'String',{arr2Text},'fontName',fontName);
+
     titleHandle = title('(b)');
     set(titleHandle,'Position',[0.011,32.33,0]);
     if isSaveFigure
@@ -242,11 +245,18 @@ if 1 % 改变第二个缓冲罐到第一个缓冲罐距离对脉动的影响
 		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-变连接管长');
     end
     
+    
+    
     figure
     paperFigureSet('Small',6.5);
     plot(linkPipeLength,Y2./Y1);
-    xlabel('Lc(m)');
-    ylabel('Pressure ratio');
+    if isEnglish
+        xlabel('Lc(m)','FontSize',paperFontSize());
+        ylabel('Peak-Peak Pressure ratio','FontSize',paperFontSize());
+    else
+        xlabel('偏置距离(m)','FontSize',paperFontSize());
+        ylabel('脉动压力比','FontSize',paperFontSize());
+    end
     if isSaveFigure
         set(gca,'color','none');
 		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-变连接管长-P1比P2');
@@ -286,7 +296,7 @@ param.calcPeakPeakValueSection = nan;
 param.notMach = 0;
 
 %长径比变化对脉动的影响
-if 1
+if 0
    
     theoryDataCells = doubleVesselBeElbowChangLengthDiameterRatio('massflowdata',[freRaw;massFlowERaw],...
         'param',param);
@@ -299,13 +309,13 @@ if 1
         ylabelText = 'r';
         zLabelText = 'Peak-to-peak pressure pulsation(kPa)';
         arr1Text = 'A-A(Point 1)';
-        arr12Text = 'B-B(Point 12)';
+        arr2Text = 'B-B(Point 12)';
     else
         xlabelText = '管线距离(m)';
         ylabelText = '长径比';
         zLabelText = '压力脉动峰峰值(kPa)';
         arr1Text = 'A-A(测点 1)';
-        arr12Text = 'B-B(测点 12)';
+        arr2Text = 'B-B(测点 12)';
     end
     figure
     paperFigureSet_large(7);
@@ -353,7 +363,7 @@ if 1
     annotation('textarrow',[0.847872023809524 0.811964285714286],...
     [0.766607142857143 0.675892857142858],'String',{arr1Text});
     annotation('textarrow',[0.838422619047619 0.806294642857143],...
-    [0.452886904761905 0.396190476190476],'String',{arr12Text});
+    [0.452886904761905 0.396190476190476],'String',{arr2Text});
     if isSaveFigure
         set(gca,'color','none');
 		saveFigure(fullfile(getPlotOutputPath(),'ch07'),'弯头式缓冲罐-长径比');

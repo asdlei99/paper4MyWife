@@ -44,7 +44,7 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 	
 	isFast = true;
 	
-	
+
 	
     while length(pp)>=2
 		prop =pp{1};
@@ -107,7 +107,7 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 		theoryDataCells{1,2} = 'dataStrcutCell';
 		theoryDataCells{1,3} = 'X';
 		theoryDataCells{1,4} = 'param';
-		theoryDataCells{1,5} = '接管长';
+		theoryDataCells{1,5} = '接管长'; 
 		theoryDataCells{1,6} = 'vesselRagion1';
 		theoryDataCells{1,7} = 'vesselRagion2';
 	end
@@ -125,7 +125,7 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
                 param.L1,param.L2,param.L3,...
                 param.LV1,param.LV2,param.l,param.Dpipe,param.DV1,param.DV2,...
                 param.sectionL1,param.sectionL2,param.sectionL3,...
-                'a',param.acousticVelocity,'isDamping',param.isDamping,'friction',0.045,...
+                'a',param.acousticVelocity,'isDamping',param.isDamping,'friction',param.coeffFriction,...
                 'meanFlowVelocity',param.meanFlowVelocity,'isUseStaightPipe',1,...
                 'm',param.mach,'notMach',param.notMach...
                 ,'isOpening',param.isOpening...
@@ -136,7 +136,9 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 			,param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3];
 		vesselRagion1 = [param.sectionL1(end),param.L1+param.LV1+2*param.l+param.sectionL2(1)];
 		vesselRagion2 = [param.L1+param.LV1+2*param.l+param.sectionL2(end),param.L1+param.LV1+2*param.l+param.L2+param.LV2+2*param.l+param.sectionL3(1)];
-		
+		relateX = [param.sectionL1...
+			,param.L1+param.sectionL2...
+			,param.L1+param.L2+param.sectionL3];
 		if isFast
 		
 			res.plus = calcPuls(pressure,dcpss);
@@ -144,6 +146,8 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 			res.param = param;
 			res.vesselRagion1 = vesselRagion1;
 			res.vesselRagion2 = vesselRagion2;
+            res.relateX = relateX;
+            res.L2 = param.L2;
 			theoryDataCells{count} = res;
 		else
 			rawDataStruct = fun_dataProcessing(pressure...
@@ -162,6 +166,7 @@ function theoryDataCells = doubleVesselChangDistanceToFirstVessel(L2,varargin)
 			theoryDataCells{count+1,5} = param.L2;
 			theoryDataCells{count+1,6} = vesselRagion1;
 			theoryDataCells{count+1,7} = vesselRagion2;
+            theoryDataCells{count+1,8} = relateX;
 		end
     end
 end

@@ -4,7 +4,7 @@ close all;
 %% 缓冲罐计算的参数设置
 vType = 'BiasFontInStraightOut';
 isSaveFigure = 0;
-
+useMainPaper = 1;%大论文用
 coeffFriction = 0.03;
 if 0
     param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密??
@@ -51,12 +51,16 @@ else
     param.lv1 = 0.318;
     param.lv2 = 0.318;
 
-    %param.acousticVelocity = 320;%声速（m/s）
-    param.acousticVelocity = 345;%声速（m/s）
-    %param.coeffFriction = 0.03;
-    param.coeffFriction = 0.03;
-%     param.meanFlowVelocity = 13;
-    param.meanFlowVelocity = 16;
+    if useMainPaper %大论文用
+        param.acousticVelocity = 320;
+        param.coeffFriction = 0.03;
+        param.meanFlowVelocity = 13;
+    else
+        param.acousticVelocity = 345;
+        param.coeffFriction = 0.03;
+        param.meanFlowVelocity = 13;
+    end
+
     
     freRaw = [14,21,28,42,56,70];
     massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
@@ -83,12 +87,12 @@ if 0
 end
 
 %% 迭代偏置距离和长径比
-if 1
-    paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,isSaveFigure);
+if 0
+	paperPlotSingleVesselTheIteBiasLengthAndAspectRatio(param,massFlowData,isSaveFigure);
 end
 
 %% 迭代缓冲罐lv1的偏置入口管长
-if 0
+if 1
     paperPlotSingleVesselTheIteChangLv1(param,massFlowData,isSaveFigure);
 end
 
@@ -99,6 +103,6 @@ end
 
 
 if 0
-    vType = 'StraightInStraightOut';%biasInBiasOut,EqualBiasInOut,BiasFontInStraightOut,straightinbiasout,BiasFrontInBiasFrontOut,
+    vType = 'StraightInBiasOut';%biasInBiasOut,EqualBiasInOut,BiasFontInStraightOut,straightinbiasout,BiasFrontInBiasFrontOut,
 	paperPlotSingleVesselTheoryFrequencyResponse(param,vType,isSaveFigure);
 end

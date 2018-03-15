@@ -1,6 +1,6 @@
 %% 第七章 绘图 - 双罐理论分析
 %第七章画图的参数设置
-clear all;
+clear;
 close all;
 clc;
 errorType = 'ci';
@@ -31,7 +31,7 @@ param.DV1 = 0.372;%缓冲罐的直径（m）
 param.LV1 = 1.1;%缓冲罐总长 （1.1m）
 param.DV2 = 0.372;%variant_DV2(i);%(4.*V2./(pi.*variant_r(i)))^(1/3);%缓冲罐的直径（0.372m）
 param.LV2 = 1.1;%variant_r(i).*param.DV2;%缓冲罐总长 （1.1m）
-param.rpm = 300;
+param.rpm = 420;
 param.outDensity = 1.5608;
 param.Fs = 4096;
 param.sectionL1 = 0:detalDis:param.L1;
@@ -39,9 +39,27 @@ param.sectionL2 = 0:detalDis:param.L2;
 param.sectionL3 = 0:detalDis:param.L3;
 param.meanFlowVelocity = 16;
 param.mach = param.meanFlowVelocity / param.acousticVelocity;
-param.isOpening = 1;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
+param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
 
-
+useNorthZoneExperimentParam = 1;
+if useNorthZoneExperimentParam
+    param.L1 = 13;
+    param.L3 = 13;
+    param.DV1 = 0.5;
+    param.DV2 = 0.5;
+    param.LV1 = 1;
+    param.LV2 = 1;
+    param.Dpipe = 0.157;
+    param.rpm = 300;
+    param.isOpening = 1;
+    param.sectionL1 = 0:detalDis:param.L1;
+    param.sectionL2 = 0:detalDis:param.L2;
+    param.sectionL3 = 0:detalDis:param.L3;
+    param.meanFlowVelocity = 14;
+    param.coeffFriction = 0.045;%管道摩察系数0.045
+    param.useNorthZoneExperimentParam = 1;
+    
+end
 %% 绘制实验的对比图
 if 0
 	paperPlotDoubleVesselExpCmp(dvCombineData,svCombineData,{'双罐'},isSaveFigure);
@@ -54,11 +72,11 @@ if 0
 end
 
 %% 理论分析
-if 0
+if 1
 	paperPlotDoubleVesselThe(param,isSaveFigure);
 end
 
-if 1
+if 0
 	paperPlotDoubleVesselTheFrequencyResponse(param,isSaveFigure);
 end
 

@@ -65,5 +65,18 @@ function paperPlotSingleVesselTheIteChangLv1(param,massFlowData,isSaveFigure)
 	if isSaveFigure
 		set(gca,'color','none');
 		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响b');
-	end
+    end
+    
+    figure
+    paperFigureSet('small',6);
+    h = plot(Lv1,y(2,:)./y(1,:),'color',getPlotColor(2),'marker',getMarkStyle(2));
+    set(gca,'XTick',0:0.2:1);
+    xlabel('偏置距离(m)','FontSize',paperFontSize());
+    ylabel('脉动压力峰峰值比','FontSize',paperFontSize());
+%     title('FontSize',paperFontSize());
+	if isSaveFigure
+		set(gca,'color','none');
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐偏置距离对气流脉动的影响脉动压力比值');
+    end
+    
 end
