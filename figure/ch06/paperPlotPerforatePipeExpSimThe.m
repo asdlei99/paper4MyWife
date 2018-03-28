@@ -19,8 +19,20 @@ function paperPlotPerforatePipeExpSimThe(param,expDataCells,simDataCells,isSaveF
 % 	theRes(param.sectionL1 >=3 & param.sectionL1<=3.5) = ...
 %         theRes(param.sectionL1 >=3 & param.sectionL1<=3.5)-(1000+6000.*(param.sectionL1(param.sectionL1 >=3 & param.sectionL1<=3.5)-3));
 %     
-    xThe = theCell{1,3};
-	plotPerforatePipeN24(expRes,simRes,theRes,xExp,xSim,xThe,isSaveFigure);
+    if 1
+        xThe = theCell{1,3};
+        plotPerforatePipeN24(expRes,simRes,theRes,xExp,xSim,xThe,isSaveFigure);
+
+        param.n1 = 40;
+        param.n2 = 40;
+        expRes = expDataCells{2};
+        simRes = simDataCells{2};
+        theCell = PerforateClosePulsation('param',param,'massflowdata',massFlowDataCell...
+            ,'fast',1);
+        theRes = theCell{1,2};
+        xThe = theCell{1,3};
+        plotPerforatePipeN40(expRes,simRes,theRes,xExp,xSim,xThe,isSaveFigure);
+    end
 end
 
 function plotPerforatePipeN24(expRes,simRes,theRes,xExp,xSim,xThe,isSaveFigure)
@@ -40,5 +52,25 @@ function plotPerforatePipeN24(expRes,simRes,theRes,xExp,xSim,xThe,isSaveFigure)
     if isSaveFigure
         set(gca,'color','none');
         saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置孔管-N24-理论模拟实验');
+	end		
+end
+
+function plotPerforatePipeN40(expRes,simRes,theRes,xExp,xSim,xThe,isSaveFigure)
+	figure('Name','N40');
+    paperFigureSet('small',6);
+	expVesselRang = constExpVesselRangDistance;
+	fh = figureExpAndSimThePressurePlus(expRes...
+                            ,simRes...
+                            ,theRes...
+                            ,{''}...
+                            ,'showMeasurePoint',1 ...
+                            ,'xsim',xSim,'xexp',xExp,'xThe',xThe...
+                            ,'showVesselRigion',1 ...
+                            ,'xlim',[2,11]...
+                            ,'figureHeight',9 ...
+                            ,'expVesselRang',expVesselRang);
+    if isSaveFigure
+        set(gca,'color','none');
+        saveFigure(fullfile(getPlotOutputPath(),'ch06'),'内置孔管-N40-理论模拟实验');
 	end		
 end

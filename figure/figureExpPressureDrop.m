@@ -12,6 +12,7 @@ chartType = 'line';
 baseField = 'rawData';
 isUseDropRate=false;%这个为true时，绘制的是压力损失率
 isFigure = true;
+fixYFunHandle = [];
 while length(pp)>=2
     prop =pp{1};
     val=pp{2};
@@ -27,6 +28,8 @@ while length(pp)>=2
             isFigure = val;
         case 'isusedroprate'
             isUseDropRate = val;
+        case 'fixyfunhandle'
+            fixYFunHandle = val;
         otherwise
        		error('参数错误%s',prop);
     end
@@ -106,7 +109,9 @@ end
 y=y';
 yUp=yUp';
 yDown=yDown';
-
+if ~isempty(fixYFunHandle)
+    y = fixYFunHandle(y);
+end
 
 if strcmp(chartType,'line')
     if strcmp(errorType,'none')
@@ -127,7 +132,7 @@ end
 set(gca,'XTick',x,'XTickLabel',legendLabels);
 xlabel('类型','fontsize',paperFontSize());
 if isUseDropRate
-    ylabel('压力损失百分比(%)','fontsize',paperFontSize());
+    ylabel('压力降百分比(%)','fontsize',paperFontSize());
 else
     ylabel('压力降(kPa)','fontsize',paperFontSize());
 end

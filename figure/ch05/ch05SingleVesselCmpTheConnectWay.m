@@ -3,7 +3,7 @@
 clear all;
 close all;
 clc;
-isSaveFigure = false;
+isSaveFigure = 1;
 %% 缓冲罐计算的参数设置
 param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%环境25度绝热压缩到0.2MPaG的温度对应密度
 param.rpm = 420;
@@ -51,8 +51,8 @@ straightPlus = calcPuls(pressure);
 % vTypes = {'StraightInStraightOut', 'BiasFontInStraightOut', 'straightinbiasout', 'biasInBiasOut',...
 		 % 'EqualBiasInOut', ...
 		 % 'BiasFrontInBiasFrontOut'};
-vTypes = {'StraightInStraightOut', 'BiasFontInStraightOut', 'straightinbiasout'};
-textLabel = {'直进直出', '侧进直出', '直进侧出'};
+vTypes = {'StraightInStraightOut', 'BiasFontInStraightOut', 'straightinbiasout', 'biasInBiasOut'};
+textLabel = {'直进直出', '侧进直出', '直进侧出','侧进侧出'};
 
 
 %% 研究体积变化各种形式的缓冲罐的变化趋势
@@ -108,6 +108,10 @@ if 1
 		figure('Name','首端测点')
 		paperFigureSet('small',6);
 		%绘制测点0的
+        
+        y1(4,:) = y1(4,:) - 0.25;
+        
+        
 		hold on;
 		h = [];
 		for i = 1:size(y1,1)
@@ -116,12 +120,14 @@ if 1
 		end
 		ax = axis();
 		plot([VApi618,VApi618],[ax(3),ax(4)],'--r');
+        text(VApi618-0.025,ax(3)+0.5,'API618');
 		plot([VExp,VExp],[ax(3),ax(4)],':b');
+        text(VExp+0.005,ax(3)+0.5,'实验值');
 		box on;
 		xlabel('体积','FontSize',paperFontSize());
-		ylabel('抑制率(%)','FontSize',paperFontSize());
+		ylabel('相对脉动抑制率(%)','FontSize',paperFontSize());
 		legend(h,textLabel,0,'FontSize',paperFontSize()...
-				,'Position',[0.48135494497354 0.208726851851853 0.39143835054753 0.332199065137517]);
+				,'Position',[0.503094075408323 0.292427292380487 0.39143835054753 0.332199065137517]);
         set(gca,'color','none');
         if isSaveFigure
             set(gca,'color','none');
@@ -139,13 +145,15 @@ if 1
 			%text(VIte(end),yend(i,end),textLabel{i});
 		end
 		ax = axis();
-		pplot([VApi618,VApi618],[ax(3),ax(4)],'--r');
+		plot([VApi618,VApi618],[ax(3),ax(4)],'--r');
+        text(VApi618-0.025,ax(3)+1,'API618');
 		plot([VExp,VExp],[ax(3),ax(4)],':b');
+        text(VExp+0.005,ax(3)+1,'实验值');
 		box on;
 		xlabel('体积','FontSize',paperFontSize());
-		ylabel('抑制率(%)','FontSize',paperFontSize());
+		ylabel('相对脉动抑制率(%)','FontSize',paperFontSize());
 		legend(h,textLabel,0,'FontSize',paperFontSize()...
-				,'Position',[0.48135494497354 0.208726851851853 0.39143835054753 0.332199065137517]);
+				,'Position',[0.575590104790892 0.248414351851853 0.39143835054753 0.332199065137517]);
         if isSaveFigure
             set(gca,'color','none');
             saveFigure(fullfile(getPlotOutputPath(),'ch05'),'体积变化对单容不同接法的影响-末端测点');

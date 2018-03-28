@@ -5,7 +5,7 @@ close all;
 clc;
 baseField = 'rawData';
 errorType = 'ci';
-isSaveFigure = 1;
+isSaveFigure = 0;
 dataPath = getDataPath();
 theoryOnly = 0;
 %% 数据路径
@@ -86,7 +86,7 @@ end
 % xSection1，xSection2 孔管每圈孔的间距，从0开始算，x的长度为孔管孔的圈数+1，x的值是当前一圈孔和上一圈孔的距离，如果间距一样，那么x里的值都一样
 param.acousticVelocity = 345;%声速（m/s）
 param.isDamping = 1;
-param.coeffFriction = 0.01;
+param.coeffFriction = 0.03;
 param.meanFlowVelocity = 10;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
@@ -129,7 +129,7 @@ param.xSection1 = [0,ones(1,param.sectionNum1).*(param.lp1/(param.sectionNum1))]
 param.xSection2 = [0,ones(1,param.sectionNum2).*(param.lp2/(param.sectionNum2))];
 param.pressureBoundary2 = 0;
 
-if 1 && ~theoryOnly
+if 0 && ~theoryOnly
 	paperPlotPerforatePipeExpSimThe(param,perforatePipeCombineDataCells(1:3),simDataCells,isSaveFigure);
 end
 
@@ -137,7 +137,7 @@ if 0
 	paperPlotPerforatePipeTheory(param,isSaveFigure)
 end
 
-if 0
+if 1
 	paperPlotPerforateTheoryFrequencyResponse(param,isSaveFigure);
 end
 

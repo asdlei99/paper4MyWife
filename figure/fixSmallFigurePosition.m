@@ -1,7 +1,7 @@
 function  fixSmallFigurePosition( fh )
 %修正小图的位置
  ax = axis();
- set(gca,'Position',[0.16 0.179016148252809 0.8 0.649213018413858]);
+ set(gca,'Position',[0.18 0.179016148252809 0.78 0.649213018413858]);
  ylim([ax(3:4)]);
  xlim([ax(1:2)]);
  if nargin > 0

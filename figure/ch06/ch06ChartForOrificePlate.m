@@ -66,6 +66,8 @@ param.Dv = 0.372;
 param.sectionL1 = 0:0.5:param.L1;%linspace(0,param.L1,14);
 param.sectionL2 = 0:0.5:param.L2;%linspace(0,param.L2,14);
 param.Dpipe = 0.098;%管道直径（m）
+param.d = param.Dpipe/2;
+param.bias = 0.168+0.150;
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.notMach = 0;
 param.allowDeviation = 0.5;
@@ -116,12 +118,14 @@ if 0
 end
 
 %% 绘制多组压力脉动抑制率
-if 1
+if 0
     paperPlotOrificeExpCmp(orificDataCells,legendLabels,isSaveFigure);
 end
 %% 绘制多组压力降
-if 0
-    fh = figureExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar');
+if 1
+    fh = figureExpPressureDrop(orificDataCells,legendLabels,[2,3],'chartType','bar'...
+        ,'fixYFunHandle',@orificePressureDropFixYFunHandle);
+    ylim([0,12]);
     %'chartType'== 'bar' 时用于设置bar的颜色
     set(fh.barHandle,'FaceColor',getPlotColor(1));
     if isSaveFigure

@@ -104,6 +104,8 @@ if strcmpi(responseType,'m')
                     ,'pp',0.1*0.1 ...
                     );
     [param.fre,AmpRaw,PhRaw,param.massFlowE] = frequencySpectrum(detrend(Y,'constant'),fs);
+    
+    
 elseif strcmpi(responseType,'n')
     %ÀíÏëÂö³å
     [time,Y] = makeIdealPuls(fs,6,'isshowfig',false...
@@ -112,7 +114,9 @@ elseif strcmpi(responseType,'n')
                     );
     [param.fre,AmpRaw,PhRaw,param.massFlowE] = frequencySpectrum(detrend(Y,'constant'),fs);
 end
-
+index = find(param.fre == 0);
+param.fre(index) = [];
+param.massFlowE(index) = [];
 
 [pressure1,pressure2] = vesselInBiasHaveInnerPerfBothClosedCompCalc(param.massFlowE,param.fre,time...
 	,param.L1,param.L2,param.Dpipe,param.Dv,param.l...

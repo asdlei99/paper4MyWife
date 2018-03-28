@@ -6,6 +6,7 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
+isSaveFigure = 0;
 %% 数据路径
 vesselSideFontInDirectOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\RPM420');%侧前进直后出
 vesselDirectInDirectOutCombineDataPath = fullfile(dataPath,'实验原始数据\无内件缓冲罐\单罐直进直出420转0.05mpaModify');
@@ -74,7 +75,7 @@ param.isOpening = 0;%管道闭口%rpm = 300;outDensity = 1.9167;multFre=[10,20,30];%
 param.rpm = 420;
 param.outDensity = 1.5608;
 param.Fs = 4096;
-param.acousticVelocity = 335;%声速（m/s）
+
 param.isDamping = 1;
 param.L1 = 3.5;%(m)
 param.L2 = 6;
@@ -88,14 +89,22 @@ param.Dpipe = 0.098;%管道直径（m
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.lv1 = 0.318;
 param.lv2 = 0.318;
-coeffFriction = 0.015;
-meanFlowVelocity = 12;
+
+%20180328
+% param.acousticVelocity = 335;%声速（m/s）%20180328 值为335
+% coeffFriction = 0.015;%20180328 值为0.015
+% meanFlowVelocity = 12;%20180328 值为12
+
+param.acousticVelocity = 355;%声速（m/s）%20180328 值为335
+coeffFriction = 0.0015;%20180328 值为0.015
+meanFlowVelocity = 16;%20180328 值为12
+
 param.coeffFriction = coeffFriction;
 param.meanFlowVelocity = meanFlowVelocity;
 freRaw = [14,21,28,42,56,70];
 massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
 vType = 'StraightInStraightOut';
-if 0
+if 1
     theDataCells = oneVesselPulsation('param',param,'vType',vType,'massflowdata',[freRaw;massFlowERaw]);
 
 
@@ -149,7 +158,7 @@ if 0
     %figureExpMultNatureFrequencyBar(vesselDirectInSideFontOutCombineData,0.5,{'0.5倍频','1.5倍频','2.5倍频'});
 end
 %% 体积变化对脉动的影响
-if 0
+if 1
     Vmin = pi* param.Dpipe^2 / 4 * param.Lv *1.5;
     Vmid = pi* param.Dv^2 / 4 * param.Lv;
     Vmax = Vmid*2;
@@ -181,7 +190,9 @@ if 0
     view(-143,12);
     h = colorbar();
     set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响');
+    if isSaveFigure
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响');
+    end
     %绘制sectionX对应截面的图形
     %saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响');
     
@@ -204,7 +215,9 @@ if 0
     ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
     legend(h,markSectionXLabel);
     set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响-截面');
+    if isSaveFigure
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响-截面');
+    end
 end
 
 %% 长径比对直进直出的影响

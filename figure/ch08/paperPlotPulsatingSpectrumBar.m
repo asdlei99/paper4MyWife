@@ -24,7 +24,7 @@ function paperPlotPulsatingSpectrumBar (isSaveFigure)
     
     mat = xlsread(fullfile(dataPath,'应用章节','兰州项目压力数据.xlsx'),2);
     %绘制改造后棒图
-    for i = 5:10
+    for i = 10
         x = mat(1:7,(i-1)*2+2);
         y = mat(1:7,(i-1)*2+1);
         fh = figure;

@@ -34,10 +34,10 @@ innerPipeD0_5CombineDataPath = fullfile(dataPath,'实验原始数据\内插管\内插管0.5D
 
 %对比单孔
 innerElementDataCells1D = {expOrificD01CombineData,expInnerPipe01CombineData,expPerforateD01N28CombineData};
-legendLabels1D = {'1D孔板','1D内插管','1D内插孔管'};
+legendLabels1D = {'1D孔板','1D滤波管','1D穿孔管'};
 
 innerElementDataCells0_5D = {expOrificD0_5CombineData,expInnerPipe0_5CombineData,expPerforateD0_5N28CombineData};
-legendLabels0_5D = {'0.5D孔板','0.5D内插管','0.5D内插孔管'};
+legendLabels0_5D = {'0.5D孔板','0.5D滤波管','0.5D穿孔管'};
 
 
 %% 绘制多组压力脉动

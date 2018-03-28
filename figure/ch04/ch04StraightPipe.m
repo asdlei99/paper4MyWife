@@ -6,7 +6,7 @@ clc;
 baseField = 'rawData';
 errorType = 'ci';
 dataPath = getDataPath();
-theoryOnly = 1;
+theoryOnly = 0;
 %% 数据路径
 if ~theoryOnly
 	straightPipeDataPath = fullfile(dataPath,'实验原始数据\纯直管\RPM420-0.1MPa');%直管
@@ -22,12 +22,12 @@ param.outDensity = 1.5608;
 param.Fs = 4096;
 param.acousticVelocity = 350;%声速（m/s）
 param.isDamping = 1;
-param.coeffFriction = 0.0005;
+param.coeffFriction = 0.005;
 param.meanFlowVelocity = 16;
 param.L = 10.5;
 param.Dpipe = 0.098;%管道直径（m）
 param.sectionL = 0:0.5:param.L;%linspace(0,param.L1,14);
-param.outDensity = 1.5608;
+param.outDensity = 1.7;
 param.notMach = 0;
 %% 绘图 
 % 
@@ -38,6 +38,12 @@ isSavePlot = 0;
 if 0
  	paperPlot04StraightPipeExpSimThe(straightPipeCombineData,straightPipeSimData,param,isSavePlot);
 end
+
+%% 实验数据分析
+if 1
+ 	res = paperPlot04StraightPipeExpThe2(straightPipeCombineData,param,isSavePlot);
+end
+
 %% 绘制压力波和频率
 if 0
  	paperPlot04StraightPipePressureAndFrequency(straightPipeDataCells{1,2}.subSpectrumData,isSavePlot);
@@ -77,7 +83,7 @@ if 0
     paperPlot04StraightPipeTheoryFrequencyResponse(param,isSavePlot);
 end
 
-if 1
+if 0
 	dataPath = fullfile(dataPath,'模拟数据\扫频数据\入口1kgs质量流量出口压力\实验长度\扫频-直管');
 	figureSimFrequencyResponse(dataPath,[]);
 end

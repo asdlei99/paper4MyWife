@@ -33,7 +33,7 @@ param.sectionL2 = 0:0.5:param.L2;
 param.sectionL3 = 0:0.5:param.L3;
 param.meanFlowVelocity = 16;
 param.mach = param.meanFlowVelocity / param.acousticVelocity;
-
+fs = 400;
 
 while length(pp)>=2
     prop =pp{1};

@@ -39,38 +39,73 @@ vesselCombineDataCells = {vesselSideFontInDirectOutCombineData...
     ,vesselDirectInDirectOutCombineData...
     };
 %% 绘制频率特性
-if 0
+if 0 % 图4-20 管线各测点压力脉动频谱
     rang = 1:13;
     figure;
     paperFigureSet('small',6);
     %subplot(1,2,1)
-    [fh,tmp,y1,tmp,y2] = figureSpectrum3D(vesselDirectInSideFontOutDataCells{1,2}.subSpectrumData,'rang',rang);
-    clear tmp;
+    [fh,~,y1_df,~,y2_df] = figureSpectrum3D(vesselDirectInSideFontOutDataCells{1,2}.subSpectrumData,'rang',rang);
+    zlabel('幅值(kPa)','FontSize',paperFontSize());
     box on;
     ylim([0,14]);
     view(37,32);
     set(gca,'color','none');
     if isSaveFigure
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出测点频谱瀑布图');
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧前出测点频谱瀑布图');
     end
+    
+    figure;
+    paperFigureSet('small',6);
+    %subplot(1,2,1)
+    [fh,~,y1_db,~,y2_db] = figureSpectrum3D(vesselDirectInSideBackOutDataCells{1,2}.subSpectrumData,'rang',rang);
+    zlabel('幅值(kPa)','FontSize',paperFontSize());
+    box on;
+    ylim([0,14]);
+    view(37,32);
+    set(gca,'color','none');
+    if isSaveFigure
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧后出测点频谱瀑布图');
+    end
+    
     
     figure;
     paperFigureSet('small',6);
     %subplot(1,2,2)
     hold on;
-    h(1) = plot(rang,y1,'color',getPlotColor(1),'Marker',getMarkStyle(1));
-    h(2) = plot(rang,y2,'color',getPlotColor(2),'Marker',getMarkStyle(2));
-    legend(h,{'1倍频','2倍频'},'Location','northwest','FontSize',paperFontSize());
-    xlabel('测点','FontSize',paperFontSize());
-    ylabel('幅值','FontSize',paperFontSize());
-    set(gca,'color','none');
+    h(1) = plot(rang,y1_df,'color',getPlotColor(1),'Marker',getMarkStyle(1),'LineStyle','-');
+    h(2) = plot(rang,y1_db,'color',getPlotColor(1),'Marker',getMarkStyle(2),'LineStyle','--');
     box on;
+    xlabel('测点','FontSize',paperFontSize());
+    ylabel('幅值(kPa)','FontSize',paperFontSize());
+    set(gca,'color','none');
+    legend(h,{'直进侧前出-1倍频','直进侧后出-1倍频'}...
+        , 'Position',[0.167941813910396 0.818609789914517 0.576284235449652 0.176388884420611]...
+        ,'FontSize',paperFontSize());
     if isSaveFigure
-		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出测点1倍频2倍频频率分布');
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧前侧后1倍频频率分布');
+    end
+    
+    
+    
+    figure;
+    paperFigureSet('small',6);
+    %subplot(1,2,2)
+    hold on;
+    h(1) = plot(rang,y2_df,'color',getPlotColor(2),'Marker',getMarkStyle(1),'LineStyle','-');
+    h(2) = plot(rang,y2_db,'color',getPlotColor(2),'Marker',getMarkStyle(2),'LineStyle','--');
+    box on;
+    xlabel('测点','FontSize',paperFontSize());
+    ylabel('幅值(kPa)','FontSize',paperFontSize());
+    set(gca,'color','none');
+    legend(h,{'直进侧前出-2倍频','直进侧后出-2倍频'}...
+        ,'Position',[0.316533485540335 0.726134263727538 0.576284235449654 0.17638888442061]...
+        ,'FontSize',paperFontSize());
+    if isSaveFigure
+		saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧前侧后2倍频频率分布');
     end
 end
 %% 实验数据绘图
-if 0
+if 1
     paperPlotStraightInBiasOutExp(isSaveFigure);
 end
 
@@ -149,14 +184,19 @@ param.Dpipe = 0.098;%管道直径（m
 param.X = [param.sectionL1, param.sectionL1(end) + 2*param.l + param.Lv + param.sectionL2];
 param.lv1 = 0.318;
 param.lv2 = 0.318;
+% 20180328
+%     param.acousticVelocity = 320;%声速（m/s）
+%     param.coeffFriction = 0.03;
+%     param.meanFlowVelocity = 13;
 
-    param.acousticVelocity = 320;%声速（m/s）
-    param.coeffFriction = 0.03;
-    param.meanFlowVelocity = 13;
+    param.acousticVelocity = 350;%声速（m/s）
+    param.coeffFriction = 0.018;
+    param.meanFlowVelocity = 9;
     
 freRaw = [14,21,28,42,56,70];
-massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
-
+%20180328
+% massFlowERaw = [0.23,0.00976,0.00515,0.00518,0.003351,0.00278];
+massFlowERaw = [0.29,0.00976,0.00843,0.00518,0.003351,0.00278];
 theDataCells = oneVesselPulsation('param',param,'vType',vType,'massflowdata',[freRaw;massFlowERaw]);
 
 
@@ -178,12 +218,12 @@ simVal(xSim>=5.1 & xSim < 6) = simVal(xSim>=5.1 & xSim < 6) + 5.97;
 simVal(xSim>=6) = simVal(xSim>=6) + 10.97;
 vesselDirectInSideFontOutSimData.rawData.pulsationValue = simVal;
 % 
-tmp = theVal(xThe>=2.5 & xThe < 4.5);
-theVal(xThe>=2.5 & xThe < 4.5) = tmp+4.9*1e3;
+tmp = theVal(xThe>=2.5 & xThe <= 3.5);
+theVal(xThe>=2.5 & xThe <= 3.5) = tmp+7.121*1e3;
 % theVal(xThe>=5 & xThe < 6) = theVal(xThe>5 & xThe < 6) + 8.97*1e3;
 % theVal(xThe>=6) = (theVal(xThe>=6) + 9.57*1e3);
 theCells.pulsationValue = theVal;
-if 1
+if 0
     legnedText = {'实验','模拟','理论'};
     figure
     paperFigureSet('small',6);
@@ -213,11 +253,12 @@ end
 %figureExpMultNatureFrequencyBar(vesselDirectInSideFontOutCombineData,0.5,{'0.5倍频','1.5倍频','2.5倍频'});
 %% 体积变化对脉动的影响
 if 0
-    Vmin = pi* param.Dpipe^2 / 4 * param.Lv *1.5;
+%     Vmin = pi* param.Dpipe^2 / 4 * param.Lv *1.5;%20180328
+    Vmin = 0.05;
     Vmid = pi* param.Dv^2 / 4 * param.Lv;
-    Vmax = Vmid*3;
+    Vmax = 0.2;
     VApi618 = 0.1;
-    V = (Vmin*0.7):0.01:Vmax;
+    V = Vmin:0.01:Vmax;
     chartTypeChangVolume = 'surf';
     theoryDataCells = oneVesselChangVolume(V,'massflowdata',[freRaw;massFlowERaw]...
                                                         ,'vType',vType...
@@ -227,7 +268,7 @@ if 0
     sectionX = [2,7,10];
     markSectionXLabel = {'b','c','d'};
     figure
-    paperFigureSet_normal(8);
+    paperFigureSet('small',6);
     fh = figureTheoryPressurePlus(ZCells,XCells,'Y',V...
         ,'yLabelText','体积'...
         ,'chartType',chartTypeChangVolume...
@@ -241,16 +282,21 @@ if 0
         ,'fixAxis',1 ...
         ,'newFigure',0 ...
         );
+    zlim([0,50]);
     sectionXDatas = fh.sectionXHandle.data;
-    view(-143,12);
-    h = colorbar();
-    set(gca,'color','none');
-    saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-体积变化影响');
+    view(-56,19);
+    ch = colorbar();
+    set(gca,'color','none'...
+        ,'Position',[0.162236954826952 0.14526397206782 0.696387353503585 0.779736027932181]);
+    set(ch,'Position',[0.865942028985508 0.259911894273129 0.043478260869565 0.590308370044052]);
+    if isSaveFigure
+        saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-体积变化影响');
+    end
     %绘制sectionX对应截面的图形
     %saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进直出缓冲罐-体积变化影响');
     
     figure
-    paperFigureSet_normal(6);
+    paperFigureSet('small',6);
     hold on;
     h = [];
     for i=1:length(sectionX)
@@ -262,13 +308,14 @@ if 0
     hm = plotXMarkerLine(Vmid,':k');
     hm = plotXMarkerLine(VApi618,'--r');
     ax = axis();
-    text(Vmid,ax(4)-3,'实验体积');
-    text(VApi618-0.03,ax(4)-3,'API 618');
+    text(Vmid,ax(4)+0.5,'实验体积');
+    text(VApi618-0.03,ax(4)+0.5,'API 618');
     xlabel('缓冲罐体积(m^3)','FontName',paperFontName(),'FontSize',paperFontSize());
     ylabel('脉动峰峰值(kPa)','FontName',paperFontName(),'FontSize',paperFontSize());
-    legend(h,markSectionXLabel);
+    xlim([Vmin,Vmax]);
+    legend(h,markSectionXLabel,'Position',[0.701931142138213 0.714375006308159 0.228339040339776 0.241064808506657]);
+    set(gca,'color','none');
     if isSaveFigure
-        set(gca,'color','none');
         saveFigure(fullfile(getPlotOutputPath(),'ch05'),'直进侧出缓冲罐-体积变化影响-截面');
     end
 end

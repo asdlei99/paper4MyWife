@@ -7,6 +7,7 @@ function res = paperPlotPerforateTheoryFrequencyResponse(param,isSaveFig)
 	figHandle = figure;
 	paperFigureSet('small',6);
 	plotWaveWaterFall(pressures,fs,'y',X,'type',type);
+    zlim([0,5000]);
 	xlim([0,100]);
 	xlabel('∆µ¬ (Hz)','fontSize',paperFontSize());
 	ylabel('π‹œﬂæ‡¿Î(m)','fontSize',paperFontSize());

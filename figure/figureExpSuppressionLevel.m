@@ -108,7 +108,7 @@ end
 
 if showVesselRegion
     fh.textarrowVessel = annotation('textarrow',[0.38 0.33],...
-        [0.744 0.665],'String',{'缓冲罐'},'FontName',paperFontName(),'FontSize',paperFontSize());
+        [0.744 0.665],'String',{'抑制装置'},'FontName',paperFontName(),'FontSize',paperFontSize());
     fh.vesselFillHandle = plotVesselRegion(gca,expVesselRang);
 end
 ax = axis;
@@ -143,7 +143,7 @@ end
 
 
 xlabel('管线距离(m)','FontSize',paperFontSize());
-ylabel('脉动抑制率(%)','FontSize',paperFontSize());
+ylabel('相对脉动抑制率(%)','FontSize',paperFontSize());
 box on;
 fh.gca = gca;
 end

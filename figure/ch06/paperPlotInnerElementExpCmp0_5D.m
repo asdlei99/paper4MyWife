@@ -53,7 +53,7 @@ function  paperPlotInnerElementExpPressureDrop05( innerElementDataCells,legendLa
         ,'isFigure',false...
         ,'isUseDropRate',true...
         );
-    set(fh.gca,'XTickLabelRotation',90);
+    set(fh.gca,'XTickLabelRotation',50);
     %'chartType'== 'bar' 时用于设置bar的颜色
     set(fh.barHandle,'FaceColor',getPlotColor(2));
     set(gca,'color','none');

@@ -67,7 +67,7 @@ param.Dinnerpipe = param.Dpipe*0.5;
 
 
 %% 绘制多组压力脉动
-if 1
+if 0
 	paperPlotInnerPipeExpCmp(innerPipeDataCells,legendLabels,isSaveFigure)
 end
 
@@ -103,7 +103,7 @@ if 0
     paperPlotInnerPipeTheory(param,isSaveFigure);
 end
 
-if 0
+if 1
     paperPlotInnerPipeTheoryFrequencyResponse(param,isSaveFigure);
 end
 

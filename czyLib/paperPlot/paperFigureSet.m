@@ -23,8 +23,9 @@ function paperFigureSet(wType,h)
     case 'normal2'
         set(gcf,'color','w');
         set(gcf,'unit','centimeter','position',[8,4,10,h]);
-    otherwise
-        paperFigureSet_normal(h);
+    otherwise%other时wtype应该为数字
+        set(gcf,'color','w');
+        set(gcf,'unit','centimeter','position',[8,4,wType,h]);
     end
 
 end
